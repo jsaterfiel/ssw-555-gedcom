@@ -9,3 +9,8 @@ A project for SSW-555 dealing with GEDCOM.
 
 ## Setup
 Project is coded in Python 3.6.x (https://www.python.org/downloads/)
+
+Example usage:
+```
+python3 gedcom.py samples/saterfiel.ged
+```
