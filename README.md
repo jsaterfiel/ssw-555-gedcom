@@ -29,3 +29,16 @@ Basics from it to note:
 - private attributes proceed the name with an underscore _my_private_attr
 - all files must have a module doc comment
 - classes must document its attributes and arguments in the class doc comment not in the ```__init__``` function
+
+## Code Process
+- No changes directly to master branch
+- Create a new branch for each ticket worked on
+- Only work on one ticket per branch
+- Create a pull request to merge the branch to master once work is completed
+- Remember to go to the project board (aka sprint board) to update ticket statuses including in progress
+- Travis CI/CD will be used for running unit tests before a pull request can be approved
+- Team members must participate in code reviews to help other team members out
+- Remember to push to origin always so your changes go up to the server
+
+## Unit Testing
+Coming soon!
