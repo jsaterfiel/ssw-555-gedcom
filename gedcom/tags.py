@@ -1,6 +1,8 @@
 """Tags module
 Handles reading gedom files
 """
+
+
 class TagsError(Exception):
     """TagsError raised when a line has syntax invalid information
     and the processing cannot continue
@@ -9,6 +11,7 @@ class TagsError(Exception):
         message (str): error message
         line (int): line where error occurred
     """
+
     def __init__(self, message, line):
         self.message = message
         self.line = line
@@ -16,8 +19,10 @@ class TagsError(Exception):
     def __str__(self):
         return 'ERROR: %s at line: %i' % (self.message, self.line)
 
+
 class Tags:
-    """Tags class handles parsing the gedom file line by line through processLine() function
+    """Tags class handles parsing the gedom file line by line through
+        processLine() function
 
     Attributes:
         all_tags: list of all the tags

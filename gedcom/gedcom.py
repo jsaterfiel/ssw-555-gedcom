@@ -3,6 +3,7 @@
 import sys
 from tags import Tags, TagsError
 
+
 def run():
     """main function
     """
@@ -25,5 +26,6 @@ def run():
         except TagsError as err:
             sys.exit("ERROR: ", err)
         print("{level}|{tag}|{valid}|{args}".format(**data))
+
 
 run()
