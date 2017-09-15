@@ -17,6 +17,8 @@ python3 gedcom/gedcom.py samples/saterfiel.ged
 
 IDE of choice is VS Code https://code.visualstudio.com/ with the python extension https://marketplace.visualstudio.com/items?itemName=donjayamanne.python
 
+Github Client for Git management https://desktop.github.com/
+
 ## Code Styling
 We will be using the standard PEP 8 code styles https://www.python.org/dev/peps/pep-0008
 
