@@ -4,4 +4,4 @@ python:
 install:
   - pip install -r requirements.txt
 script:
-  - pep8 gedcom/
+  - pep8 --ignore=E501 gedcom/

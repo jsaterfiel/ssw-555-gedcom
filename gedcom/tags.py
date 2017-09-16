@@ -13,6 +13,7 @@ class TagsError(Exception):
     """
 
     def __init__(self, message, line):
+        super(TagsError, self).__init__(message)
         self.message = message
         self.line = line
 
@@ -58,12 +59,14 @@ class Tags:
     def processline(self, line):
         """
         process each line to parse out the data to a dict
-        {
-        "level": int,
-        "tag": string,
-        "args": string,
-        "valid": "Y" or "N"
-        }
+
+        Returns:
+            {
+                "level": int,
+                "tag": string,
+               "args": string,
+                "valid": "Y" or "N"
+            }
         """
         data = {"level": 0, "tag": "", "args": "", "valid": "Y"}
         pieces = line.rstrip().split(" ")

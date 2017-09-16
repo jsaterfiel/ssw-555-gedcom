@@ -12,12 +12,26 @@ Project is coded in Python 3.6.x (https://www.python.org/downloads/)
 
 Example usage:
 ```
-python3 gedcom/gedcom.py samples/saterfiel.ged
+python3 gedcom/gedcom.py samples/sample_01.ged
 ```
 
 IDE of choice is VS Code https://code.visualstudio.com/ with the python extension https://marketplace.visualstudio.com/items?itemName=donjayamanne.python
 
 Github Client for Git management https://desktop.github.com/
+
+## Pip Libraries
+### Pretty Table
+for printing out tabular data in the console
+https://code.google.com/archive/p/prettytable/wikis/Tutorial.wiki
+```
+pip3 install https://pypi.python.org/packages/source/P/PrettyTable/prettytable-0.7.2.tar.bz2
+```
+
+### AutoPep8
+for auto formatting text on save in IDE
+```
+pip3 install autopep8
+```
 
 ## Code Styling
 We will be using the standard PEP 8 code styles https://www.python.org/dev/peps/pep-0008
