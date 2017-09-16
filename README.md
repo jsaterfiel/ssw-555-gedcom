@@ -12,7 +12,7 @@ Project is coded in Python 3.6.x (https://www.python.org/downloads/)
 
 Example usage:
 ```
-python3 gedcom/gedcom.py samples/saterfiel.ged
+python3 gedcom/gedcom.py samples/sample_01.ged
 ```
 
 IDE of choice is VS Code https://code.visualstudio.com/ with the python extension https://marketplace.visualstudio.com/items?itemName=donjayamanne.python
