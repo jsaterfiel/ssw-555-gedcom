@@ -97,9 +97,11 @@ class People(object):
     def print_all(self):
         """print all individuals information
         """
+        people_keys = sorted(self.individuals.keys())
+
         p_table = PrettyTable(["ID", "Name", "Gender", "Birthday",
                                "Age", "Alive", "Death", "Child", "Spouse"])
-        for idx in self.individuals:
+        for idx in people_keys:
             person = self.individuals[idx]
             death_date = "NA"
             if person["death_date"] is not None:

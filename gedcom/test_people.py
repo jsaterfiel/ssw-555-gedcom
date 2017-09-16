@@ -559,14 +559,14 @@ class TestPeople(unittest.TestCase):
 """
         self.assertEqual(test_output, output.getvalue())
 
-    def test_print_all_multi_person(self):
-        """test print all persons
+    def test_print_all_in_order(self):
+        """test print all persons in order
         """
         # raw lines:
         # 0 @A9@ INDI
         # 1 NAME Joe /Smith/
         # 1 SEX M
-        # 0 @A9@ INDI
+        # 0 @A3@ INDI
         # 1 NAME Jane /Doe/
         # 1 SEX F
         # 1 BIRT
@@ -672,8 +672,8 @@ class TestPeople(unittest.TestCase):
         test_output = """+------+-------------+--------+------------+------+-------+------------+-----------+-----------+
 |  ID  |     Name    | Gender |  Birthday  | Age  | Alive |   Death    |   Child   |   Spouse  |
 +------+-------------+--------+------------+------+-------+------------+-----------+-----------+
-| @A9@ | Joe /Smith/ |   M    |     NA     | None |  True |     NA     |     []    |     []    |
 | @A3@ |  Jane /Doe/ |   F    | 1960-08-10 |  30  | False | 1990-12-20 | ['@F04@'] | ['@F10@'] |
+| @A9@ | Joe /Smith/ |   M    |     NA     | None |  True |     NA     |     []    |     []    |
 +------+-------------+--------+------------+------+-------+------------+-----------+-----------+
 """
         self.assertEqual(test_output, output.getvalue())

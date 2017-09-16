@@ -457,14 +457,13 @@ class TestFamilies(unittest.TestCase):
 | @F1@ | 1952-05-06 | 1992-04-26 |    @A4@    |  Jane /Doe/  |   @A3@  | Jane /Doe/ | ['@I11@', '@I12@'] |
 +------+------------+------------+------------+--------------+---------+------------+--------------------+
 """
-        self.maxDiff = None
         self.assertEqual(test_output, output.getvalue())
 
-    def test_print_all(self):
-        """test print all families
+    def test_print_all_no_dates(self):
+        """test print all families without dates
         """
         # raw lines:
-        # 0 @A6@ FAM
+        # 0 @F1@ FAM
         # 1 HUSB @A4@
         # 1 WIFE @A3@
         fam_data = {
@@ -544,5 +543,39 @@ class TestFamilies(unittest.TestCase):
 | @F1@ |    NA   |    NA    |    @A4@    |  Jane /Doe/  |   @A3@  | Jane /Doe/ | ['@I11@', '@I12@'] |
 +------+---------+----------+------------+--------------+---------+------------+--------------------+
 """
-        self.maxDiff = None
+        self.assertEqual(test_output, output.getvalue())
+
+    def test_print_all_in_order(self):
+        """test print all families in order
+        """
+        # raw lines:
+        # 0 @F6@ FAM
+        # 0 @F5@ FAM
+        fam_data1 = {
+            "level": 0,
+            "tag": "FAM",
+            "args": "@F6@",
+            "valid": "Y"
+        }
+        self.fam.process_line_data(fam_data1)
+        fam_data2 = {
+            "level": 0,
+            "tag": "FAM",
+            "args": "@F5@",
+            "valid": "Y"
+        }
+        self.fam.process_line_data(fam_data2)
+
+        # capture the output
+        output = io.StringIO()
+        sys.stdout = output
+        self.fam.print_all()
+        sys.stdout = sys.__stdout__
+        test_output = """+------+---------+----------+------------+--------------+---------+-----------+----------+
+|  ID  | Married | Divorced | Husband ID | Husband Name | Wife ID | Wife Name | Children |
++------+---------+----------+------------+--------------+---------+-----------+----------+
+| @F5@ |    NA   |    NA    |     NA     |      NA      |    NA   |     NA    |    []    |
+| @F6@ |    NA   |    NA    |     NA     |      NA      |    NA   |     NA    |    []    |
++------+---------+----------+------------+--------------+---------+-----------+----------+
+"""
         self.assertEqual(test_output, output.getvalue())

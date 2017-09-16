@@ -82,9 +82,11 @@ class Families(object):
     def print_all(self):
         """print all families information
         """
+        fam_keys = sorted(self.families.keys())
+
         p_table = PrettyTable(["ID", "Married", "Divorced", "Husband ID",
                                "Husband Name", "Wife ID", "Wife Name", "Children"])
-        for idx in self.families:
+        for idx in fam_keys:
             family = self.families[idx]
             married_date = "NA"
             if family["married_date"] is not None:
@@ -94,12 +96,12 @@ class Families(object):
                 divorced_date = family["divorced_date"].date().isoformat()
             husband_id = "NA"
             husband_name = "NA"
-            if family["husband_id"] is not "":
+            if family["husband_id"] is not None:
                 husband_id = family["husband_id"]
                 husband_name = self._people.individuals[husband_id]["name"]
             wife_id = "NA"
             wife_name = "NA"
-            if family["wife_id"] is not "":
+            if family["wife_id"] is not None:
                 wife_id = family["wife_id"]
                 wife_name = self._people.individuals[wife_id]["name"]
 
