@@ -13,12 +13,13 @@ class People(object):
         individuals: list of individuals
     """
 
-    def __init__(self):
+    def __init__(self, validation_messages):
         self.individuals = {}
         self._curr_person = None
         self._current_level_1 = None
         self._current_time = datetime.now()
         self._days_in_year = 365.2425
+        self._msgs = validation_messages
 
     def process_line_data(self, data):
         """line data is a dict of the format:

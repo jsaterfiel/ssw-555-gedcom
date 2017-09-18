@@ -4,6 +4,7 @@ Parses family tags from the gedcom data passed to it line by line as they appear
 from datetime import datetime
 from prettytable import PrettyTable
 from people import People
+from validation_messages import ValidationMessages
 
 
 class Families(object):
@@ -17,11 +18,12 @@ class Families(object):
         people (People): people used for looking up individuals
     """
 
-    def __init__(self, people=None):
+    def __init__(self, people, validation_messages):
         self.families = {}
         self._curr_family = None
         self._current_level_1 = None
         self._people = people
+        self._msgs = validation_messages
 
     def process_line_data(self, data):
         """line data is a dict of the format:
