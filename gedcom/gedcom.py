@@ -39,12 +39,15 @@ def run():
     if validation_msgs.get_messages():
         print("Validation Messages")
         validation_msgs.print_all()
+        print("")
 
     print("Individuals")
     peeps.print_all()
+    print("")
 
     print("Families")
     fam.print_all()
+    print("")
 
 
 run()
