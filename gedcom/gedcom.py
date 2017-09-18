@@ -4,6 +4,7 @@ import sys
 from tags import Tags, TagsError
 from families import Families
 from people import People
+from validation_messages import ValidationMessages
 
 
 def run():
@@ -11,9 +12,10 @@ def run():
     """
     file_data = None
     filename = ""
+    validation_msgs = ValidationMessages()
     tags = Tags()
-    peeps = People()
-    fam = Families(peeps)
+    peeps = People(validation_msgs)
+    fam = Families(peeps, validation_msgs)
 
     if len(sys.argv) < 2:
         sys.exit("Usage: " + sys.argv[0] + " path-to-gedom-file")
@@ -33,8 +35,14 @@ def run():
 
         except TagsError as err:
             sys.exit("ERROR: ", err)
+
+    if validation_msgs.get_messages():
+        print("Validation Messages")
+        validation_msgs.print_all()
+
     print("Individuals")
     peeps.print_all()
+
     print("Families")
     fam.print_all()
 

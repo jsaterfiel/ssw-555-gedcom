@@ -5,6 +5,7 @@ import io
 import sys
 from datetime import datetime
 from people import People
+from validation_messages import ValidationMessages
 
 
 class TestPeople(unittest.TestCase):
@@ -16,7 +17,8 @@ class TestPeople(unittest.TestCase):
     def setUp(self):
         """creates family object
         """
-        self.peeps = People()
+        self.msgs = ValidationMessages()
+        self.peeps = People(self.msgs)
 
     def tearDown(self):
         """delete family object

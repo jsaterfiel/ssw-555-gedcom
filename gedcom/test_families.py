@@ -6,6 +6,7 @@ import sys
 from datetime import datetime
 from families import Families
 from people import People
+from validation_messages import ValidationMessages
 
 
 class TestFamilies(unittest.TestCase):
@@ -17,8 +18,9 @@ class TestFamilies(unittest.TestCase):
     def setUp(self):
         """creates family object
         """
-        self.peeps = People()
-        self.fam = Families(self.peeps)
+        self.msgs = ValidationMessages()
+        self.peeps = People(self.msgs)
+        self.fam = Families(self.peeps, self.msgs)
 
     def tearDown(self):
         """delete family object
