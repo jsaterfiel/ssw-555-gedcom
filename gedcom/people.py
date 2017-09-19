@@ -124,12 +124,12 @@ class People(object):
                 person["spouse_of_families"]])
         print(p_table)
 
-    def is_valid_birth_date(self, date):
+    def is_valid_birth_date(self, date: datetime):
         """ checks if birthday occurs after death
         """
         if ((date - self._curr_person["birth_date"]).days / self._days_in_year) < 0:
-            self._msgs.add_message("%s - %s - Birth date should occur before death of an individual" %
-                                   (self._curr_person['id'], self._curr_person['name']))
+            self._msgs.add_message(self._curr_person['id'], self._curr_person['name'],
+                                   "Birth date should occur before death of an individual")
             return False
         else:
             return True

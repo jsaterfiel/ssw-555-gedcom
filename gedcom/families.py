@@ -81,18 +81,18 @@ class Families(object):
             if self._current_level_1 == "DIV":
                 self._curr_family["divorced_date"] = date_obj
 
-    def is_valid_married_date(self, married_date):
+    def is_valid_married_date(self, married_date: datetime):
         """ get husband and wife and check birth dates
         """
         if married_date < self._people.individuals[self._curr_family['husband_id']]['birth_date']:
-            self._msgs.add_message("%s - %s - Birth date should occur before marriage of an individual" %
-                                   (self._people.individuals[self._curr_family['husband_id']]['id'],
-                                    self._people.individuals[self._curr_family['husband_id']]['name']))
+            self._msgs.add_message(self._people.individuals[self._curr_family['husband_id']]['id'],
+                                   self._people.individuals[self._curr_family['husband_id']]['name'],
+                                   "Birth date should occur before marriage of an individual")
             return False
         elif married_date < self._people.individuals[self._curr_family['wife_id']]['birth_date']:
-            self._msgs.add_message("%s - %s - Birth date should occur before marriage of an individual" %
-                                   (self._people.individuals[self._curr_family['wife_id']]['id'],
-                                    self._people.individuals[self._curr_family['wife_id']]['name']))
+            self._msgs.add_message(self._people.individuals[self._curr_family['wife_id']]['id'],
+                                   self._people.individuals[self._curr_family['wife_id']]['name'],
+                                   "Birth date should occur before marriage of an individual")
             return False
         else:
             return True
