@@ -8,6 +8,8 @@ from validation_messages import ValidationMessages
 
 
 class Families(object):
+    CLASS_IDENTIFIER = "FAMILY"
+
     """Families class
     Contains logic for processing family tags
 
@@ -76,10 +78,28 @@ class Families(object):
 
         if data["tag"] == "DATE":
             date_obj = datetime.strptime(data["args"], '%d %b %Y')
-            if self._current_level_1 == "MARR":
+            if self._current_level_1 == "MARR" and self.is_valid_married_date(date_obj):
                 self._curr_family["married_date"] = date_obj
             if self._current_level_1 == "DIV":
                 self._curr_family["divorced_date"] = date_obj
+
+    def is_valid_married_date(self, married_date: datetime):
+        """ get husband and wife and check birth dates
+        """
+        if married_date < self._people.individuals[self._curr_family['husband_id']]['birth_date']:
+            self._msgs.add_message(People.CLASS_IDENTIFIER, "US02",
+                                   self._people.individuals[self._curr_family['husband_id']]['id'],
+                                   self._people.individuals[self._curr_family['husband_id']]['name'],
+                                   "Birth date should occur before marriage of an individual")
+            return False
+        elif married_date < self._people.individuals[self._curr_family['wife_id']]['birth_date']:
+            self._msgs.add_message(People.CLASS_IDENTIFIER, "US02",
+                                   self._people.individuals[self._curr_family['wife_id']]['id'],
+                                   self._people.individuals[self._curr_family['wife_id']]['name'],
+                                   "Birth date should occur before marriage of an individual")
+            return False
+        else:
+            return True
 
     def print_all(self):
         """print all families information
