@@ -41,7 +41,7 @@ class ValidationMessages(object):
         """
         messages = sorted(self._messages, key=lambda msg: msg['user_story'])
 
-        pretty_table = PrettyTable(["Error Type", "User Story", "User ID", "Name", "Message"])
+        pretty_table = PrettyTable(["Error Type", "User Story", "ID", "Name", "Message"])
         for message in messages:
             pretty_table.add_row(
                 [message["error_id"], message["user_story"], message["user_id"], message["name"], message["message"]])
