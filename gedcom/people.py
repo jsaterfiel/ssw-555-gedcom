@@ -7,6 +7,8 @@ from validation_messages import ValidationMessages
 
 
 class People(object):
+    CLASS_IDENTIFIER = "INDIVIDUAL"
+
     """People class
     Contains logic for processing person (INDI) tags
 
@@ -128,7 +130,7 @@ class People(object):
         """ checks if birthday occurs after death
         """
         if ((date - self._curr_person["birth_date"]).days / self._days_in_year) < 0:
-            self._msgs.add_message(self._curr_person['id'], self._curr_person['name'],
+            self._msgs.add_message(self.CLASS_IDENTIFIER, "US03", self._curr_person['id'], self._curr_person['name'],
                                    "Birth date should occur before death of an individual")
             return False
         else:
