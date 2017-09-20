@@ -152,20 +152,28 @@ class Families(object):
         """US05: validate that death occurred before marriage
         """
         key = "US05"
-        msg = "marriage after death"
+        msg = "marriage after death for "
 
         if family["married_date"] is not None:
             if family["husband_id"] is not None:
                 # check the husband died after marriage
-                husband = self._people.individuals[family["husband_id"]]
-                if husband["death_date"] is not None and family["married_date"] > husband["death_date"]:
+                husb = self._people.individuals[family["husband_id"]]
+                if husb["death_date"] is not None and family["married_date"] > husb["death_date"]:
                     # error husband died before marriage
                     self._msgs.add_message(
-                        key + ": FAMILY " + family["id"] + ": " + msg + ": " + husband["id"] + " " + husband["name"])
+                        "FAMILY",
+                        key,
+                        family["id"],
+                        "NA",
+                        msg + husb["id"] + " " + husb["name"])
             if family["wife_id"] is not None:
                 # check the wife died after the marriage
                 wife = self._people.individuals[family["wife_id"]]
                 if wife["death_date"] is not None and family["married_date"] > wife["death_date"]:
                     # error wife died before marriage
                     self._msgs.add_message(
-                        key + ": FAMILY " + family["id"] + ": " + msg + ": " + wife["id"] + " " + wife["name"])
+                        "FAMILY",
+                        key,
+                        family["id"],
+                        "NA",
+                        msg + wife["id"] + " " + wife["name"])

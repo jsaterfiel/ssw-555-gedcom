@@ -776,9 +776,27 @@ class TestFamilies(unittest.TestCase):
         results = self.msgs.get_messages()
 
         self.assertEqual(3, len(results))
-        self.assertEqual(
-            "US05: FAMILY @F02@: marriage after death: @I03@ Bob /Hope/", results[0]["message"])
-        self.assertEqual(
-            "US05: FAMILY @F04@: marriage after death: @I07@ Paris /Troy/", results[1]["message"])
-        self.assertEqual(
-            "US05: FAMILY @F04@: marriage after death: @I08@ Helena /Troy/", results[2]["message"])
+        err1 = {
+            "error_id": "FAMILY",
+            "user_story": "US05",
+            "user_id": fam2["id"],
+            "name": "NA",
+            "message": "marriage after death for " + peep3["id"] + " " + peep3["name"]
+        }
+        self.assertDictEqual(err1, results[0])
+        err2 = {
+            "error_id": "FAMILY",
+            "user_story": "US05",
+            "user_id": fam4["id"],
+            "name": "NA",
+            "message": "marriage after death for " + peep7["id"] + " " + peep7["name"]
+        }
+        self.assertDictEqual(err2, results[1])
+        err3 = {
+            "error_id": "FAMILY",
+            "user_story": "US05",
+            "user_id": fam4["id"],
+            "name": "NA",
+            "message": "marriage after death for " + peep8["id"] + " " + peep8["name"]
+        }
+        self.assertDictEqual(err3, results[2])
