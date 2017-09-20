@@ -5,3 +5,4 @@ install:
   - pip install -r requirements.txt
 script:
   - pep8 --ignore=E501 gedcom/
+  - python -m unittest gedcom/test_families.py
