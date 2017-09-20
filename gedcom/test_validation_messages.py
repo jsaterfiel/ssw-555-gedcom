@@ -4,6 +4,7 @@ import unittest
 import io
 import sys
 from .validation_messages import ValidationMessages
+from .people import People
 
 
 class TestValidationMessages(unittest.TestCase):
@@ -30,27 +31,25 @@ class TestValidationMessages(unittest.TestCase):
     def test_add_message(self):
         """ensure message is added
         """
-        msg = "Hello world!"
-        self.msgs.add_message(msg)
+        self.msgs.add_message(People.CLASS_IDENTIFIER, "US02", "@I7@", "Test Name", "There is an issue here")
         # ensure nothing got added
         output = self.msgs.get_messages()
         self.assertEqual(1, len(output))
-        self.assertEqual(msg, output[0]["message"])
 
     def test_print_all(self):
         """test print all messages
         """
-        self.msgs.add_message("test message 1")
-        self.msgs.add_message("test message 2")
-        self.msgs.add_message("test message 3")
+        self.msgs.add_message(People.CLASS_IDENTIFIER, "US02", "@I7@", "Test Name", "There is an issue here")
 
         # capture the output
         output = io.StringIO()
         sys.stdout = output
         self.msgs.print_all()
         sys.stdout = sys.__stdout__
-        test_output = """test message 1
-test message 2
-test message 3
+        test_output = """+------------+------------+------+-----------+------------------------+
+| Error Type | User Story |  ID  |    Name   |        Message         |
++------------+------------+------+-----------+------------------------+
+| INDIVIDUAL |    US02    | @I7@ | Test Name | There is an issue here |
++------------+------------+------+-----------+------------------------+
 """
         self.assertEqual(test_output, output.getvalue())

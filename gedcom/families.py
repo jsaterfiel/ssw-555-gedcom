@@ -86,22 +86,24 @@ class Families(object):
     def _is_valid_married_date(self, married_date: datetime):
         """ get husband and wife and check birth dates
         """
-        if married_date < self._people.individuals[self._curr_family['husband_id']]['birth_date']:
-            self._msgs.add_message(People.CLASS_IDENTIFIER,
-                                   "US02",
-                                   self._people.individuals[self._curr_family['husband_id']]['id'],
-                                   self._people.individuals[self._curr_family['husband_id']]['name'],
-                                   "Birth date should occur before marriage of an individual")
-            return False
-        elif married_date < self._people.individuals[self._curr_family['wife_id']]['birth_date']:
-            self._msgs.add_message(People.CLASS_IDENTIFIER,
-                                   "US02",
-                                   self._people.individuals[self._curr_family['wife_id']]['id'],
-                                   self._people.individuals[self._curr_family['wife_id']]['name'],
-                                   "Birth date should occur before marriage of an individual")
-            return False
-        else:
-            return True
+        if self._curr_family['husband_id'] in self._people.individuals:
+            if married_date < self._people.individuals[self._curr_family['husband_id']]['birth_date']:
+                self._msgs.add_message(People.CLASS_IDENTIFIER,
+                                       "US02",
+                                       self._people.individuals[self._curr_family['husband_id']]['id'],
+                                       self._people.individuals[self._curr_family['husband_id']]['name'],
+                                       "Birth date should occur before marriage of an individual")
+                return False
+
+        if self._curr_family['wife_id'] in self._people.individuals:
+            if married_date < self._people.individuals[self._curr_family['wife_id']]['birth_date']:
+                self._msgs.add_message(People.CLASS_IDENTIFIER,
+                                       "US02",
+                                       self._people.individuals[self._curr_family['wife_id']]['id'],
+                                       self._people.individuals[self._curr_family['wife_id']]['name'],
+                                       "Birth date should occur before marriage of an individual")
+                return False
+        return True
 
     def print_all(self):
         """print all families information
