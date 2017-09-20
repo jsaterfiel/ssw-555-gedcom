@@ -679,3 +679,34 @@ class TestPeople(unittest.TestCase):
 +------+-------------+--------+------------+------+-------+------------+-----------+-----------+
 """
         self.assertEqual(test_output, output.getvalue())
+
+    def test__is_valid_birth_date(self):
+        valid_person = {
+            'id': '@I3@',
+            'gender': 'F',
+            'is_alive': False,
+            'birth_date': datetime(1954, 4, 8, 0, 0),
+            'death_date': datetime(2011, 11, 5, 0, 0),
+            'child_of_families': [],
+            'spouse_of_families': [],
+            'age': 63,
+            'name': 'Margo /Hemmingway/'
+        }
+
+        self.peeps._curr_person = valid_person
+        self.assertTrue(self.peeps._is_valid_birth_date())
+
+        invalid_person = {
+            'id': '@I3@',
+            'gender': 'F',
+            'is_alive': False,
+            'birth_date': datetime(2011, 11, 5, 0, 0),
+            'death_date': datetime(1954, 4, 8, 0, 0),
+            'child_of_families': [],
+            'spouse_of_families': [],
+            'age': -63,
+            'name': 'Margo /Hemmingway/'
+        }
+
+        self.peeps._curr_person = invalid_person
+        self.assertFalse(self.peeps._is_valid_birth_date())
