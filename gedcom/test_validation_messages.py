@@ -3,7 +3,7 @@
 import unittest
 import io
 import sys
-from validation_messages import ValidationMessages
+from .validation_messages import ValidationMessages
 
 
 class TestValidationMessages(unittest.TestCase):
