@@ -117,3 +117,35 @@ class Families(object):
                 wife_name,
                 family["children"]])
         print(p_table)
+
+    def validate(self):
+        """run through all the validation rules around families
+        """
+        # ensure the order of the results doesn't change between runs
+        fam_keys = sorted(self.families.keys())
+        for idx in fam_keys:
+            family = self.families[idx]
+
+            self._validate_death_before_marriage(family)
+
+    def _validate_death_before_marriage(self, family):
+        """US05: validate that death occurred before marriage
+        """
+        key = "US05"
+        msg = "marriage after death"
+
+        if family["married_date"] is not None:
+            if family["husband_id"] is not None:
+                # check the husband died after marriage
+                husband = self._people.individuals[family["husband_id"]]
+                if husband["death_date"] is not None and family["married_date"] > husband["death_date"]:
+                    # error husband died before marriage
+                    self._msgs.add_message(
+                        key + ": FAMILY " + family["id"] + ": " + msg + ": " + husband["id"] + " " + husband["name"])
+            if family["wife_id"] is not None:
+                # check the wife died after the marriage
+                wife = self._people.individuals[family["wife_id"]]
+                if wife["death_date"] is not None and family["married_date"] > wife["death_date"]:
+                    # error wife died before marriage
+                    self._msgs.add_message(
+                        key + ": FAMILY " + family["id"] + ": " + msg + ": " + wife["id"] + " " + wife["name"])
