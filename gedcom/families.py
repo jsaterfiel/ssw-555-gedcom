@@ -8,6 +8,8 @@ from validation_messages import ValidationMessages
 
 
 class Families(object):
+    CLASS_IDENTIFIER = "FAMILY"
+
     """Families class
     Contains logic for processing family tags
 
@@ -76,10 +78,28 @@ class Families(object):
 
         if data["tag"] == "DATE":
             date_obj = datetime.strptime(data["args"], '%d %b %Y')
-            if self._current_level_1 == "MARR":
+            if self._current_level_1 == "MARR" and self.is_valid_married_date(date_obj):
                 self._curr_family["married_date"] = date_obj
             if self._current_level_1 == "DIV":
                 self._curr_family["divorced_date"] = date_obj
+
+    def is_valid_married_date(self, married_date: datetime):
+        """ get husband and wife and check birth dates
+        """
+        if married_date < self._people.individuals[self._curr_family['husband_id']]['birth_date']:
+            self._msgs.add_message(People.CLASS_IDENTIFIER, "US02",
+                                   self._people.individuals[self._curr_family['husband_id']]['id'],
+                                   self._people.individuals[self._curr_family['husband_id']]['name'],
+                                   "Birth date should occur before marriage of an individual")
+            return False
+        elif married_date < self._people.individuals[self._curr_family['wife_id']]['birth_date']:
+            self._msgs.add_message(People.CLASS_IDENTIFIER, "US02",
+                                   self._people.individuals[self._curr_family['wife_id']]['id'],
+                                   self._people.individuals[self._curr_family['wife_id']]['name'],
+                                   "Birth date should occur before marriage of an individual")
+            return False
+        else:
+            return True
 
     def print_all(self):
         """print all families information
@@ -117,3 +137,74 @@ class Families(object):
                 wife_name,
                 family["children"]])
         print(p_table)
+
+    def validate(self):
+        """run through all the validation rules around families
+        """
+        # ensure the order of the results doesn't change between runs
+        fam_keys = sorted(self.families.keys())
+        for idx in fam_keys:
+            family = self.families[idx]
+
+            self._validate_death_before_marriage(family)
+            self._validate_death_before_divorce(family)
+
+    def _validate_death_before_marriage(self, family):
+        """US05: validate that death occurred before marriage
+        """
+        key = "US05"
+        msg = "marriage after death for "
+
+        if family["married_date"] is not None:
+            if family["husband_id"] is not None:
+                # check the husband died after marriage
+                husb = self._people.individuals[family["husband_id"]]
+                if husb["death_date"] is not None and family["married_date"] > husb["death_date"]:
+                    # error husband died before marriage
+                    self._msgs.add_message(
+                        "FAMILY",
+                        key,
+                        family["id"],
+                        "NA",
+                        msg + husb["id"] + " " + husb["name"])
+            if family["wife_id"] is not None:
+                # check the wife died after the marriage
+                wife = self._people.individuals[family["wife_id"]]
+                if wife["death_date"] is not None and family["married_date"] > wife["death_date"]:
+                    # error wife died before marriage
+                    self._msgs.add_message(
+                        "FAMILY",
+                        key,
+                        family["id"],
+                        "NA",
+                        msg + wife["id"] + " " + wife["name"])
+
+    def _validate_death_before_divorce(self, family):
+        """US06: validate that death occurred before marriage
+        """
+        key = "US06"
+        msg = "divorce after death for "
+
+        if family["divorced_date"] is not None:
+            if family["husband_id"] is not None:
+                # check the husband died after divorce
+                husb = self._people.individuals[family["husband_id"]]
+                if husb["death_date"] is not None and family["divorced_date"] > husb["death_date"]:
+                    # error husband died before divorce
+                    self._msgs.add_message(
+                        "FAMILY",
+                        key,
+                        family["id"],
+                        "NA",
+                        msg + husb["id"] + " " + husb["name"])
+            if family["wife_id"] is not None:
+                # check the wife died after the divorce
+                wife = self._people.individuals[family["wife_id"]]
+                if wife["death_date"] is not None and family["divorced_date"] > wife["death_date"]:
+                    # error wife died before divorce
+                    self._msgs.add_message(
+                        "FAMILY",
+                        key,
+                        family["id"],
+                        "NA",
+                        msg + wife["id"] + " " + wife["name"])

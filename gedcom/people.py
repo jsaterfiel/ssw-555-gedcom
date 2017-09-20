@@ -3,9 +3,12 @@ Parses person tags from the gedcom data passed to it line by line as they appear
 """
 from datetime import datetime
 from prettytable import PrettyTable
+from validation_messages import ValidationMessages
 
 
 class People(object):
+    CLASS_IDENTIFIER = "INDIVIDUAL"
+
     """People class
     Contains logic for processing person (INDI) tags
 
@@ -39,6 +42,7 @@ class People(object):
         if data["tag"] == "INDI":
             self._curr_person = {
                 "id": data["args"],
+                "name": "",
                 "gender": "",
                 "is_alive": True,
                 "birth_date": None,
@@ -91,7 +95,7 @@ class People(object):
 
             if self._current_level_1 == "DEAT":
                 self._curr_person["death_date"] = date_obj
-                if self._curr_person["birth_date"] is not None:
+                if self._curr_person["birth_date"] is not None and self.is_valid_birth_date(date_obj):
                     self._curr_person["age"] = int(
                         (date_obj - self._curr_person["birth_date"]).days / self._days_in_year)
 
@@ -122,3 +126,13 @@ class People(object):
                 person["child_of_families"],
                 person["spouse_of_families"]])
         print(p_table)
+
+    def is_valid_birth_date(self, date: datetime):
+        """ checks if birthday occurs after death
+        """
+        if ((date - self._curr_person["birth_date"]).days / self._days_in_year) < 0:
+            self._msgs.add_message(self.CLASS_IDENTIFIER, "US03", self._curr_person['id'], self._curr_person['name'],
+                                   "Birth date should occur before death of an individual")
+            return False
+        else:
+            return True
