@@ -42,6 +42,7 @@ class People(object):
         if data["tag"] == "INDI":
             self._curr_person = {
                 "id": data["args"],
+                "name": "",
                 "gender": "",
                 "is_alive": True,
                 "birth_date": None,

@@ -139,3 +139,74 @@ class Families(object):
                 wife_name,
                 family["children"]])
         print(p_table)
+
+    def validate(self):
+        """run through all the validation rules around families
+        """
+        # ensure the order of the results doesn't change between runs
+        fam_keys = sorted(self.families.keys())
+        for idx in fam_keys:
+            family = self.families[idx]
+
+            self._validate_death_before_marriage(family)
+            self._validate_death_before_divorce(family)
+
+    def _validate_death_before_marriage(self, family):
+        """US05: validate that death occurred before marriage
+        """
+        key = "US05"
+        msg = "marriage after death for "
+
+        if family["married_date"] is not None:
+            if family["husband_id"] is not None:
+                # check the husband died after marriage
+                husb = self._people.individuals[family["husband_id"]]
+                if husb["death_date"] is not None and family["married_date"] > husb["death_date"]:
+                    # error husband died before marriage
+                    self._msgs.add_message(
+                        "FAMILY",
+                        key,
+                        family["id"],
+                        "NA",
+                        msg + husb["id"] + " " + husb["name"])
+            if family["wife_id"] is not None:
+                # check the wife died after the marriage
+                wife = self._people.individuals[family["wife_id"]]
+                if wife["death_date"] is not None and family["married_date"] > wife["death_date"]:
+                    # error wife died before marriage
+                    self._msgs.add_message(
+                        "FAMILY",
+                        key,
+                        family["id"],
+                        "NA",
+                        msg + wife["id"] + " " + wife["name"])
+
+    def _validate_death_before_divorce(self, family):
+        """US06: validate that death occurred before marriage
+        """
+        key = "US06"
+        msg = "divorce after death for "
+
+        if family["divorced_date"] is not None:
+            if family["husband_id"] is not None:
+                # check the husband died after divorce
+                husb = self._people.individuals[family["husband_id"]]
+                if husb["death_date"] is not None and family["divorced_date"] > husb["death_date"]:
+                    # error husband died before divorce
+                    self._msgs.add_message(
+                        "FAMILY",
+                        key,
+                        family["id"],
+                        "NA",
+                        msg + husb["id"] + " " + husb["name"])
+            if family["wife_id"] is not None:
+                # check the wife died after the divorce
+                wife = self._people.individuals[family["wife_id"]]
+                if wife["death_date"] is not None and family["divorced_date"] > wife["death_date"]:
+                    # error wife died before divorce
+                    self._msgs.add_message(
+                        "FAMILY",
+                        key,
+                        family["id"],
+                        "NA",
+                        msg + wife["id"] + " " + wife["name"])
