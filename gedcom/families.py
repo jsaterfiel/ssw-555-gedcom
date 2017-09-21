@@ -78,32 +78,10 @@ class Families(object):
 
         if data["tag"] == "DATE":
             date_obj = datetime.strptime(data["args"], '%d %b %Y')
-            if self._current_level_1 == "MARR" and self._is_valid_married_date(date_obj):
+            if self._current_level_1 == "MARR":
                 self._curr_family["married_date"] = date_obj
             if self._current_level_1 == "DIV":
                 self._curr_family["divorced_date"] = date_obj
-
-    def _is_valid_married_date(self, married_date: datetime):
-        """ get husband and wife and check birth dates
-        """
-        if self._curr_family['husband_id'] in self._people.individuals:
-            if married_date < self._people.individuals[self._curr_family['husband_id']]['birth_date']:
-                self._msgs.add_message(People.CLASS_IDENTIFIER,
-                                       "US02",
-                                       self._people.individuals[self._curr_family['husband_id']]['id'],
-                                       self._people.individuals[self._curr_family['husband_id']]['name'],
-                                       "Birth date should occur before marriage of an individual")
-                return False
-
-        if self._curr_family['wife_id'] in self._people.individuals:
-            if married_date < self._people.individuals[self._curr_family['wife_id']]['birth_date']:
-                self._msgs.add_message(People.CLASS_IDENTIFIER,
-                                       "US02",
-                                       self._people.individuals[self._curr_family['wife_id']]['id'],
-                                       self._people.individuals[self._curr_family['wife_id']]['name'],
-                                       "Birth date should occur before marriage of an individual")
-                return False
-        return True
 
     def print_all(self):
         """print all families information
@@ -152,6 +130,35 @@ class Families(object):
 
             self._validate_death_before_marriage(family)
             self._validate_death_before_divorce(family)
+            self._validate_birth_before_marriage(family)
+
+    def _validate_birth_before_marriage(self, family):
+        """get husband and wife and check birth dates
+        :param family family to validate
+        :return boolean if valid
+        """
+        if family["married_date"] is not None:
+            married_date = family["married_date"]
+            if family['husband_id'] is not None and family['husband_id'] in self._people.individuals and \
+                            self._people.individuals[family['husband_id']]['birth_date'] is not None:
+                if married_date < self._people.individuals[family['husband_id']]['birth_date']:
+                    self._msgs.add_message(People.CLASS_IDENTIFIER,
+                                           "US02",
+                                           self._people.individuals[family['husband_id']]['id'],
+                                           self._people.individuals[family['husband_id']]['name'],
+                                           "Birth date should occur before marriage of an individual")
+                    return False
+
+            if family['wife_id'] is not None and family['wife_id'] in self._people.individuals and \
+                            self._people.individuals[family['wife_id']]['birth_date'] is not None:
+                if married_date < self._people.individuals[family['wife_id']]['birth_date']:
+                    self._msgs.add_message(People.CLASS_IDENTIFIER,
+                                           "US02",
+                                           self._people.individuals[family['wife_id']]['id'],
+                                           self._people.individuals[family['wife_id']]['name'],
+                                           "Birth date should occur before marriage of an individual")
+                    return False
+        return True
 
     def _validate_death_before_marriage(self, family):
         """US05: validate that death occurred before marriage

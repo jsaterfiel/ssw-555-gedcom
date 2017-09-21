@@ -1015,7 +1015,7 @@ class TestFamilies(unittest.TestCase):
         self.assertDictEqual(err3, results[2])
 
     def test___is_valid_married_date(self):
-        current_family = {
+        family = {
             'id': '@F1@',
             'children': ['@I16@'],
             'husband_id': '@I1@',
@@ -1038,10 +1038,9 @@ class TestFamilies(unittest.TestCase):
             }
         }
 
-        self.fam._curr_family = current_family
         self.fam._people.individuals = individuals
-        self.assertTrue(self.fam._is_valid_married_date(current_family["married_date"]))
+        self.assertTrue(self.fam._validate_birth_before_marriage(family))
 
         # Invalid marriage date
-        self.fam._curr_family["married_date"] = datetime(1960, 1, 1, 0, 0)
-        self.assertFalse(self.fam._is_valid_married_date(current_family["married_date"]))
+        family["married_date"] = datetime(1960, 1, 1, 0, 0)
+        self.assertFalse(self.fam._validate_birth_before_marriage(family))
