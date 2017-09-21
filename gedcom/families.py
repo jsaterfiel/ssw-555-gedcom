@@ -139,24 +139,24 @@ class Families(object):
         """
         if family["married_date"] is not None:
             married_date = family["married_date"]
-            if family['husband_id'] is not None and family['husband_id'] in self._people.individuals and \
-                            self._people.individuals[family['husband_id']]['birth_date'] is not None:
-                if married_date < self._people.individuals[family['husband_id']]['birth_date']:
-                    self._msgs.add_message(People.CLASS_IDENTIFIER,
-                                           "US02",
-                                           self._people.individuals[family['husband_id']]['id'],
-                                           self._people.individuals[family['husband_id']]['name'],
-                                           "Birth date should occur before marriage of an individual")
+            if family['husband_id'] is not None and family['husband_id'] in self._people.individuals:
+                if self._people.individuals[family['husband_id']]['birth_date'] is not None:
+                    if married_date < self._people.individuals[family['husband_id']]['birth_date']:
+                        self._msgs.add_message(People.CLASS_IDENTIFIER,
+                                               "US02",
+                                               self._people.individuals[family['husband_id']]['id'],
+                                               self._people.individuals[family['husband_id']]['name'],
+                                               "Birth date should occur before marriage of an individual")
                     return False
 
-            if family['wife_id'] is not None and family['wife_id'] in self._people.individuals and \
-                            self._people.individuals[family['wife_id']]['birth_date'] is not None:
-                if married_date < self._people.individuals[family['wife_id']]['birth_date']:
-                    self._msgs.add_message(People.CLASS_IDENTIFIER,
-                                           "US02",
-                                           self._people.individuals[family['wife_id']]['id'],
-                                           self._people.individuals[family['wife_id']]['name'],
-                                           "Birth date should occur before marriage of an individual")
+            if family['wife_id'] is not None and family['wife_id'] in self._people.individuals:
+                if self._people.individuals[family['wife_id']]['birth_date'] is not None:
+                    if married_date < self._people.individuals[family['wife_id']]['birth_date']:
+                        self._msgs.add_message(People.CLASS_IDENTIFIER,
+                                               "US02",
+                                               self._people.individuals[family['wife_id']]['id'],
+                                               self._people.individuals[family['wife_id']]['name'],
+                                               "Birth date should occur before marriage of an individual")
                     return False
         return True
 
