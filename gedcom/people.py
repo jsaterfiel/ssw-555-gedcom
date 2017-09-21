@@ -95,7 +95,7 @@ class People(object):
 
             if self._current_level_1 == "DEAT":
                 self._curr_person["death_date"] = date_obj
-                if self._curr_person["birth_date"] is not None and self.is_valid_birth_date(date_obj):
+                if self._curr_person["birth_date"] is not None and self._is_valid_birth_date():
                     self._curr_person["age"] = int(
                         (date_obj - self._curr_person["birth_date"]).days / self._days_in_year)
 
@@ -127,12 +127,16 @@ class People(object):
                 person["spouse_of_families"]])
         print(p_table)
 
-    def is_valid_birth_date(self, date: datetime):
+    def _is_valid_birth_date(self):
         """ checks if birthday occurs after death
         """
-        if ((date - self._curr_person["birth_date"]).days / self._days_in_year) < 0:
-            self._msgs.add_message(self.CLASS_IDENTIFIER, "US03", self._curr_person['id'], self._curr_person['name'],
-                                   "Birth date should occur before death of an individual")
-            return False
-        else:
-            return True
+        if self._curr_person["birth_date"] is not None and self._curr_person["death_date"]:
+            if self._curr_person["death_date"] < self._curr_person["birth_date"]:
+                self._msgs.add_message(self.CLASS_IDENTIFIER,
+                                       "US03",
+                                       self._curr_person['id'],
+                                       self._curr_person['name'],
+                                       "Birth date should occur before death of an individual")
+                return False
+            else:
+                return True

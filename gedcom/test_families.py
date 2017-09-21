@@ -1013,3 +1013,34 @@ class TestFamilies(unittest.TestCase):
             "message": "divorce after death for " + peep8["id"] + " " + peep8["name"]
         }
         self.assertDictEqual(err3, results[2])
+
+    def test___is_valid_married_date(self):
+        family = {
+            'id': '@F1@',
+            'children': ['@I16@'],
+            'husband_id': '@I1@',
+            'wife_id': '@I7@',
+            'married_date': datetime(2000, 1, 1, 0, 0),
+            'divorced_date': None,
+            'married': True
+        }
+
+        individuals = {
+            '@I1@': {
+                'id': '@I1@', 'gender': 'M', 'is_alive': True, 'birth_date': datetime(1970, 1, 1, 0, 0),
+                'death_date': None, 'child_of_families': ['@F2@'], 'spouse_of_families': ['@F1@'], 'age': 47,
+                'name': 'Tony /Tiger/'
+            },
+            '@I7@': {
+                'id': '@I7@', 'gender': 'F', 'is_alive': True, 'birth_date': datetime(1970, 7, 20, 0, 0),
+                'death_date': None, 'child_of_families': ['@F9@'], 'spouse_of_families': ['@F1@'], 'age': 47,
+                'name': 'Minnie /Mouse/'
+            }
+        }
+
+        self.fam._people.individuals = individuals
+        self.assertTrue(self.fam._validate_birth_before_marriage(family))
+
+        # Invalid marriage date
+        family["married_date"] = datetime(1960, 1, 1, 0, 0)
+        self.assertFalse(self.fam._validate_birth_before_marriage(family))
