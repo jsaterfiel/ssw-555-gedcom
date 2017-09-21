@@ -4,9 +4,9 @@ import unittest
 import io
 import sys
 from datetime import datetime
-from .families import Families
-from .people import People
-from .validation_messages import ValidationMessages
+from families import Families
+from people import People
+from validation_messages import ValidationMessages
 
 
 class TestFamilies(unittest.TestCase):

@@ -1,9 +1,9 @@
 """GEDCOM project program for SSW-555
 """
 import sys
-from .tags import Tags, TagsError
-from .families import Families
-from .people import People
+from tags import Tags, TagsError
+from families import Families
+from people import People
 from validation_messages import ValidationMessages
 
 

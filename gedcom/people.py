@@ -3,7 +3,7 @@ Parses person tags from the gedcom data passed to it line by line as they appear
 """
 from datetime import datetime
 from prettytable import PrettyTable
-from .validation_messages import ValidationMessages
+from validation_messages import ValidationMessages
 
 
 class People(object):

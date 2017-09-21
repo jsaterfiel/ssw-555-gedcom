@@ -3,8 +3,8 @@ Parses family tags from the gedcom data passed to it line by line as they appear
 """
 from datetime import datetime
 from prettytable import PrettyTable
-from .people import People
-from .validation_messages import ValidationMessages
+from people import People
+from validation_messages import ValidationMessages
 
 
 class Families(object):

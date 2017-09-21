@@ -4,8 +4,8 @@ import unittest
 import io
 import sys
 from datetime import datetime
-from .people import People
-from .validation_messages import ValidationMessages
+from people import People
+from validation_messages import ValidationMessages
 
 
 class TestPeople(unittest.TestCase):

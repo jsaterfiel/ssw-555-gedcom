@@ -3,8 +3,8 @@
 import unittest
 import io
 import sys
-from .validation_messages import ValidationMessages
-from .people import People
+from validation_messages import ValidationMessages
+from people import People
 
 
 class TestValidationMessages(unittest.TestCase):
