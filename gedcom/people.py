@@ -141,16 +141,25 @@ class People(object):
             else:
                 return True
 
-    def _is_valid_age(self):
+    def _is_valid_age(self, person):
         """ checks if age is less than 150
         """
-        if self._curr_person["age"] is not None:
-            if self._curr_person["age"] > 150:
+        if person["age"] is not None:
+            if person["age"] > 149:
                 self._msgs.add_message(self.CLASS_IDENTIFIER,
                                        "US07",
-                                       self._curr_person['id'],
-                                       self._curr_person['name'],
+                                       person['id'],
+                                       person['name'],
                                        "Age should be less than 150")
                 return False
             else:
                 return True
+
+    def validate(self):
+        """run through all validation rules around people
+        """
+        # ensure the order of results doesn't change between runs
+        ind_keys = sorted(self.individuals.keys())
+        for idx in ind_keys:
+            person = self.individuals[idx]
+            self._is_valid_age(person)

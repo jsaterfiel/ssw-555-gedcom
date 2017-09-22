@@ -36,6 +36,9 @@ def run():
         except TagsError as err:
             sys.exit("ERROR: ", err)
 
+    fam.validate()
+    peeps.validate()
+
     if validation_msgs.get_messages():
         print("Validation Messages")
         validation_msgs.print_all()
