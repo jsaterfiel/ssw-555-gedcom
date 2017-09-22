@@ -710,3 +710,35 @@ class TestPeople(unittest.TestCase):
 
         self.peeps._curr_person = invalid_person
         self.assertFalse(self.peeps._is_valid_birth_date())
+
+
+def test__is_valid_age(self):
+    valid_person = {
+        'id': '@I3@',
+        'gender': 'F',
+        'is_alive': False,
+        'birth_date': datetime(1954, 4, 8, 0, 0),
+        'death_date': datetime(2011, 11, 5, 0, 0),
+        'child_of_families': [],
+        'spouse_of_families': [],
+        'age': 63,
+        'name': 'Bubbles /Bambi/'
+    }
+
+    self.peeps._curr_person = valid_person
+    self.assertTrue(self.peeps._is_valid_age())
+
+    invalid_person = {
+        'id': '@I3@',
+        'gender': 'F',
+        'is_alive': False,
+        'birth_date': datetime(1860, 11, 5, 0, 0),
+        'death_date': datetime(2011, 11, 5, 0, 0),
+        'child_of_families': [],
+        'spouse_of_families': [],
+        'age': 151,
+        'name': 'Margo /Hemmingway/'
+    }
+
+    self.peeps._curr_person = invalid_person
+    self.assertFalse(self.peeps._is_valid_age())

@@ -140,3 +140,17 @@ class People(object):
                 return False
             else:
                 return True
+
+    def _is_valid_age(self):
+        """ checks if age is less than 150
+        """
+        if self._curr_person["age"] is not None:
+            if self._curr_person["age"] > 150:
+                self._msgs.add_message(self.CLASS_IDENTIFIER,
+                                       "US07",
+                                       self._curr_person['id'],
+                                       self._curr_person['name'],
+                                       "Age should be less than 150")
+                return False
+            else:
+                return True
