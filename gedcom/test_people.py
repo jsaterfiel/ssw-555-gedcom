@@ -710,3 +710,68 @@ class TestPeople(unittest.TestCase):
 
         self.peeps._curr_person = invalid_person
         self.assertFalse(self.peeps._is_valid_birth_date())
+
+    def test_not_too_old(self):
+        """ test is the person's age is less than 150
+        """
+        valid_person = {
+            "id": "@I3@",
+            "age": 63,
+            "name": "Bubbles /Bambi/"
+        }
+        self.peeps.individuals[valid_person["id"]] = valid_person
+
+        invalid_person = {
+            "id": "@I4@",
+            "age": 151,
+            "name": 'Margo /Hemmingway/'
+        }
+        self.peeps.individuals[invalid_person["id"]] = invalid_person
+        invalid_person2 = {
+            "id": "@I5@",
+            "age": 150,
+            "name": 'Betty /Hemmingway/'
+        }
+        self.peeps.individuals[invalid_person2["id"]] = invalid_person2
+        invalid_person3 = {
+            "id": "@I6@",
+            "age": 2010,
+            "name": 'Moses /Hemmingway/'
+        }
+        self.peeps.individuals[invalid_person3["id"]] = invalid_person3
+        valid_person2 = {
+            "id": "@I7@",
+            "age": 149,
+            "name": 'Salty /Hemmingway/'
+        }
+        self.peeps.individuals[valid_person2["id"]] = valid_person2
+
+        self.peeps.validate()
+
+        output = self.msgs.get_messages()
+        self.assertEqual(3, len(output))
+
+        error1 = {
+            "error_id": "INDIVIDUAL",
+            "message": "Age should be less than 150",
+            "name": "Margo /Hemmingway/",
+            "user_id": "@I4@",
+            "user_story": "US07"
+        }
+        self.assertDictEqual(error1, output[0])
+        error2 = {
+            "error_id": "INDIVIDUAL",
+            "message": "Age should be less than 150",
+            "name": "Betty /Hemmingway/",
+            "user_id": "@I5@",
+            "user_story": "US07"
+        }
+        self.assertDictEqual(error2, output[1])
+        error3 = {
+            "error_id": "INDIVIDUAL",
+            "message": "Age should be less than 150",
+            "name": "Moses /Hemmingway/",
+            "user_id": "@I6@",
+            "user_story": "US07"
+        }
+        self.assertDictEqual(error3, output[2])
