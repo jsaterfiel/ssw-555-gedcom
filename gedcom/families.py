@@ -254,5 +254,5 @@ class Families(object):
                                        family["id"],
                                        "NA",
                                        "Marriage date should occur before current date of a family")
-        return False
-    return True
+            return False
+        return True
