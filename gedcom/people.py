@@ -158,8 +158,8 @@ class People(object):
     def _is_valid_date_birthdeath(self, person):
         """ checks if birth date is before current date
         """
-        if self._curr_person["birth_date"] is not None:
-            if self._curr_person["birth_date"] > self._current_time:
+        if person["birth_date"] is not None:
+            if person["birth_date"] > self._current_time:
                 self._msgs.add_message(self.CLASS_IDENTIFIER,
                                        "US01",
                                        person['id'],
@@ -168,8 +168,8 @@ class People(object):
                 return False
         """ checks if death date is before current date
         """
-        if self._curr_person["death_date"] is not None:
-            if self._curr_person["death_date"] > self._current_time:
+        if person["death_date"] is not None:
+            if person["death_date"] > self._current_time:
                 self._msgs.add_message(self.CLASS_IDENTIFIER,
                                        "US01",
                                        person['id'],
