@@ -175,6 +175,7 @@ class People(object):
                                        person['id'],
                                        person['name'],
                                        "Death date should occur before current date")
+                return False
             else:
                 return True
 
