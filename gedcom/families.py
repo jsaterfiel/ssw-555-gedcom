@@ -247,7 +247,7 @@ class Families(object):
                                        "Divorce date should occur before current date of a family")
                 return False
 
-        if family["divorced_date"] is not None:
+        if family["married_date"] is not None:
             if family["married_date"] > self._current_time:
                 self._msgs.add_message("Family",
                                        "US01",
