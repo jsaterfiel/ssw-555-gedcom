@@ -26,6 +26,7 @@ class Families(object):
         self._current_level_1 = None
         self._people = people
         self._msgs = validation_messages
+        self._current_time = datetime.now()
 
     def process_line_data(self, data):
         """line data is a dict of the format:
@@ -131,6 +132,8 @@ class Families(object):
             self._validate_death_before_marriage(family)
             self._validate_death_before_divorce(family)
             self._validate_birth_before_marriage(family)
+            self._validate_marrb4div_dates(family)
+            self._validate_marr_div_dates(family)
 
     def _validate_birth_before_marriage(self, family):
         """get husband and wife and check birth dates
@@ -217,3 +220,39 @@ class Families(object):
                         family["id"],
                         "NA",
                         msg + wife["id"] + " " + wife["name"])
+
+    def _validate_marrb4div_dates(self, family):
+        """Validate that family marriage date occurs before divorce
+        """
+        if family["divorced_date"] is not None:
+            if family["married_date"] is not None:
+                if family["married_date"] > family["divorce_date"]:
+                    self._msgs.add_message("Family",
+                                           "US04",
+                                           family["id"],
+                                           "NA",
+                                           "Marriage date should occur before divorce date of a family")
+                    return False
+        return True
+
+    def _validate_marr_div_dates(self, family):
+        """Validate that family marriage and divorce dates occurs before current date
+        """
+        if family["divorced_date"] is not None:
+            if family["divorce_date"] > self._current_time:
+                self._msgs.add_message("Family",
+                                       "US01",
+                                       family["id"],
+                                       "NA",
+                                       "Divorce date should occur before current date of a family")
+                return False
+
+        if family["divorced_date"] is not None:
+            if family["married_date"] > self._current_time:
+                self._msgs.add_message("Family",
+                                       "US01",
+                                       family["id"],
+                                       "NA",
+                                       "Marriage date should occur before current date of a family")
+        return False
+    return True
