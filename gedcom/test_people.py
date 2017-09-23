@@ -695,6 +695,7 @@ class TestPeople(unittest.TestCase):
 
         self.peeps._curr_person = valid_person
         self.assertTrue(self.peeps._is_valid_birth_date())
+        self.assertEqual(len(self.msgs._messages), 0)
 
         invalid_person = {
             'id': '@I3@',
@@ -708,8 +709,20 @@ class TestPeople(unittest.TestCase):
             'name': 'Margo /Hemmingway/'
         }
 
+        valid_error_message = {
+            'error_id': People.CLASS_IDENTIFIER,
+            'user_story': 'US03',
+            'user_id': '@I3@',
+            'name': 'Margo /Hemmingway/',
+            'message': 'Birth date should occur before death of an individual'
+        }
+
         self.peeps._curr_person = invalid_person
         self.assertFalse(self.peeps._is_valid_birth_date())
+        self.assertEqual(len(self.msgs._messages), 1)
+
+        test_messages = self.msgs.get_messages()[0]
+        self.assertDictEqual(test_messages, valid_error_message)
 
     def test_not_too_old(self):
         """ test is the person's age is less than 150
