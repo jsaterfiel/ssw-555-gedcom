@@ -187,4 +187,3 @@ class People(object):
         for idx in ind_keys:
             person = self.individuals[idx]
             self._is_valid_age(person)
-            self._is_valid_date_birthdeath(person)
