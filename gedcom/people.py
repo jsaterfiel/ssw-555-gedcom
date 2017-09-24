@@ -155,18 +155,8 @@ class People(object):
             else:
                 return True
 
-    def _is_valid_date_birthdeath(self, person):
-        """ checks if birth date is before current date
-        """
-        if person["birth_date"] is not None:
-            if person["birth_date"] > self._current_time:
-                self._msgs.add_message(self.CLASS_IDENTIFIER,
-                                       "US01",
-                                       person['id'],
-                                       person['name'],
-                                       "Birth date should occur before current date")
-                return False
-        """ checks if death date is before current date
+    def _is_valid_birth_death_dates(self, person):
+        """ checks if birthday and death dates occurs before current date
         """
         if person["death_date"] is not None:
             if person["death_date"] > self._current_time:
@@ -175,6 +165,14 @@ class People(object):
                                        person['id'],
                                        person['name'],
                                        "Death date should occur before current date")
+                return False
+        if person["birth_date"] is not None:
+            if person["birth_date"] > self._current_time:
+                self._msgs.add_message(self.CLASS_IDENTIFIER,
+                                       "US01",
+                                       person['id'],
+                                       person['name'],
+                                       "Birth date should occur before current date")
                 return False
             else:
                 return True
@@ -187,3 +185,4 @@ class People(object):
         for idx in ind_keys:
             person = self.individuals[idx]
             self._is_valid_age(person)
+            self._is_valid_birth_death_dates(person)

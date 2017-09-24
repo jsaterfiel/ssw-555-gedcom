@@ -227,7 +227,7 @@ class Families(object):
         if family["divorced_date"] is not None:
             if family["married_date"] is not None:
                 if family["married_date"] > family["divorced_date"]:
-                    self._msgs.add_message("Family",
+                    self._msgs.add_message("FAMILY",
                                            "US04",
                                            family["id"],
                                            "NA",
@@ -240,19 +240,19 @@ class Families(object):
         """
         if family["divorced_date"] is not None:
             if family["divorced_date"] > self._current_time:
-                self._msgs.add_message("Family",
+                self._msgs.add_message("FAMILY",
                                        "US01",
                                        family["id"],
                                        "NA",
-                                       "Divorce date should occur before current date of a family")
+                                       "Divorced date should occur before current date of a family")
                 return False
 
         if family["married_date"] is not None:
             if family["married_date"] > self._current_time:
-                self._msgs.add_message("Family",
+                self._msgs.add_message("FAMILY",
                                        "US01",
                                        family["id"],
                                        "NA",
-                                       "Marriage date should occur before current date of a family")
+                                       "Married date should occur before current date of a family")
             return False
         return True
