@@ -730,7 +730,7 @@ class TestPeople(unittest.TestCase):
         valid_person = {
             "id": "@I3@",
             "age": 63,
-            "birth_date": datetime(1800, 3, 15, 0, 0),
+            "birth_date": None,
             "death_date": None,
             "name": "Bubbles /Bambi/"
         }
@@ -739,32 +739,32 @@ class TestPeople(unittest.TestCase):
         invalid_person = {
             "id": "@I4@",
             "age": 151,
-            "birth_date": datetime(1861, 4, 8, 0, 0),
-            "death_date": datetime(2021, 11, 5, 0, 0),
+            "birth_date": None,
+            "death_date": None,
             "name": 'Margo /Hemmingway/'
         }
         self.peeps.individuals[invalid_person["id"]] = invalid_person
         invalid_person2 = {
             "id": "@I5@",
             "age": 150,
-            "birth_date": datetime(1865, 4, 8, 0, 0),
-            "death_date": datetime(2021, 11, 5, 0, 0),
+            "birth_date": None,
+            "death_date": None,
             "name": 'Betty /Hemmingway/'
         }
         self.peeps.individuals[invalid_person2["id"]] = invalid_person2
         invalid_person3 = {
             "id": "@I6@",
-            "age": 2010,
-            "birth_date": datetime(1865, 4, 8, 0, 0),
-            "death_date": datetime(2021, 11, 5, 0, 0),
+            "age": 200,
+            "birth_date": None,
+            "death_date": None,
             "name": 'Moses /Hemmingway/'
         }
         self.peeps.individuals[invalid_person3["id"]] = invalid_person3
         valid_person2 = {
             "id": "@I7@",
             "age": 149,
-            "birth_date": datetime(1865, 4, 8, 0, 0),
-            "death_date": datetime(2021, 11, 5, 0, 0),
+            "birth_date": None,
+            "death_date": None,
             "name": 'Salty /Hemmingway/'
         }
         self.peeps.individuals[valid_person2["id"]] = valid_person2
@@ -772,7 +772,7 @@ class TestPeople(unittest.TestCase):
         self.peeps.validate()
 
         output = self.msgs.get_messages()
-        self.assertEqual(7, len(output))
+        self.assertEqual(3, len(output))
 
         error1 = {
             "error_id": "INDIVIDUAL",
