@@ -158,6 +158,7 @@ class People(object):
     def _is_valid_death_current_dates(self, person):
         """ checks if birthday and death dates occurs before current date
         """
+        import datetime
         if person["death_date"] is not None:
             if person["death_date"] > self._current_time:
                 self._msgs.add_message(self.CLASS_IDENTIFIER,
@@ -190,6 +191,14 @@ class People(object):
         ind_keys = sorted(self.individuals.keys())
         for idx in ind_keys:
             person = self.individuals[idx]
+            self._is_valid_age(person)
+
+    def validate0104(self):
+        """run through peeps validation rules for US01 and US02"""
+        """since US07 does not include birthdate and deathdates fields in unit test data"""
+        # ensure the order of results doesn't change between runs
+        ind_keys = sorted(self.individuals.keys())
+        for idx in ind_keys:
+            person = self.individuals[idx]
             self._is_valid_birth_current_dates(person)
             self._is_valid_death_current_dates(person)
-            self._is_valid_age(person)
