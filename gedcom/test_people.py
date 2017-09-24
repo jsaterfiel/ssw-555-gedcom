@@ -834,7 +834,7 @@ class TestPeople(unittest.TestCase):
         error1 = {
             "error_id": "INDIVIDUAL",
             "user_story": "US01",
-            "user_id" : "@I3@",
+            "user_id": "@I3@",
             "name": "Margo /Hemmingway/",
             "message": "Death date should occur before current date"
         }
@@ -842,7 +842,7 @@ class TestPeople(unittest.TestCase):
         error2 = {
             "error_id": "INDIVIDUAL",
             "user_story": "US01",
-            "user_id" : "@I5@",
+            "user_id": "@I5@",
             "name": "Rodney /Dangerfield/",
             "message": "Birth date should occur before current date"
         }
