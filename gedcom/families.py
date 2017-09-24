@@ -244,7 +244,7 @@ class Families(object):
                                        "US01",
                                        family["id"],
                                        "NA",
-                                       "Divorced date should occur before current date of a family")
+                                       "Divorced date should occur before current date for a family")
                 return False
 
         if family["married_date"] is not None:
@@ -253,6 +253,6 @@ class Families(object):
                                        "US01",
                                        family["id"],
                                        "NA",
-                                       "Married date should occur before current date of a family")
+                                       "Married date should occur before current date for a family")
             return False
         return True

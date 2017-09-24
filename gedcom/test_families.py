@@ -1202,3 +1202,56 @@ class TestFamilies(unittest.TestCase):
             "message": "Marriage date should occur before divorce date of a family"
         }
         self.assertDictEqual(err5, results[4])
+
+    def test_validation_marriagedivorce_before_current(self):
+        """US01: testing that marriage and divorce dates occurred before current date
+        """
+        # Family 1 setup (married before current) pass
+        fam1 = {
+            "id": "@F03@",
+            "husband_id": None,
+            "wife_id": None,
+            "children": [],
+            "married_date": datetime(1991, 5, 19, 0, 0, 0),
+            "divorced_date": None
+        }
+        self.fam.families[fam1["id"]] = fam1
+        # Family 2 setup (married after current) fail
+        fam2invalid = {
+            "id": "@F01@",
+            "husband_id": None,
+            "wife_id": None,
+            "children": [],
+            "married_date": datetime(2020, 10, 4, 0, 0, 0),
+            "divorced_date": None
+        }
+        self.fam.families[fam2invalid["id"]] = fam2invalid
+        # Family 3 setup (divorced after current) fail
+        fam3invalid = {
+            "id": "@F05@",
+            "husband_id": None,
+            "wife_id": None,
+            "children": [],
+            "married_date": datetime(1952, 5, 6, 0, 0, 0),
+            "divorced_date": datetime(2018, 11, 6, 0, 0, 0)
+        }
+        self.fam.families[fam3invalid["id"]] = fam3invalid
+        self.fam.validate()
+        results = self.msgs.get_messages()
+        self.assertEqual(2, len(results))
+        err1 = {
+            "error_id": "FAMILY",
+            "user_story": "US01",
+            "user_id": fam2invalid["id"],
+            "name": "NA",
+            "message": "Married date should occur before current date for a family"
+        }
+        self.assertDictEqual(err1, results[0])
+        err2 = {
+            "error_id": "FAMILY",
+            "user_story": "US01",
+            "user_id": fam3invalid["id"],
+            "name": "NA",
+            "message": "Divorced date should occur before current date for a family"
+        }
+        self.assertDictEqual(err2, results[1])

@@ -798,3 +798,52 @@ class TestPeople(unittest.TestCase):
             "user_story": "US07"
         }
         self.assertDictEqual(error3, output[2])
+
+    def test_dates_before_current_date(self):
+        """ test that all dates are before the current date
+        """
+        date_before_current1 = {
+            "id": "@I10@",
+            "age": 63,
+            "birth_date": datetime(1940, 10, 7, 0, 0),
+            "death_date": None,
+            "name": "Link /Tiger/"
+        }
+        self.peeps.individuals[date_before_current1["id"]] = date_before_current1
+        date_notbefore_current1 = {
+            "id": "@I3@",
+            "age": 151,
+            "birth_date": datetime(1861, 4, 8, 0, 0),
+            "death_date": datetime(2021, 11, 5, 0, 0),
+            "name": 'Margo /Hemmingway/'
+        }
+        self.peeps.individuals[date_notbefore_current1["id"]] = date_notbefore_current1
+        date_notbefore_current2 = {
+            "id": "@I5@",
+            "age": None,
+            "birth_date": datetime(2019, 10, 9, 0, 0),
+            "death_date": None,
+            "name": 'Rodney /Dangerfield/'
+        }
+        self.peeps.individuals[date_notbefore_current2["id"]] = date_notbefore_current2
+        self.peeps.validate()
+
+        output = self.msgs.get_messages()
+        self.assertEqual(3, len(output))
+
+        error1 = {
+            "error_id": "INDIVIDUAL",
+            "user_story": "US01",
+            "user_id" : "@I3@",
+            "name": "Margo /Hemmingway/",
+            "message": "Death date should occur before current date"
+        }
+        self.assertDictEqual(error1, output[1])
+        error2 = {
+            "error_id": "INDIVIDUAL",
+            "user_story": "US01",
+            "user_id" : "@I5@",
+            "name": "Rodney /Dangerfield/",
+            "message": "Birth date should occur before current date"
+        }
+        self.assertDictEqual(error2, output[2])
