@@ -772,7 +772,7 @@ class TestPeople(unittest.TestCase):
         self.peeps.validate()
 
         output = self.msgs.get_messages()
-        self.assertEqual(3, len(output))
+        self.assertEqual(7, len(output))
 
         error1 = {
             "error_id": "INDIVIDUAL",
