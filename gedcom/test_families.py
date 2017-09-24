@@ -147,7 +147,6 @@ class TestFamilies(unittest.TestCase):
         # ensure the marrage is recorded for the family we added
         self.assertTrue(self.fam.families["@F6@"]["married"])
 
-
     def test_detect_married_date(self):
         """able to read the date for a married event
         """
@@ -181,7 +180,6 @@ class TestFamilies(unittest.TestCase):
         self.assertEqual(
             date_obj, self.fam.families[data["args"]]["married_date"])
 
-
     def test_detect_divorced_tag(self):
         """test cases for detecting if the family is divorced
         """
@@ -205,7 +203,6 @@ class TestFamilies(unittest.TestCase):
         self.fam.process_line_data(data)
         # ensure the marrage is recorded for the family we added
         self.assertTrue(self.fam.families["@F6@"]["divorced"])
-
 
     def test_detect_divorced_date(self):
         """able to read the date for a divorced event
@@ -240,7 +237,6 @@ class TestFamilies(unittest.TestCase):
         self.assertEqual(
             date_obj, self.fam.families[data["args"]]["divorced_date"])
 
-
     def test_husband_id_tag(self):
         """testing the husb tag with id
         """
@@ -263,7 +259,6 @@ class TestFamilies(unittest.TestCase):
         self.assertEqual(
             husband_data["args"], self.fam.families[fam_data["args"]]["husband_id"])
 
-
     def test_wife_id_tag(self):
         """testing the wife tag with id
         """
@@ -285,7 +280,6 @@ class TestFamilies(unittest.TestCase):
         self.fam.process_line_data(wife_data)
         self.assertEqual(
             wife_data["args"], self.fam.families[fam_data["args"]]["wife_id"])
-
 
     def test_children_id_tag(self):
         """testing the child tag with id
@@ -310,7 +304,6 @@ class TestFamilies(unittest.TestCase):
             1, len(self.fam.families[fam_data["args"]]["children"]))
         self.assertEqual(
             child_data["args"], self.fam.families[fam_data["args"]]["children"][0])
-
 
     def test_multi_children_id_tags(self):
         """testing the child tag with id
