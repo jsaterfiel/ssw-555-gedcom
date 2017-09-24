@@ -1117,7 +1117,7 @@ class TestFamilies(unittest.TestCase):
             "divorced_date": datetime(2011, 2, 10, 0, 0, 0)
         }
         self.fam.families[fam2["id"]] = fam2
-        # Family 3 setup (married before divorced for two previously married individuals-used I01 previous divorce date) Failure
+        # Family 3 setup (married before divorced) Failure
         fam3 = {
             "id": "@F03@",
             "children": [],
@@ -1137,7 +1137,7 @@ class TestFamilies(unittest.TestCase):
             "divorced_date": datetime(2015, 2, 11, 0, 0, 0)
         }
         self.fam.families[fam4["id"]] = fam4
-        # Family 5 setup 
+        # Family 5 setup
         peep5 = {
             "id": "@I09@",
             "name": "Carl /Gallagher/",
@@ -1227,4 +1227,4 @@ class TestFamilies(unittest.TestCase):
             "message": "Marriage date should occur before divorce date of a family"
         }
         self.assertDictEqual(err5, results[4])
-        
+    
