@@ -148,7 +148,7 @@ class TestFamilies(unittest.TestCase):
         self.assertTrue(self.fam.families["@F6@"]["married"])
 
 
-def test_detect_married_date(self):
+    def test_detect_married_date(self):
         """able to read the date for a married event
         """
         # raw line:
@@ -182,7 +182,7 @@ def test_detect_married_date(self):
             date_obj, self.fam.families[data["args"]]["married_date"])
 
 
-def test_detect_divorced_tag(self):
+    def test_detect_divorced_tag(self):
         """test cases for detecting if the family is divorced
         """
         # raw line:
@@ -207,7 +207,7 @@ def test_detect_divorced_tag(self):
         self.assertTrue(self.fam.families["@F6@"]["divorced"])
 
 
-def test_detect_divorced_date(self):
+    def test_detect_divorced_date(self):
         """able to read the date for a divorced event
         """
         # raw line:
@@ -241,7 +241,7 @@ def test_detect_divorced_date(self):
             date_obj, self.fam.families[data["args"]]["divorced_date"])
 
 
-def test_husband_id_tag(self):
+    def test_husband_id_tag(self):
         """testing the husb tag with id
         """
         # raw line:
@@ -264,7 +264,7 @@ def test_husband_id_tag(self):
             husband_data["args"], self.fam.families[fam_data["args"]]["husband_id"])
 
 
-def test_wife_id_tag(self):
+    def test_wife_id_tag(self):
         """testing the wife tag with id
         """
         # raw line:
@@ -287,7 +287,7 @@ def test_wife_id_tag(self):
             wife_data["args"], self.fam.families[fam_data["args"]]["wife_id"])
 
 
-def test_children_id_tag(self):
+    def test_children_id_tag(self):
         """testing the child tag with id
         """
         # raw line:
@@ -312,7 +312,7 @@ def test_children_id_tag(self):
             child_data["args"], self.fam.families[fam_data["args"]]["children"][0])
 
 
-def test_multi_children_id_tags(self):
+    def test_multi_children_id_tags(self):
         """testing the child tag with id
         """
         # raw line:
@@ -345,7 +345,7 @@ def test_multi_children_id_tags(self):
         self.assertEqual(
             child2_data["args"], self.fam.families[fam_data["args"]]["children"][1])
 
-def test_print_all(self):
+    def test_print_all(self):
         """test print all families
         """
         # raw lines:
