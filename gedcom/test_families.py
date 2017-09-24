@@ -240,6 +240,7 @@ def test_detect_divorced_date(self):
         self.assertEqual(
             date_obj, self.fam.families[data["args"]]["divorced_date"])
 
+
 def test_husband_id_tag(self):
         """testing the husb tag with id
         """
@@ -344,7 +345,7 @@ def test_multi_children_id_tags(self):
         self.assertEqual(
             child2_data["args"], self.fam.families[fam_data["args"]]["children"][1])
 
-    def test_print_all(self):
+def test_print_all(self):
         """test print all families
         """
         # raw lines:
