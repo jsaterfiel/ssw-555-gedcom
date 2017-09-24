@@ -16,26 +16,26 @@ class TestFamilies(unittest.TestCase):
         peeps (People): People test object
         msgs (ValidationMessages): Validation messages test object
     """
-    
+
     def setUp(self):
         """creates test objects
         """
         self.msgs = ValidationMessages()
         self.peeps = People(self.msgs)
         self.fam = Families(self.peeps, self.msgs)
-   
+
     def tearDown(self):
         """delete test objects
         """
         del self.fam
         del self.peeps
         del self.msgs
-    
+
     def test_default_init(self):
         """make sure the object is empty on init
         """
         self.assertEqual(0, len(self.fam.families))
-   
+
     def test_ignore_bad_tags(self):
         """ensure bad tags aren't being processed
         """
@@ -51,7 +51,7 @@ class TestFamilies(unittest.TestCase):
             self.fam.process_line_data(data)
         # ensure nothing got added
         self.assertEqual(0, len(self.fam.families))
-    
+
     def test_add_family(self):
         """test cases for detecting the family tag and adding it to the list of families
         """
@@ -72,7 +72,7 @@ class TestFamilies(unittest.TestCase):
         }
         self.assertDictContainsSubset(
             test_fam, self.fam.families[data["args"]])
-    
+
     def test_correct_family_tag(self):
         """Ensuring the FAM tag can only be used to add a family
         """
@@ -87,7 +87,7 @@ class TestFamilies(unittest.TestCase):
         self.fam.process_line_data(data)
         # add a family
         self.assertEqual(0, len(self.fam.families))
-    
+
     def test_add_multiple_families(self):
         """adding mulitiple families to make sure they are both read in
         """
@@ -122,7 +122,7 @@ class TestFamilies(unittest.TestCase):
         }
         self.assertDictContainsSubset(
             test_fam2, self.fam.families[fam2["args"]])
-    
+
     def test_detect_married_tag(self):
         """test cases for detecting if the family is married
         """
@@ -146,8 +146,8 @@ class TestFamilies(unittest.TestCase):
         self.fam.process_line_data(data)
         # ensure the marrage is recorded for the family we added
         self.assertTrue(self.fam.families["@F6@"]["married"])
-    
-    def test_detect_married_date(self):
+
+def test_detect_married_date(self):
         """able to read the date for a married event
         """
         # raw line:
@@ -179,8 +179,8 @@ class TestFamilies(unittest.TestCase):
         date_obj = datetime.strptime(mar_date["args"], '%d %b %Y')
         self.assertEqual(
             date_obj, self.fam.families[data["args"]]["married_date"])
-    
-    def test_detect_divorced_tag(self):
+
+def test_detect_divorced_tag(self):
         """test cases for detecting if the family is divorced
         """
         # raw line:
@@ -203,8 +203,8 @@ class TestFamilies(unittest.TestCase):
         self.fam.process_line_data(data)
         # ensure the marrage is recorded for the family we added
         self.assertTrue(self.fam.families["@F6@"]["divorced"])
-    
-    def test_detect_divorced_date(self):
+
+def test_detect_divorced_date(self):
         """able to read the date for a divorced event
         """
         # raw line:
@@ -236,8 +236,8 @@ class TestFamilies(unittest.TestCase):
         date_obj = datetime.strptime(div_date["args"], '%d %b %Y')
         self.assertEqual(
             date_obj, self.fam.families[data["args"]]["divorced_date"])
-    
-    def test_husband_id_tag(self):
+
+def test_husband_id_tag(self):
         """testing the husb tag with id
         """
         # raw line:
@@ -258,8 +258,8 @@ class TestFamilies(unittest.TestCase):
         self.fam.process_line_data(husband_data)
         self.assertEqual(
             husband_data["args"], self.fam.families[fam_data["args"]]["husband_id"])
-    
-    def test_wife_id_tag(self):
+
+def test_wife_id_tag(self):
         """testing the wife tag with id
         """
         # raw line:
@@ -280,8 +280,8 @@ class TestFamilies(unittest.TestCase):
         self.fam.process_line_data(wife_data)
         self.assertEqual(
             wife_data["args"], self.fam.families[fam_data["args"]]["wife_id"])
-    
-    def test_children_id_tag(self):
+
+def test_children_id_tag(self):
         """testing the child tag with id
         """
         # raw line:
@@ -304,8 +304,8 @@ class TestFamilies(unittest.TestCase):
             1, len(self.fam.families[fam_data["args"]]["children"]))
         self.assertEqual(
             child_data["args"], self.fam.families[fam_data["args"]]["children"][0])
-    
-    def test_multi_children_id_tags(self):
+
+def test_multi_children_id_tags(self):
         """testing the child tag with id
         """
         # raw line:
@@ -337,7 +337,7 @@ class TestFamilies(unittest.TestCase):
             child1_data["args"], self.fam.families[fam_data["args"]]["children"][0])
         self.assertEqual(
             child2_data["args"], self.fam.families[fam_data["args"]]["children"][1])
-    
+
     def test_print_all(self):
         """test print all families
         """
@@ -455,7 +455,7 @@ class TestFamilies(unittest.TestCase):
 +------+------------+------------+------------+--------------+---------+------------+--------------------+
 """
         self.assertEqual(test_output, output.getvalue())
-    
+
     def test_print_all_no_dates(self):
         """test print all families without dates
         """
@@ -539,7 +539,7 @@ class TestFamilies(unittest.TestCase):
 +------+---------+----------+------------+--------------+---------+------------+--------------------+
 """
         self.assertEqual(test_output, output.getvalue())
-    
+
     def test_print_all_in_order(self):
         """test print all families in order
         """
@@ -573,7 +573,7 @@ class TestFamilies(unittest.TestCase):
 +------+---------+----------+------------+--------------+---------+-----------+----------+
 """
         self.assertEqual(test_output, output.getvalue())
-    
+
     def test_validation_marriage_before_death(self):
         """US05: testing that a marriage occurred before death
         """
@@ -784,7 +784,7 @@ class TestFamilies(unittest.TestCase):
             "message": "marriage after death for " + peep8["id"] + " " + peep8["name"]
         }
         self.assertDictEqual(err3, results[2])
-    
+
     def test_validation_divorce_before_death(self):
         """US05: testing that a divorce occurred before death
         """
@@ -995,7 +995,7 @@ class TestFamilies(unittest.TestCase):
             "message": "divorce after death for " + peep8["id"] + " " + peep8["name"]
         }
         self.assertDictEqual(err3, results[2])
-    
+
     def test___is_valid_married_date(self):
         family = {
             'id': '@F1@',
