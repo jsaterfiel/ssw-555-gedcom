@@ -170,6 +170,8 @@ class People(object):
                 return True
 
     def _is_valid_birth_current_dates(self, person):
+        """ checks if birthday occurs after death
+        """
         if person["birth_date"] is not None:
             if person["birth_date"] > self._current_time:
                 self._msgs.add_message(self.CLASS_IDENTIFIER,
@@ -188,5 +190,6 @@ class People(object):
         ind_keys = sorted(self.individuals.keys())
         for idx in ind_keys:
             person = self.individuals[idx]
-            self._is_valid_age(person)
+            self._is_valid_birth_current_dates(person)
             self._is_valid_death_current_dates(person)
+            self._is_valid_age(person)
