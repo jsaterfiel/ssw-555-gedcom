@@ -133,12 +133,9 @@ class Families(object):
             self._validate_death_before_marriage(family)
             self._validate_death_before_divorce(family)
             self._validate_birth_before_marriage(family)
-<<<<<<< HEAD
-            self._validate_death_of_parents_before_child_birth(family)
-=======
             self._validate_marrb4div_dates(family)
             self._validate_marr_div_dates(family)
->>>>>>> master
+            self._validate_death_of_parents_before_child_birth(family)
 
     def _validate_birth_before_marriage(self, family):
         """get husband and wife and check birth dates
@@ -226,7 +223,6 @@ class Families(object):
                         "NA",
                         msg + wife["id"] + " " + wife["name"])
 
-<<<<<<< HEAD
     def _validate_death_of_parents_before_child_birth(self, family):
         """US09: validate death of parents before child birth
         """
@@ -266,7 +262,7 @@ class Families(object):
                         family["id"],
                         "NA",
                         msg + wife["id"] + " " + wife["name"])
-=======
+
     def _validate_marrb4div_dates(self, family):
         """Validate that family marriage date occurs before divorce
         """
@@ -302,4 +298,3 @@ class Families(object):
                                        "Married date should occur before current date for a family")
             return False
         return True
->>>>>>> master
