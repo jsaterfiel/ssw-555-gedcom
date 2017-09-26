@@ -2,6 +2,7 @@
 Parses family tags from the gedcom data passed to it line by line as they appear in the gedcom files
 """
 from datetime import datetime
+from datetime import timedelta
 from prettytable import PrettyTable
 from people import People
 from validation_messages import ValidationMessages
@@ -131,6 +132,7 @@ class Families(object):
             self._validate_death_before_marriage(family)
             self._validate_death_before_divorce(family)
             self._validate_birth_before_marriage(family)
+            self._validate_death_of_parents_before_child_birth(family)
 
     def _validate_birth_before_marriage(self, family):
         """get husband and wife and check birth dates
@@ -210,6 +212,46 @@ class Families(object):
                 # check the wife died after the divorce
                 wife = self._people.individuals[family["wife_id"]]
                 if wife["death_date"] is not None and family["divorced_date"] > wife["death_date"]:
+                    # error wife died before divorce
+                    self._msgs.add_message(
+                        "FAMILY",
+                        key,
+                        family["id"],
+                        "NA",
+                        msg + wife["id"] + " " + wife["name"])
+
+    def _validate_death_of_parents_before_child_birth(self, family):
+        """US09: validate death of parents before child birth
+        """
+        key = "US09"
+        msg = "parent death before child birth for "
+        if family["children"] is not None:
+            chil = self._people.individuals[family["child_id"]]
+            if family["husband_id"] is not None:
+                # check the husband died after conception of child
+                husb = self._people.individuals[family["husband_id"]]
+                if husb["death_date"] is not None:
+                    hub9_date = husb["death_date"]
+                    # Calculate 9 Months Back
+                    for i in range(0, 9):
+                        hub9_date = hub9_date.replace(day=1)
+                        hub9_date = hub9_date - timedelta(days=1)
+                        # Calculate Day
+                    if hub9_date.day > husb["death_date"].day:
+                        hub9_date = hub9_date.replace(
+                            day=husb["death_date"].day)
+                    if hub9_date > chil["birth_date"]:
+                        # error husband died at least 9 months before child birth
+                        self._msgs.add_message(
+                            "FAMILY",
+                            key,
+                            family["id"],
+                            "NA",
+                            msg + husb["id"] + " " + husb["name"])
+            if family["wife_id"] is not None:
+                # check the wife died before the child birth
+                wife = self._people.individuals[family["wife_id"]]
+                if wife["death_date"] is not None and chil["birth_date"] > wife["death_date"]:
                     # error wife died before divorce
                     self._msgs.add_message(
                         "FAMILY",
