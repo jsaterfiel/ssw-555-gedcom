@@ -155,6 +155,35 @@ class People(object):
             else:
                 return True
 
+    def _is_valid_death_current_dates(self, person):
+        """ checks if birthday and death dates occurs before current date
+        """
+        import datetime
+        if person["death_date"] is not None:
+            if person["death_date"] > self._current_time:
+                self._msgs.add_message(self.CLASS_IDENTIFIER,
+                                       "US01",
+                                       person['id'],
+                                       person['name'],
+                                       "Death date should occur before current date")
+                return False
+            else:
+                return True
+
+    def _is_valid_birth_current_dates(self, person):
+        """ checks if birthday occurs after death
+        """
+        if person["birth_date"] is not None:
+            if person["birth_date"] > self._current_time:
+                self._msgs.add_message(self.CLASS_IDENTIFIER,
+                                       "US01",
+                                       person['id'],
+                                       person['name'],
+                                       "Birth date should occur before current date")
+                return False
+            else:
+                return True
+
     def validate(self):
         """run through all validation rules around people
         """
@@ -163,3 +192,5 @@ class People(object):
         for idx in ind_keys:
             person = self.individuals[idx]
             self._is_valid_age(person)
+            self._is_valid_birth_current_dates(person)
+            self._is_valid_death_current_dates(person)

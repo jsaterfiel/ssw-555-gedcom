@@ -66,7 +66,6 @@ class TestFamilies(unittest.TestCase):
         self.fam.process_line_data(data)
         # add a family
         self.assertEqual(1, len(self.fam.families))
-
         # test family dict setup
         test_fam = {
             "id": data["args"]
@@ -92,7 +91,6 @@ class TestFamilies(unittest.TestCase):
     def test_add_multiple_families(self):
         """adding mulitiple families to make sure they are both read in
         """
-
         # raw line:
         # 0 @F6@ FAM
         fam1 = {
@@ -113,7 +111,6 @@ class TestFamilies(unittest.TestCase):
         self.fam.process_line_data(fam2)
         # add a family
         self.assertEqual(2, len(self.fam.families))
-
         # test family exist
         test_fam1 = {
             "id": fam1["args"]
@@ -138,7 +135,6 @@ class TestFamilies(unittest.TestCase):
             "valid": "Y"
         }
         self.fam.process_line_data(data)
-
         # raw lines:
         # 1 MARR
         data = {
@@ -163,7 +159,6 @@ class TestFamilies(unittest.TestCase):
             "valid": "Y"
         }
         self.fam.process_line_data(data)
-
         # raw lines:
         # 1 MARR
         # 2 DATE 15 JUN 1970
@@ -197,7 +192,6 @@ class TestFamilies(unittest.TestCase):
             "valid": "Y"
         }
         self.fam.process_line_data(data)
-
         # raw lines:
         # 1 DIV
         data = {
@@ -222,7 +216,6 @@ class TestFamilies(unittest.TestCase):
             "valid": "Y"
         }
         self.fam.process_line_data(data)
-
         # raw lines:
         # 1 DIV
         # 2 DATE 15 JUN 1970
@@ -421,7 +414,6 @@ class TestFamilies(unittest.TestCase):
             "valid": "Y"
         }
         self.fam.process_line_data(mar_date)
-
         # load up spouses data
         data1 = {
             "level": 0,
@@ -451,7 +443,6 @@ class TestFamilies(unittest.TestCase):
             "valid": "Y"
         }
         self.peeps.process_line_data(name_tag2)
-
         # capture the output
         output = io.StringIO()
         sys.stdout = output
@@ -507,7 +498,6 @@ class TestFamilies(unittest.TestCase):
             "valid": "Y"
         }
         self.fam.process_line_data(child2_data)
-
         # load up spouses data
         data1 = {
             "level": 0,
@@ -537,7 +527,6 @@ class TestFamilies(unittest.TestCase):
             "valid": "Y"
         }
         self.peeps.process_line_data(name_tag2)
-
         # capture the output
         output = io.StringIO()
         sys.stdout = output
@@ -571,7 +560,6 @@ class TestFamilies(unittest.TestCase):
             "valid": "Y"
         }
         self.fam.process_line_data(fam_data2)
-
         # capture the output
         output = io.StringIO()
         sys.stdout = output
@@ -769,11 +757,8 @@ class TestFamilies(unittest.TestCase):
             "divorced_date": None
         }
         self.fam.families[fam6["id"]] = fam6
-
         self.fam.validate()
-
         results = self.msgs.get_messages()
-
         self.assertEqual(3, len(results))
         err1 = {
             "error_id": "FAMILY",
@@ -983,11 +968,8 @@ class TestFamilies(unittest.TestCase):
             "divorced_date": datetime(2013, 2, 10, 0, 0, 0)
         }
         self.fam.families[fam6["id"]] = fam6
-
         self.fam.validate()
-
         results = self.msgs.get_messages()
-
         self.assertEqual(3, len(results))
         err1 = {
             "error_id": "FAMILY",
@@ -1026,7 +1008,6 @@ class TestFamilies(unittest.TestCase):
             'divorced_date': None,
             'married': True
         }
-
         individuals = {
             '@I1@': {
                 'id': '@I1@', 'gender': 'M', 'is_alive': True, 'birth_date': datetime(1970, 1, 1, 0, 0),
@@ -1039,14 +1020,13 @@ class TestFamilies(unittest.TestCase):
                 'name': 'Minnie /Mouse/'
             }
         }
-
         self.fam._people.individuals = individuals
         self.assertTrue(self.fam._validate_birth_before_marriage(family))
-
         # Invalid marriage date
         family["married_date"] = datetime(1960, 1, 1, 0, 0)
         self.assertFalse(self.fam._validate_birth_before_marriage(family))
 
+<<<<<<< HEAD
     def test_validation_child_before_parent_death(self):
         """US09: testing that a child birth occurred before mom death
         """
@@ -1421,37 +1401,266 @@ class TestFamilies(unittest.TestCase):
             "user_id": fam103["id"],
             "name": "NA",
             "message": "parent death before child birth for " + peep107["id"] + " " + peep107["name"]
+=======
+    def test_validation_marriage_before_divorce(self):
+        """US04: testing that marriage occurred before divorce
+        """
+        # Family 1 setup (married before divorced) Pass
+        peep1 = {
+            "id": "@I01@",
+            "name": "Frank /Gallagher/",
+            "gender": "M",
+            "is_alive": True,
+            "birth_date": datetime(1958, 7, 25, 0, 0, 0),
+            "death_date": None,
+            "child_of_families": [],
+            "spouse_of_families": ["@F01@"],
+            "age": 59
+        }
+        self.peeps.individuals[peep1["id"]] = peep1
+        peep2 = {
+            "id": "@I02@",
+            "gender": "F",
+            "name": "Monica /Gallagher/",
+            "is_alive": True,
+            "birth_date": datetime(1955, 12, 28, 0, 0, 0),
+            "death_date": None,
+            "child_of_families": [],
+            "spouse_of_families": ["@F01@"],
+            "age": 62
+        }
+        self.peeps.individuals[peep2["id"]] = peep2
+        fam1 = {
+            "id": "@F01@",
+            "children": [],
+            "husband_id": peep1["id"],
+            "wife_id": peep2["id"],
+            "married_date": datetime(1980, 2, 10, 0, 0, 0),
+            "divorced_date": datetime(2015, 2, 11, 0, 0, 0)
+        }
+        self.fam.families[fam1["id"]] = fam1
+        # Family 2 setup (married after divorced) FAILURE
+        peep3 = {
+            "id": "@I03@",
+            "name": "Philip /Gallagher/",
+            "gender": "M",
+            "is_alive": True,
+            "birth_date": datetime(1961, 8, 17, 0, 0, 0),
+            "death_date": None,
+            "child_of_families": [],
+            "spouse_of_families": ["@F02@"],
+            "age": 56
+        }
+        self.peeps.individuals[peep3["id"]] = peep3
+        peep4 = {
+            "id": "@I04@",
+            "gender": "F",
+            "name": "Fiona /Gallagher/",
+            "is_alive": True,
+            "birth_date": datetime(1965, 8, 17, 0, 0, 0),
+            "death_date": None,
+            "child_of_families": [],
+            "spouse_of_families": ["@F02@"],
+            "age": 51
+        }
+        self.peeps.individuals[peep4["id"]] = peep4
+        fam2 = {
+            "id": "@F02@",
+            "children": [],
+            "husband_id": peep3["id"],
+            "wife_id": peep4["id"],
+            "married_date": datetime(2015, 2, 10, 0, 0, 0),
+            "divorced_date": datetime(2011, 2, 10, 0, 0, 0)
+        }
+        self.fam.families[fam2["id"]] = fam2
+        # Family 3 setup (married before divorced) Failure
+        fam3 = {
+            "id": "@F03@",
+            "children": [],
+            "husband_id": peep1["id"],
+            "wife_id": peep4["id"],
+            "married_date": datetime(2016, 2, 10, 0, 0, 0),
+            "divorced_date": datetime(2015, 2, 11, 0, 0, 0)
+        }
+        self.fam.families[fam3["id"]] = fam3
+        # Family 4 setup (marriage after divorce for two previously married individuals) Failure
+        fam4 = {
+            "id": "@F04@",
+            "children": [],
+            "husband_id": peep3["id"],
+            "wife_id": peep2["id"],
+            "married_date": datetime(2017, 2, 10, 0, 0, 0),
+            "divorced_date": datetime(2015, 2, 11, 0, 0, 0)
+        }
+        self.fam.families[fam4["id"]] = fam4
+        # Family 5 setup
+        peep5 = {
+            "id": "@I09@",
+            "name": "Carl /Gallagher/",
+            "gender": "M",
+            "is_alive": True,
+            "birth_date": datetime(1980, 8, 17, 0, 0, 0),
+            "death_date": None,
+            "child_of_families": [],
+            "spouse_of_families": ["@F04@"],
+            "age": 37
+        }
+        self.peeps.individuals[peep5["id"]] = peep5
+        peep6 = {
+            "id": "@I10@",
+            "gender": "F",
+            "name": "Debbie /Gallager/",
+            "is_alive": True,
+            "birth_date": datetime(1985, 8, 17, 0, 0, 0),
+            "death_date": None,
+            "child_of_families": [],
+            "spouse_of_families": ["@F05@"],
+            "age": 32
+        }
+        self.peeps.individuals[peep6["id"]] = peep6
+        fam5 = {
+            "id": "@F05@",
+            "children": [],
+            "husband_id": peep5["id"],
+            "wife_id": peep6["id"],
+            "married_date": datetime(2013, 2, 10, 0, 0, 0),
+            "divorced_date": datetime(2012, 2, 10, 0, 0, 0)
+        }
+        self.fam.families[fam5["id"]] = fam5
+        # Family 6 setup (no spouses)
+        fam6 = {
+            "id": "@F06@",
+            "children": [],
+            "husband_id": None,
+            "wife_id": None,
+            "married_date": datetime(2013, 2, 10, 0, 0, 0),
+            "divorced_date": datetime(2012, 2, 10, 0, 0, 0)
+        }
+        self.fam.families[fam6["id"]] = fam6
+        self.fam.validate()
+        results = self.msgs.get_messages()
+        self.assertEqual(5, len(results))
+        err1 = {
+            "error_id": "FAMILY",
+            "user_story": "US04",
+            "user_id": fam2["id"],
+            "name": "NA",
+            "message": "Marriage date should occur before divorce date of a family"
+>>>>>>> master
         }
         self.assertDictEqual(err1, results[0])
         err2 = {
             "error_id": "FAMILY",
+<<<<<<< HEAD
             "user_story": "US07",
             "user_id": fam106["id"],
             "name": "NA",
             "message": "parent death before child birth for " + peep119["id"] + " " + peep119["name"]
+=======
+            "user_story": "US04",
+            "user_id": fam3["id"],
+            "name": "NA",
+            "message": "Marriage date should occur before divorce date of a family"
+>>>>>>> master
         }
         self.assertDictEqual(err2, results[1])
         err3 = {
             "error_id": "FAMILY",
+<<<<<<< HEAD
             "user_story": "US07",
             "user_id": fam107["id"],
             "name": "NA",
             "message": "parent death before child birth for " + peep123["id"] + " " + peep123["name"]
+=======
+            "user_story": "US04",
+            "user_id": fam4["id"],
+            "name": "NA",
+            "message": "Marriage date should occur before divorce date of a family"
+>>>>>>> master
         }
         self.assertDictEqual(err3, results[2])
         err4 = {
             "error_id": "FAMILY",
+<<<<<<< HEAD
             "user_story": "US07",
             "user_id": fam108["id"],
             "name": "NA",
             "message": "parent death before child birth for " + peep125["id"] + " " + peep125["name"]
+=======
+            "user_story": "US04",
+            "user_id": fam5["id"],
+            "name": "NA",
+            "message": "Marriage date should occur before divorce date of a family"
+>>>>>>> master
         }
         self.assertDictEqual(err4, results[3])
         err5 = {
             "error_id": "FAMILY",
+<<<<<<< HEAD
             "user_story": "US07",
             "user_id": fam108["id"],
             "name": "NA",
             "message": "parent death before child birth for " + peep126["id"] + " " + peep126["name"]
         }
         self.assertDictEqual(err5, results[4])
+=======
+            "user_story": "US04",
+            "user_id": fam6["id"],
+            "name": "NA",
+            "message": "Marriage date should occur before divorce date of a family"
+        }
+        self.assertDictEqual(err5, results[4])
+
+    def test_validation_marriagedivorce_before_current(self):
+        """US01: testing that marriage and divorce dates occurred before current date
+        """
+        # Family 1 setup (married before current) pass
+        fam1 = {
+            "id": "@F03@",
+            "husband_id": None,
+            "wife_id": None,
+            "children": [],
+            "married_date": datetime(1991, 5, 19, 0, 0, 0),
+            "divorced_date": None
+        }
+        self.fam.families[fam1["id"]] = fam1
+        # Family 2 setup (married after current) fail
+        fam2invalid = {
+            "id": "@F01@",
+            "husband_id": None,
+            "wife_id": None,
+            "children": [],
+            "married_date": datetime(2020, 10, 4, 0, 0, 0),
+            "divorced_date": None
+        }
+        self.fam.families[fam2invalid["id"]] = fam2invalid
+        # Family 3 setup (divorced after current) fail
+        fam3invalid = {
+            "id": "@F05@",
+            "husband_id": None,
+            "wife_id": None,
+            "children": [],
+            "married_date": datetime(1952, 5, 6, 0, 0, 0),
+            "divorced_date": datetime(2018, 11, 6, 0, 0, 0)
+        }
+        self.fam.families[fam3invalid["id"]] = fam3invalid
+        self.fam.validate()
+        results = self.msgs.get_messages()
+        self.assertEqual(2, len(results))
+        err1 = {
+            "error_id": "FAMILY",
+            "user_story": "US01",
+            "user_id": fam2invalid["id"],
+            "name": "NA",
+            "message": "Married date should occur before current date for a family"
+        }
+        self.assertDictEqual(err1, results[0])
+        err2 = {
+            "error_id": "FAMILY",
+            "user_story": "US01",
+            "user_id": fam3invalid["id"],
+            "name": "NA",
+            "message": "Divorced date should occur before current date for a family"
+        }
+        self.assertDictEqual(err2, results[1])
+>>>>>>> master
