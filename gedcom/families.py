@@ -132,7 +132,7 @@ class Families(object):
             self._validate_death_before_marriage(family)
             self._validate_death_before_divorce(family)
             self._validate_birth_before_marriage(family)
-            self._validate_marrb4div_dates(family)
+            self._validate_marr_before_div_dates(family)
             self._validate_marr_div_dates(family)
 
     def _validate_birth_before_marriage(self, family):
@@ -221,7 +221,7 @@ class Families(object):
                         "NA",
                         msg + wife["id"] + " " + wife["name"])
 
-    def _validate_marrb4div_dates(self, family):
+    def _validate_marr_before_div_dates(self, family):
         """Validate that family marriage date occurs before divorce
         """
         if family["divorced_date"] is not None:
