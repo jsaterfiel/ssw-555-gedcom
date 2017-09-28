@@ -1259,7 +1259,7 @@ class TestFamilies(unittest.TestCase):
         self.assertDictEqual(err2, results[1])
 
     def test_validation_child_before_parent_death(self):
-        """US09: testing that a child birth occurred before mom death
+        """US09: testing that a child birth occurred before parent death
         """
         # Family 1 setup (child 5ish years before mom death) Valid
         peep101 = {
@@ -1440,7 +1440,7 @@ class TestFamilies(unittest.TestCase):
         }
         self.peeps.individuals[peep112["id"]] = peep112
         fam104 = {
-            "id": "@F04@",
+            "id": "@F104@",
             "children": peep112["id"],
             "husband_id": peep110["id"],
             "wife_id": peep111["id"],
@@ -1496,7 +1496,7 @@ class TestFamilies(unittest.TestCase):
         }
         self.fam.families[fam105["id"]] = fam105
 
-        # Family 6 setup (child 10 months before dad death) Invalid
+        # Family 6 setup (child 10 months before dad death) Valid
         peep119 = {
             "id": "@I119@",
             "name": "Dan /Conner/",
@@ -1641,45 +1641,67 @@ class TestFamilies(unittest.TestCase):
 
         results = self.msgs.get_messages()
 
-        self.assertEqual(5, len(results))
-        # err1 = {
-        #     "error_id": "FAMILY",
-        #     "user_story": "US07",
-        #     "user_id": fam106["id"],
-        #     "name": "NA",
-        #     "message": "parent death before child birth for " + peep119["id"] + " " + peep119["name"]
-        # }
-        # self.assertDictEqual(err1, results[0])
+        self.assertEqual(7, len(results))
+        err1 = {
+            "error_id": "FAMILY",
+            "user_story": "US09",
+            "user_id": fam103["id"],
+            "name": "NA",
+            "message": "parent death before child birth for " + peep107["id"] + " " +
+                       peep107["name"]
+        }
+        self.assertDictEqual(err1, results[0])
         err2 = {
             "error_id": "FAMILY",
-            "user_story": "US07",
-            "user_id": fam106["id"],
+            "user_story": "US09",
+            "user_id": fam104["id"],
             "name": "NA",
-            "message": "parent death before child birth for " + peep119["id"] + " " + peep119["name"]
+            "message": "parent death before child birth for " + peep110["id"] + " " +
+                       peep110["name"]
         }
         self.assertDictEqual(err2, results[1])
         err3 = {
             "error_id": "FAMILY",
-            "user_story": "US07",
-            "user_id": fam107["id"],
+            "user_story": "US09",
+            "user_id": fam105["id"],
             "name": "NA",
-            "message": "parent death before child birth for " + peep123["id"] + " " + peep123["name"]
+            "message": "parent death before child birth for " + peep113["id"] + " " +
+                       peep113["name"]
         }
         self.assertDictEqual(err3, results[2])
         err4 = {
             "error_id": "FAMILY",
-            "user_story": "US07",
-            "user_id": fam108["id"],
+            "user_story": "US09",
+            "user_id": fam106["id"],
             "name": "NA",
-            "message": "parent death before child birth for " + peep125["id"] + " " + peep125["name"]
+            "message": "parent death before child birth for "+ peep119["id"] + " " +
+                       peep119["name"]
         }
         self.assertDictEqual(err4, results[3])
         err5 = {
             "error_id": "FAMILY",
-            "user_story": "US07",
-            "user_id": fam108["id"],
+            "user_story": "US09",
+            "user_id": fam107["id"],
             "name": "NA",
-            "message": "parent death before child birth for "
-            + peep126["id"] + " " + peep126["name"]
+            "message": "parent death before child birth for "+ peep123["id"] + " " +
+                       peep123["name"]
         }
         self.assertDictEqual(err5, results[4])
+        err6 = {
+            "error_id": "FAMILY",
+            "user_story": "US09",
+            "user_id": fam108["id"],
+            "name": "NA",
+            "message": "parent death before child birth for "+ peep125["id"] + " " +
+                       peep125["name"]
+        }
+        self.assertDictEqual(err6, results[5])
+        err7 = {
+            "error_id": "FAMILY",
+            "user_story": "US09",
+            "user_id": fam108["id"],
+            "name": "NA",
+            "message": "parent death before child birth for "+ peep126["id"] + " " +
+                       peep126["name"]
+        }
+        self.assertDictEqual(err7, results[6])

@@ -133,7 +133,7 @@ class Families(object):
             self._validate_death_before_marriage(family)
             self._validate_death_before_divorce(family)
             self._validate_birth_before_marriage(family)
-            self._validate_marrb4div_dates(family)
+            self._validate_marr_before_div_dates(family)
             self._validate_marr_div_dates(family)
             self._validate_death_of_parents_before_child_birth(family)
 
@@ -229,7 +229,7 @@ class Families(object):
         key = "US09"
         msg = "parent death before child birth for "
         if family["children"] is not None:
-            chil = self._people.individuals[family["child_id"]]
+            chil = self._people.individuals[family["children"]]
             if family["husband_id"] is not None:
                 # check the husband died after conception of child
                 husb = self._people.individuals[family["husband_id"]]
@@ -243,7 +243,7 @@ class Families(object):
                     if hub9_date.day > husb["death_date"].day:
                         hub9_date = hub9_date.replace(
                             day=husb["death_date"].day)
-                    if hub9_date > chil["birth_date"]:
+                    if hub9_date < chil["birth_date"]:
                         # error husband died at least 9 months before child birth
                         self._msgs.add_message(
                             "FAMILY",
@@ -263,7 +263,7 @@ class Families(object):
                         "NA",
                         msg + wife["id"] + " " + wife["name"])
 
-    def _validate_marrb4div_dates(self, family):
+    def _validate_marr_before_div_dates(self, family):
         """Validate that family marriage date occurs before divorce
         """
         if family["divorced_date"] is not None:
