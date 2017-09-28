@@ -997,6 +997,8 @@ class TestFamilies(unittest.TestCase):
         self.assertDictEqual(err3, results[2])
 
     def test___is_valid_married_date(self):
+        """ is marriage valid
+        """
         family = {
             'id': '@F1@',
             'children': ['@I16@'],
@@ -1203,7 +1205,7 @@ class TestFamilies(unittest.TestCase):
         }
         self.assertDictEqual(err5, results[4])
 
-    def test_validation_marriagedivorce_before_current(self):
+    def test_validation_marriage_and_divorce_before_current(self):
         """US01: testing that marriage and divorce dates occurred before current date
         """
         # Family 1 setup (married before current) pass
@@ -1255,3 +1257,433 @@ class TestFamilies(unittest.TestCase):
             "message": "Divorced date should occur before current date for a family"
         }
         self.assertDictEqual(err2, results[1])
+
+    def test_validation_child_before_parent_death(self):
+        """US09: testing that a child birth occurred before parent death
+        """
+        # Family 1 setup (child 5ish years before mom death) Valid
+        peep101 = {
+            "id": "@I101@",
+            "name": "Philip /Banks/",
+            "gender": "M",
+            "is_alive": True,
+            "birth_date": datetime(1987, 8, 17, 0, 0, 0),
+            "death_date": None,
+            "child_of_families": [],
+            "spouse_of_families": ["@F101@"],
+            "age": 30
+        }
+        self.peeps.individuals[peep101["id"]] = peep101
+        peep102 = {
+            "id": "@I102@",
+            "gender": "F",
+            "name": "Vivian /Banks/",
+            "is_alive": False,
+            "birth_date": datetime(1990, 8, 17, 0, 0, 0),
+            "death_date": datetime(2014, 1, 17, 0, 0, 0),
+            "child_of_families": [],
+            "spouse_of_families": ["@F101@"],
+            "age": 23
+        }
+        self.peeps.individuals[peep102["id"]] = peep102
+        peep103 = {
+            "id": "@I103@",
+            "gender": "M",
+            "name": "Fresh /Prince/",
+            "is_alive": True,
+            "birth_date": datetime(2009, 8, 17, 0, 0, 0),
+            "death_date": None,
+            "child_of_families": ["@F101@"],
+            "spouse_of_families": [],
+            "age": 8
+        }
+        self.peeps.individuals[peep103["id"]] = peep103
+        fam101 = {
+            "id": "@F101@",
+            "children": [peep103["id"]],
+            "husband_id": peep101["id"],
+            "wife_id": peep102["id"],
+            "married_date": None,
+            "divorced_date": None
+        }
+        self.fam.families[fam101["id"]] = fam101
+
+        # Family 2 setup (child 5 years before dad death) Valid
+        peep104 = {
+            "id": "@I104@",
+            "name": "Doug /Funnie/",
+            "gender": "M",
+            "is_alive": False,
+            "birth_date": datetime(1987, 8, 17, 0, 0, 0),
+            "death_date": datetime(2014, 9, 17, 0, 0, 0),
+            "child_of_families": [],
+            "spouse_of_families": ["@F102@"],
+            "age": 27
+        }
+        self.peeps.individuals[peep104["id"]] = peep104
+        peep105 = {
+            "id": "@I105@",
+            "gender": "F",
+            "name": "Pattie /Mayonaise/",
+            "is_alive": True,
+            "birth_date": datetime(1990, 8, 17, 0, 0, 0),
+            "death_date": None,
+            "child_of_families": [],
+            "spouse_of_families": ["@F102@"],
+            "age": 27
+        }
+        self.peeps.individuals[peep105["id"]] = peep105
+        peep106 = {
+            "id": "@I106@",
+            "gender": "F",
+            "name": "Frankie /Funnie/",
+            "is_alive": True,
+            "birth_date": datetime(2009, 8, 17, 0, 0, 0),
+            "death_date": None,
+            "child_of_families": ["@F102@"],
+            "spouse_of_families": [],
+            "age": 8
+        }
+        self.peeps.individuals[peep106["id"]] = peep106
+        fam102 = {
+            "id": "@F102@",
+            "children": [peep106["id"]],
+            "husband_id": peep104["id"],
+            "wife_id": peep105["id"],
+            "married_date": None,
+            "divorced_date": None
+        }
+        self.fam.families[fam102["id"]] = fam102
+
+        # Family 3 setup (child 2 years after dad death) Invalid
+        peep107 = {
+            "id": "@I107@",
+            "name": "Jack /Daniels/",
+            "gender": "M",
+            "is_alive": False,
+            "birth_date": datetime(1987, 8, 17, 0, 0, 0),
+            "death_date": datetime(2014, 9, 17, 0, 0, 0),
+            "child_of_families": [],
+            "spouse_of_families": ["@F103@"],
+            "age": 27
+        }
+        self.peeps.individuals[peep107["id"]] = peep107
+        peep108 = {
+            "id": "@I108@",
+            "gender": "F",
+            "name": "Margarita /Daniels/",
+            "is_alive": True,
+            "birth_date": datetime(1990, 8, 17, 0, 0, 0),
+            "death_date": None,
+            "child_of_families": [],
+            "spouse_of_families": ["@F103@"],
+            "age": 27
+        }
+        self.peeps.individuals[peep108["id"]] = peep108
+        peep109 = {
+            "id": "@I109@",
+            "gender": "M",
+            "name": "Whiskey /Daniels/",
+            "is_alive": True,
+            "birth_date": datetime(2016, 8, 17, 0, 0, 0),
+            "death_date": None,
+            "child_of_families": ["@F103@"],
+            "spouse_of_families": [],
+            "age": 1
+        }
+        self.peeps.individuals[peep109["id"]] = peep109
+        fam103 = {
+            "id": "@F103@",
+            "children": [peep109["id"]],
+            "husband_id": peep107["id"],
+            "wife_id": peep108["id"],
+            "married_date": None,
+            "divorced_date": None
+        }
+        self.fam.families[fam103["id"]] = fam103
+
+        # Family 4 setup (child exactly 9 months before dad death) Valid
+        peep110 = {
+            "id": "@I110@",
+            "name": "George /McFly/",
+            "gender": "M",
+            "is_alive": False,
+            "birth_date": datetime(1987, 8, 17, 0, 0, 0),
+            "death_date": datetime(2014, 9, 17, 0, 0, 0),
+            "child_of_families": [],
+            "spouse_of_families": ["@F104@"],
+            "age": 27
+        }
+        self.peeps.individuals[peep110["id"]] = peep110
+        peep111 = {
+            "id": "@I111@",
+            "gender": "F",
+            "name": "Lorraine /McFly/",
+            "is_alive": True,
+            "birth_date": datetime(1990, 8, 17, 0, 0, 0),
+            "death_date": None,
+            "child_of_families": [],
+            "spouse_of_families": ["@F104@"],
+            "age": 27
+        }
+        self.peeps.individuals[peep111["id"]] = peep111
+        peep112 = {
+            "id": "@I112@",
+            "gender": "M",
+            "name": "Marty /McFly/",
+            "is_alive": True,
+            "birth_date": datetime(2013, 12, 17, 0, 0, 0),
+            "death_date": None,
+            "child_of_families": ["@F104@"],
+            "spouse_of_families": [],
+            "age": 3
+        }
+        self.peeps.individuals[peep112["id"]] = peep112
+        fam104 = {
+            "id": "@F104@",
+            "children": [peep112["id"]],
+            "husband_id": peep110["id"],
+            "wife_id": peep111["id"],
+            "married_date": None,
+            "divorced_date": None
+        }
+        self.fam.families[fam104["id"]] = fam104
+
+        # Family 5 setup (child 9 months and some days but same month before dad death) Invalid
+        peep113 = {
+            "id": "@I113@",
+            "name": "Homer /Simpson/",
+            "gender": "M",
+            "is_alive": False,
+            "birth_date": datetime(1987, 8, 17, 0, 0, 0),
+            "death_date": datetime(2014, 9, 17, 0, 0, 0),
+            "child_of_families": [],
+            "spouse_of_families": ["@F105@"],
+            "age": 27
+        }
+        self.peeps.individuals[peep113["id"]] = peep113
+        peep114 = {
+            "id": "@I114@",
+            "gender": "F",
+            "name": "Marge /Simpson/",
+            "is_alive": True,
+            "birth_date": datetime(1990, 8, 17, 0, 0, 0),
+            "death_date": None,
+            "child_of_families": [],
+            "spouse_of_families": ["@F105@"],
+            "age": 27
+        }
+        self.peeps.individuals[peep114["id"]] = peep114
+        peep115 = {
+            "id": "@I115@",
+            "gender": "M",
+            "name": "Bart /Simpson/",
+            "is_alive": True,
+            "birth_date": datetime(2014, 1, 1, 0, 0, 0),
+            "death_date": None,
+            "child_of_families": ["@F105@"],
+            "spouse_of_families": [],
+            "age": 3
+        }
+        self.peeps.individuals[peep115["id"]] = peep115
+        fam105 = {
+            "id": "@F105@",
+            "children": [peep115["id"]],
+            "husband_id": peep113["id"],
+            "wife_id": peep114["id"],
+            "married_date": None,
+            "divorced_date": None
+        }
+        self.fam.families[fam105["id"]] = fam105
+
+        # Family 6 setup (child 10 months before dad death) Valid
+        peep119 = {
+            "id": "@I119@",
+            "name": "Dan /Conner/",
+            "gender": "M",
+            "is_alive": False,
+            "birth_date": datetime(1987, 8, 17, 0, 0, 0),
+            "death_date": datetime(2014, 9, 17, 0, 0, 0),
+            "child_of_families": [],
+            "spouse_of_families": ["@F106@"],
+            "age": 27
+        }
+        self.peeps.individuals[peep119["id"]] = peep119
+        peep120 = {
+            "id": "@I120@",
+            "gender": "F",
+            "name": "Roseanne /Conner/",
+            "is_alive": True,
+            "birth_date": datetime(1990, 8, 17, 0, 0, 0),
+            "death_date": None,
+            "child_of_families": [],
+            "spouse_of_families": ["@F106@"],
+            "age": 27
+        }
+        self.peeps.individuals[peep120["id"]] = peep120
+        peep121 = {
+            "id": "@I121@",
+            "gender": "M",
+            "name": "Becky /Conner/",
+            "is_alive": True,
+            "birth_date": datetime(2013, 11, 29, 0, 0, 0),
+            "death_date": None,
+            "child_of_families": ["@F106@"],
+            "spouse_of_families": [],
+            "age": 3
+        }
+        self.peeps.individuals[peep121["id"]] = peep121
+        fam106 = {
+            "id": "@F106@",
+            "children": [peep121["id"]],
+            "husband_id": peep119["id"],
+            "wife_id": peep120["id"],
+            "married_date": None,
+            "divorced_date": None
+        }
+        self.fam.families[fam106["id"]] = fam106
+
+        # Family 7 setup (child after mom death) Invalid
+        peep122 = {
+            "id": "@I122@",
+            "name": "Carl /Winslow/",
+            "gender": "M",
+            "is_alive": True,
+            "birth_date": datetime(1987, 8, 17, 0, 0, 0),
+            "death_date": None,
+            "child_of_families": [],
+            "spouse_of_families": ["@F107@"],
+            "age": 27
+        }
+        self.peeps.individuals[peep122["id"]] = peep122
+        peep123 = {
+            "id": "@I123@",
+            "gender": "F",
+            "name": "Harriette /Winslow/",
+            "is_alive": False,
+            "birth_date": datetime(1990, 8, 17, 0, 0, 0),
+            "death_date": datetime(2016, 8, 17, 0, 0, 0),
+            "child_of_families": [],
+            "spouse_of_families": ["@F107@"],
+            "age": 26
+        }
+        self.peeps.individuals[peep123["id"]] = peep123
+        peep124 = {
+            "id": "@I124@",
+            "gender": "M",
+            "name": "Laura /Winslow/",
+            "is_alive": True,
+            "birth_date": datetime(2016, 9, 1, 0, 0, 0),
+            "death_date": None,
+            "child_of_families": ["@F107@"],
+            "spouse_of_families": [],
+            "age": 1
+        }
+        self.peeps.individuals[peep124["id"]] = peep124
+        fam107 = {
+            "id": "@F107@",
+            "children": [peep124["id"]],
+            "husband_id": peep122["id"],
+            "wife_id": peep123["id"],
+            "married_date": None,
+            "divorced_date": None
+        }
+        self.fam.families[fam107["id"]] = fam107
+
+        # Family 8 setup (child after mom death and dad death) Invalid
+        peep125 = {
+            "id": "@I125@",
+            "name": "Walter /White/",
+            "gender": "M",
+            "is_alive": False,
+            "birth_date": datetime(1987, 8, 17, 0, 0, 0),
+            "death_date": datetime(2014, 10, 20, 0, 0, 0),
+            "child_of_families": [],
+            "spouse_of_families": ["@F108@"],
+            "age": 27
+        }
+        self.peeps.individuals[peep125["id"]] = peep125
+        peep126 = {
+            "id": "@I126@",
+            "gender": "F",
+            "name": "Skyler /White/",
+            "is_alive": False,
+            "birth_date": datetime(1990, 8, 17, 0, 0, 0),
+            "death_date": datetime(2014, 10, 20, 0, 0, 0),
+            "child_of_families": [],
+            "spouse_of_families": ["@F108@"],
+            "age": 24
+        }
+        self.peeps.individuals[peep126["id"]] = peep126
+        peep127 = {
+            "id": "@I127@",
+            "gender": "M",
+            "name": "Walter Jr /White/",
+            "is_alive": True,
+            "birth_date": datetime(2016, 9, 1, 0, 0, 0),
+            "death_date": None,
+            "child_of_families": ["@F108@"],
+            "spouse_of_families": [],
+            "age": 1
+        }
+        self.peeps.individuals[peep127["id"]] = peep127
+        fam108 = {
+            "id": "@F108@",
+            "children": [peep127["id"]],
+            "husband_id": peep125["id"],
+            "wife_id": peep126["id"],
+            "married_date": None,
+            "divorced_date": None
+        }
+        self.fam.families[fam108["id"]] = fam108
+
+        self.fam.validate()
+
+        results = self.msgs.get_messages()
+
+        self.assertEqual(5, len(results))
+        err1 = {
+            "error_id": "FAMILY",
+            "user_story": "US09",
+            "user_id": fam103["id"],
+            "name": "NA",
+            "message": "parent death before child birth for " + peep107["id"] + " " +
+                       peep107["name"]
+        }
+        self.assertDictEqual(err1, results[0])
+        err2 = {
+            "error_id": "FAMILY",
+            "user_story": "US09",
+            "user_id": fam105["id"],
+            "name": "NA",
+            "message": "parent death before child birth for " + peep113["id"] + " " +
+                       peep113["name"]
+        }
+        self.assertDictEqual(err2, results[1])
+        err3 = {
+            "error_id": "FAMILY",
+            "user_story": "US09",
+            "user_id": fam107["id"],
+            "name": "NA",
+            "message": "parent death before child birth for " + peep123["id"] + " " +
+                       peep123["name"]
+        }
+        self.assertDictEqual(err3, results[2])
+        err4 = {
+            "error_id": "FAMILY",
+            "user_story": "US09",
+            "user_id": fam108["id"],
+            "name": "NA",
+            "message": "parent death before child birth for " + peep125["id"] + " " +
+                       peep125["name"]
+        }
+        self.assertDictEqual(err4, results[3])
+        err5 = {
+            "error_id": "FAMILY",
+            "user_story": "US09",
+            "user_id": fam108["id"],
+            "name": "NA",
+            "message": "parent death before child birth for " + peep126["id"] + " " +
+                       peep126["name"]
+        }
+        self.assertDictEqual(err5, results[4])
