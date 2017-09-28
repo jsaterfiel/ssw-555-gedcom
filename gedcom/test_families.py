@@ -1300,7 +1300,7 @@ class TestFamilies(unittest.TestCase):
         self.peeps.individuals[peep103["id"]] = peep103
         fam101 = {
             "id": "@F101@",
-            "children": peep103["id"],
+            "children": [peep103["id"]],
             "husband_id": peep101["id"],
             "wife_id": peep102["id"],
             "married_date": None,
@@ -1347,7 +1347,7 @@ class TestFamilies(unittest.TestCase):
         self.peeps.individuals[peep106["id"]] = peep106
         fam102 = {
             "id": "@F102@",
-            "children": peep106["id"],
+            "children": [peep106["id"]],
             "husband_id": peep104["id"],
             "wife_id": peep105["id"],
             "married_date": None,
@@ -1394,7 +1394,7 @@ class TestFamilies(unittest.TestCase):
         self.peeps.individuals[peep109["id"]] = peep109
         fam103 = {
             "id": "@F103@",
-            "children": peep109["id"],
+            "children": [peep109["id"]],
             "husband_id": peep107["id"],
             "wife_id": peep108["id"],
             "married_date": None,
@@ -1441,7 +1441,7 @@ class TestFamilies(unittest.TestCase):
         self.peeps.individuals[peep112["id"]] = peep112
         fam104 = {
             "id": "@F104@",
-            "children": peep112["id"],
+            "children": [peep112["id"]],
             "husband_id": peep110["id"],
             "wife_id": peep111["id"],
             "married_date": None,
@@ -1488,7 +1488,7 @@ class TestFamilies(unittest.TestCase):
         self.peeps.individuals[peep115["id"]] = peep115
         fam105 = {
             "id": "@F105@",
-            "children": peep115["id"],
+            "children": [peep115["id"]],
             "husband_id": peep113["id"],
             "wife_id": peep114["id"],
             "married_date": None,
@@ -1535,7 +1535,7 @@ class TestFamilies(unittest.TestCase):
         self.peeps.individuals[peep121["id"]] = peep121
         fam106 = {
             "id": "@F106@",
-            "children": peep121["id"],
+            "children": [peep121["id"]],
             "husband_id": peep119["id"],
             "wife_id": peep120["id"],
             "married_date": None,
@@ -1582,7 +1582,7 @@ class TestFamilies(unittest.TestCase):
         self.peeps.individuals[peep124["id"]] = peep124
         fam107 = {
             "id": "@F107@",
-            "children": peep124["id"],
+            "children": [peep124["id"]],
             "husband_id": peep122["id"],
             "wife_id": peep123["id"],
             "married_date": None,
@@ -1629,7 +1629,7 @@ class TestFamilies(unittest.TestCase):
         self.peeps.individuals[peep127["id"]] = peep127
         fam108 = {
             "id": "@F108@",
-            "children": peep127["id"],
+            "children": [peep127["id"]],
             "husband_id": peep125["id"],
             "wife_id": peep126["id"],
             "married_date": None,
@@ -1665,7 +1665,7 @@ class TestFamilies(unittest.TestCase):
             "user_story": "US09",
             "user_id": fam107["id"],
             "name": "NA",
-            "message": "parent death before child birth for "+ peep123["id"] + " " +
+            "message": "parent death before child birth for " + peep123["id"] + " " +
                        peep123["name"]
         }
         self.assertDictEqual(err3, results[2])
@@ -1674,7 +1674,7 @@ class TestFamilies(unittest.TestCase):
             "user_story": "US09",
             "user_id": fam108["id"],
             "name": "NA",
-            "message": "parent death before child birth for "+ peep125["id"] + " " +
+            "message": "parent death before child birth for " + peep125["id"] + " " +
                        peep125["name"]
         }
         self.assertDictEqual(err4, results[3])
@@ -1683,7 +1683,7 @@ class TestFamilies(unittest.TestCase):
             "user_story": "US09",
             "user_id": fam108["id"],
             "name": "NA",
-            "message": "parent death before child birth for "+ peep126["id"] + " " +
+            "message": "parent death before child birth for " + peep126["id"] + " " +
                        peep126["name"]
         }
         self.assertDictEqual(err5, results[4])

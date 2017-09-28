@@ -228,8 +228,8 @@ class Families(object):
         """
         key = "US09"
         msg = "parent death before child birth for "
-        if family["children"] is not None:
-            chil = self._people.individuals[family["children"]]
+        for child_id in family["children"]:
+            chil = self._people.individuals[child_id]
             if family["husband_id"] is not None:
                 # check the husband died after conception of child
                 husb = self._people.individuals[family["husband_id"]]
