@@ -5,6 +5,7 @@ import io
 import sys
 from datetime import datetime
 from people import People
+from person import Person
 from validation_messages import ValidationMessages
 
 
@@ -62,11 +63,9 @@ class TestPeople(unittest.TestCase):
         self.assertEqual(1, len(self.peeps.individuals))
 
         # test person dict setup
-        test_person = {
-            "id": data["args"]
-        }
-        self.assertDictContainsSubset(
-            test_person, self.peeps.individuals[data["args"]])
+        test_person = Person(data["args"])
+        result = self.peeps.individuals[data["args"]]
+        self.assertEqual(test_person.get_person_id(), result.get_person_id())
 
     def test_correct_individual_tag(self):
         """Ensuring the INDI tag can only be used to add a person
@@ -108,16 +107,11 @@ class TestPeople(unittest.TestCase):
         self.assertEqual(2, len(self.peeps.individuals))
 
         # test family exist
-        test_person1 = {
-            "id": person1["args"]
-        }
-        self.assertDictContainsSubset(
-            test_person1, self.peeps.individuals[person1["args"]])
-        test_person2 = {
-            "id": person2["args"]
-        }
-        self.assertDictContainsSubset(
-            test_person2, self.peeps.individuals[person2["args"]])
+        result1 = self.peeps.individuals[person1["args"]]
+        self.assertEqual(person1["args"], result1.get_person_id())
+
+        result2 = self.peeps.individuals[person2["args"]]
+        self.assertEqual(person2["args"], result2.get_person_id())
 
     def test_name(self):
         """name test for people
@@ -140,7 +134,7 @@ class TestPeople(unittest.TestCase):
         }
         self.peeps.process_line_data(person_name)
         self.assertEqual(
-            person_name["args"], self.peeps.individuals[person["args"]]["name"])
+            person_name["args"], self.peeps.individuals[person["args"]].get_name())
 
     def test_gender(self):
         """gender tests for people
@@ -163,7 +157,7 @@ class TestPeople(unittest.TestCase):
         }
         self.peeps.process_line_data(gender)
         self.assertEqual(
-            gender["args"], self.peeps.individuals[person["args"]]["gender"])
+            gender["args"], self.peeps.individuals[person["args"]].get_gender())
 
     def test_birth_date(self):
         """able to read the birth date for a person and their age
@@ -195,32 +189,9 @@ class TestPeople(unittest.TestCase):
         self.peeps.process_line_data(birth_date)
         date_obj = datetime.strptime(birth_date["args"], '%d %b %Y')
         self.assertEqual(
-            date_obj, self.peeps.individuals[data["args"]]["birth_date"])
+            date_obj, self.peeps.individuals[data["args"]].get_birth_date())
         age = int((datetime.now().date() - date_obj.date()).days / 365.2425)
-        self.assertEqual(age, self.peeps.individuals[data["args"]]["age"])
-
-    def test_death(self):
-        """test reading if a person is dead and has no birth date so no age
-        """
-        # raw lines:
-        # 0 @I6@ INDI
-        # 1 DEAT
-        person = {
-            "level": 0,
-            "tag": "INDI",
-            "args": "@I6@",
-            "valid": "Y"
-        }
-        self.peeps.process_line_data(person)
-        death = {
-            "level": 1,
-            "tag": "DEAT",
-            "args": "",
-            "valid": "Y"
-        }
-        self.peeps.process_line_data(death)
-        self.assertFalse(self.peeps.individuals[person["args"]]["is_alive"])
-        self.assertIsNone(self.peeps.individuals[person["args"]]["age"])
+        self.assertEqual(age, self.peeps.individuals[data["args"]].get_age())
 
     def test_death_date_no_birth(self):
         """test death date no birth and no age should be set
@@ -252,8 +223,8 @@ class TestPeople(unittest.TestCase):
         self.peeps.process_line_data(death_date)
         date_obj = datetime.strptime(death_date["args"], '%d %b %Y')
         self.assertEqual(
-            date_obj, self.peeps.individuals[data["args"]]["death_date"])
-        self.assertIsNone(self.peeps.individuals[data["args"]]["age"])
+            date_obj, self.peeps.individuals[data["args"]].get_death_date())
+        self.assertIsNone(self.peeps.individuals[data["args"]].get_age())
 
     def test_birth_then_death_date(self):
         """test birth then death date with age of 9 years 9 months so 9
@@ -299,7 +270,7 @@ class TestPeople(unittest.TestCase):
             "valid": "Y"
         }
         self.peeps.process_line_data(death_date)
-        self.assertEqual(9, self.peeps.individuals[data["args"]]["age"])
+        self.assertEqual(9, self.peeps.individuals[data["args"]].get_age())
 
     def test_death_then_birth_date(self):
         """test death then birth date with age of 9 years 9 months so 9
@@ -345,7 +316,7 @@ class TestPeople(unittest.TestCase):
             "valid": "Y"
         }
         self.peeps.process_line_data(birth_date)
-        self.assertEqual(9, self.peeps.individuals[data["args"]]["age"])
+        self.assertEqual(9, self.peeps.individuals[data["args"]].get_age())
 
     def test_child_of_family(self):
         """test person being a child in a family
@@ -369,7 +340,7 @@ class TestPeople(unittest.TestCase):
         }
         self.peeps.process_line_data(child1)
         self.assertEqual(
-            child1["args"], self.peeps.individuals[person["args"]]["child_of_families"][0])
+            child1["args"], self.peeps.individuals[person["args"]].get_children_of_families()[0])
         child2 = {
             "level": 1,
             "tag": "FAMC",
@@ -378,7 +349,7 @@ class TestPeople(unittest.TestCase):
         }
         self.peeps.process_line_data(child2)
         self.assertEqual(
-            child2["args"], self.peeps.individuals[person["args"]]["child_of_families"][1])
+            child2["args"], self.peeps.individuals[person["args"]].get_children_of_families()[1])
 
     def test_spouse_of_family(self):
         """test person being a spouse in a family
@@ -402,7 +373,7 @@ class TestPeople(unittest.TestCase):
         }
         self.peeps.process_line_data(fam1)
         self.assertEqual(
-            fam1["args"], self.peeps.individuals[person["args"]]["spouse_of_families"][0])
+            fam1["args"], self.peeps.individuals[person["args"]].get_spouse_of_families()[0])
         fam2 = {
             "level": 1,
             "tag": "FAMS",
@@ -411,7 +382,7 @@ class TestPeople(unittest.TestCase):
         }
         self.peeps.process_line_data(fam2)
         self.assertEqual(
-            fam2["args"], self.peeps.individuals[person["args"]]["spouse_of_families"][1])
+            fam2["args"], self.peeps.individuals[person["args"]].get_spouse_of_families()[1])
 
     def test_print_all(self):
         """test print all persons
@@ -681,93 +652,75 @@ class TestPeople(unittest.TestCase):
         self.assertEqual(test_output, output.getvalue())
 
     def test__is_valid_birth_date(self):
-        valid_person = {
-            'id': '@I3@',
-            'gender': 'F',
-            'is_alive': False,
-            'birth_date': datetime(1954, 4, 8, 0, 0),
-            'death_date': datetime(2011, 11, 5, 0, 0),
-            'child_of_families': [],
-            'spouse_of_families': [],
-            'age': 63,
-            'name': 'Margo /Hemmingway/'
-        }
+        """US03 test case for valid birth dates
+        """
+        valid_person = Person("@I3@")
+        valid_person.set_name("Margo /Hemmingway/")
+        valid_person.set_gender("F")
+        valid_person.set_birth_date("8 APR 1954")
+        valid_person.set_death_date("5 NOV 2011")
+        self.peeps.individuals[valid_person.get_person_id()] = valid_person
 
-        self.peeps._curr_person = valid_person
-        self.assertTrue(self.peeps._is_valid_birth_date())
-        self.assertEqual(len(self.msgs._messages), 0)
+        self.peeps.validate()
 
-        invalid_person = {
-            'id': '@I3@',
-            'gender': 'F',
-            'is_alive': False,
-            'birth_date': datetime(2011, 11, 5, 0, 0),
-            'death_date': datetime(1954, 4, 8, 0, 0),
-            'child_of_families': [],
-            'spouse_of_families': [],
-            'age': -63,
-            'name': 'Margo /Hemmingway/'
-        }
+        self.assertEqual(0, len(self.msgs.get_messages()))
+
+        invalid_person = Person("@I4@")
+        invalid_person.set_gender("F")
+        invalid_person.set_name("Gergina /Hemmingway/")
+        invalid_person.set_death_date("8 APR 1954")
+        invalid_person.set_birth_date("5 NOV 2011")
+        self.peeps.individuals[invalid_person.get_person_id()] = invalid_person
+
+        self.peeps.validate()
+
+        test_messages = self.msgs.get_messages()
+
+        self.assertEqual(1, len(test_messages))
 
         valid_error_message = {
             'error_id': People.CLASS_IDENTIFIER,
             'user_story': 'US03',
-            'user_id': '@I3@',
-            'name': 'Margo /Hemmingway/',
+            'user_id': invalid_person.get_person_id(),
+            'name': invalid_person.get_name(),
             'message': 'Birth date should occur before death of an individual'
         }
 
-        self.peeps._curr_person = invalid_person
-        self.assertFalse(self.peeps._is_valid_birth_date())
-        self.assertEqual(len(self.msgs._messages), 1)
-
-        test_messages = self.msgs.get_messages()[0]
-        self.assertDictEqual(test_messages, valid_error_message)
+        self.assertDictEqual(valid_error_message, test_messages[0])
 
     def test_not_too_old(self):
-        """ test is the person's age is less than 150
+        """US07: test is the person's age is less than 150
         """
-        valid_person = {
-            "id": "@I3@",
-            "age": 63,
-            "birth_date": None,
-            "death_date": None,
-            "name": "Bubbles /Bambi/"
-        }
-        self.peeps.individuals[valid_person["id"]] = valid_person
+        valid_person = Person("@I3@")
+        valid_person.set_name("Bubbles /Bambi/")
+        valid_person.set_birth_date("1 JAN 1960")
+        self.peeps.individuals[valid_person.get_person_id()] = valid_person
 
-        invalid_person = {
-            "id": "@I4@",
-            "age": 151,
-            "birth_date": None,
-            "death_date": None,
-            "name": 'Margo /Hemmingway/'
-        }
-        self.peeps.individuals[invalid_person["id"]] = invalid_person
-        invalid_person2 = {
-            "id": "@I5@",
-            "age": 150,
-            "birth_date": None,
-            "death_date": None,
-            "name": 'Betty /Hemmingway/'
-        }
-        self.peeps.individuals[invalid_person2["id"]] = invalid_person2
-        invalid_person3 = {
-            "id": "@I6@",
-            "age": 200,
-            "birth_date": None,
-            "death_date": None,
-            "name": 'Moses /Hemmingway/'
-        }
-        self.peeps.individuals[invalid_person3["id"]] = invalid_person3
-        valid_person2 = {
-            "id": "@I7@",
-            "age": 149,
-            "birth_date": None,
-            "death_date": None,
-            "name": 'Salty /Hemmingway/'
-        }
-        self.peeps.individuals[valid_person2["id"]] = valid_person2
+        invalid_person = Person("@I4@")
+        invalid_person.set_name("Margo /Hemmingway/")
+        invalid_person.set_death_date("1 JAN 2000")  # 151 years old
+        invalid_person.set_birth_date("1 JAN 1849")
+        self.peeps.individuals[invalid_person.get_person_id()] = invalid_person
+
+        invalid_person2 = Person("@I5@")
+        invalid_person2.set_name("Betty /Hemmingway/")
+        invalid_person2.set_death_date("2 JAN 2000")  # 150 years old
+        invalid_person2.set_birth_date("1 JAN 1850")
+        self.peeps.individuals[invalid_person2.get_person_id()
+                               ] = invalid_person2
+
+        invalid_person3 = Person("@I6@")
+        invalid_person3.set_name("Moses /Hemmingway/")
+        invalid_person3.set_death_date("1 JAN 2000")  # 200 years old
+        invalid_person3.set_birth_date("1 JAN 1800")
+        self.peeps.individuals[invalid_person3.get_person_id()
+                               ] = invalid_person3
+        valid_person2 = Person("@I7@")
+        valid_person2.set_name("Salty /Hemmingway/")
+        valid_person2.set_death_date("1 JAN 2000")  # 149 years old
+        valid_person2.set_birth_date("1 JAN 1851")
+        self.peeps.individuals[valid_person2.get_person_id()
+                               ] = valid_person2
 
         self.peeps.validate()
 
@@ -777,55 +730,58 @@ class TestPeople(unittest.TestCase):
         error1 = {
             "error_id": "INDIVIDUAL",
             "message": "Age should be less than 150",
-            "name": "Margo /Hemmingway/",
-            "user_id": "@I4@",
+            "name": invalid_person.get_name(),
+            "user_id": invalid_person.get_person_id(),
             "user_story": "US07"
         }
         self.assertDictEqual(error1, output[0])
         error2 = {
             "error_id": "INDIVIDUAL",
             "message": "Age should be less than 150",
-            "name": "Betty /Hemmingway/",
-            "user_id": "@I5@",
+            "name": invalid_person2.get_name(),
+            "user_id": invalid_person2.get_person_id(),
             "user_story": "US07"
         }
         self.assertDictEqual(error2, output[1])
         error3 = {
             "error_id": "INDIVIDUAL",
             "message": "Age should be less than 150",
-            "name": "Moses /Hemmingway/",
-            "user_id": "@I6@",
+            "name": invalid_person3.get_name(),
+            "user_id": invalid_person3.get_person_id(),
             "user_story": "US07"
         }
         self.assertDictEqual(error3, output[2])
 
     def test_dates_before_current_date(self):
-        """ test that all dates are before the current date
+        """US01: test that all dates are before the current date
         """
-        date_before_current1 = {
-            "id": "@I10@",
-            "age": 63,
-            "birth_date": datetime(1940, 10, 7, 0, 0),
-            "death_date": None,
-            "name": "Link /Tiger/"
-        }
-        self.peeps.individuals[date_before_current1["id"]] = date_before_current1
-        date_notbefore_current1 = {
-            "id": "@I3@",
-            "age": 151,
-            "birth_date": datetime(1861, 4, 8, 0, 0),
-            "death_date": datetime(2021, 11, 5, 0, 0),
-            "name": 'Margo /Hemmingway/'
-        }
-        self.peeps.individuals[date_notbefore_current1["id"]] = date_notbefore_current1
-        date_notbefore_current2 = {
-            "id": "@I5@",
-            "age": None,
-            "birth_date": datetime(2019, 10, 9, 0, 0),
-            "death_date": None,
-            "name": 'Rodney /Dangerfield/'
-        }
-        self.peeps.individuals[date_notbefore_current2["id"]] = date_notbefore_current2
+        curr = datetime.now()
+
+        date_before_current = Person("@I10@")
+        date_before_current.set_name("Link /Tiger/")
+        date_before_current.set_birth_date("7 OCT 1940")
+        self.peeps.individuals[date_before_current.get_person_id(
+        )] = date_before_current
+
+        date_before_current1 = Person("@I11@")
+        date_before_current1.set_name("Zelda /Tiger/")
+        date_before_current1.set_birth_date("7 OCT 1942")
+        self.peeps.individuals[date_before_current1.get_person_id(
+        )] = date_before_current1
+
+        date_notbefore_current1 = Person("@I3@")
+        date_notbefore_current1.set_name("Ernest /Hemmingway/")
+        date_notbefore_current1.set_birth_date("4 AUG 1861")
+        date_notbefore_current1.set_death_date("5 NOV " + str(curr.year + 4))
+        self.peeps.individuals[date_notbefore_current1.get_person_id(
+        )] = date_notbefore_current1
+
+        date_notbefore_current2 = Person("@I5@")
+        date_notbefore_current2.set_name("Rodney /Dangerfield/")
+        date_notbefore_current2.set_birth_date("9 OCT " + str(curr.year + 2))
+        self.peeps.individuals[date_notbefore_current2.get_person_id(
+        )] = date_notbefore_current2
+
         self.peeps.validate()
 
         output = self.msgs.get_messages()
@@ -834,16 +790,16 @@ class TestPeople(unittest.TestCase):
         error1 = {
             "error_id": "INDIVIDUAL",
             "user_story": "US01",
-            "user_id": "@I3@",
-            "name": "Margo /Hemmingway/",
+            "user_id": date_notbefore_current1.get_person_id(),
+            "name": date_notbefore_current1.get_name(),
             "message": "Death date should occur before current date"
         }
         self.assertDictEqual(error1, output[1])
         error2 = {
             "error_id": "INDIVIDUAL",
             "user_story": "US01",
-            "user_id": "@I5@",
-            "name": "Rodney /Dangerfield/",
+            "user_id": date_notbefore_current2.get_person_id(),
+            "name": date_notbefore_current2.get_name(),
             "message": "Birth date should occur before current date"
         }
         self.assertDictEqual(error2, output[2])
