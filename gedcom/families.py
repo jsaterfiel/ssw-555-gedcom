@@ -300,23 +300,24 @@ class Families(object):
     def _validate_parents_not_too_old(self, family):
         children = family.get_children()
 
-        for child in children:
-            child = self._people.individuals[child]  # type: Person
-            husband = self._people.individuals[family.get_husband_id()]  # type: Person
-            wife = self._people.individuals[family.get_wife_id()]  # type: Person
-            if husband.get_age() - child.get_age() >= 80:
-                self._msgs.add_message(self.CLASS_IDENTIFIER,
-                                       "US12",
-                                       family.get_family_id(),
-                                       "NA",
-                                       "Father should be less than 80 years older than his children")
-                return False
-            if wife.get_age() - child.get_age() >= 60:
-                self._msgs.add_message(self.CLASS_IDENTIFIER,
-                                       "US12",
-                                       family.get_family_id(),
-                                       "NA",
-                                       "Mother should be less than 60 years older than her children")
-                return False
+        if children:
+            for child in children:
+                child = self._people.individuals[child]  # type: Person
+                husband = self._people.individuals[family.get_husband_id()]  # type: Person
+                wife = self._people.individuals[family.get_wife_id()]  # type: Person
+                if husband.get_age() - child.get_age() >= 80:
+                    self._msgs.add_message(self.CLASS_IDENTIFIER,
+                                           "US12",
+                                           family.get_family_id(),
+                                           "NA",
+                                           "Father should be less than 80 years older than his children")
+                    return False
+                if wife.get_age() - child.get_age() >= 60:
+                    self._msgs.add_message(self.CLASS_IDENTIFIER,
+                                           "US12",
+                                           family.get_family_id(),
+                                           "NA",
+                                           "Mother should be less than 60 years older than her children")
+                    return False
 
         return True
