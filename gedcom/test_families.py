@@ -26,6 +26,32 @@ class TestFamilies(unittest.TestCase):
         self.peeps = People(self.msgs)
         self.fam = Families(self.peeps, self.msgs)
 
+        # Create a test family for each unit test
+        test_family = Family("@F1@")
+        test_family.set_husband_id("@I1@")
+        test_family.set_wife_id("@I2@")
+        test_family.set_married_date("1 JAN 1990")
+        test_family.add_child("@I3@")
+        self.fam.families[test_family.get_family_id()] = test_family
+        test_husband = Person("@I1@")
+        test_husband.set_name("Tony /Tiger/")
+        test_husband.set_gender("M")
+        test_husband.set_birth_date("1 JAN 1965")
+        test_husband.add_spouse_of_family(test_family.get_family_id())
+        self.peeps.individuals[test_husband.get_person_id()] = test_husband
+        test_wife = Person("@I2@")
+        test_wife.set_name("Minnie /Mouse/")
+        test_wife.set_gender("F")
+        test_wife.set_birth_date("20 JUL 1966")
+        test_wife.add_spouse_of_family(test_family.get_family_id())
+        self.peeps.individuals[test_wife.get_person_id()] = test_wife
+        test_child = Person("@I3@")
+        test_child.set_name("Mickey /Mouse/")
+        test_child.set_gender("M")
+        test_child.set_birth_date("20 NOV 1992")
+        test_child.add_children_of_family(test_family.get_family_id())
+        self.peeps.individuals[test_child.get_person_id()] = test_child
+
     def tearDown(self):
         """delete test objects
         """
@@ -36,11 +62,13 @@ class TestFamilies(unittest.TestCase):
     def test_default_init(self):
         """make sure the object is empty on init
         """
+        self.fam.families.clear()
         self.assertEqual(0, len(self.fam.families))
 
     def test_ignore_bad_tags(self):
         """ensure bad tags aren't being processed
         """
+        self.fam.families.clear()
         # raw line:
         # 1 BLAH sdfsd
         data = {
@@ -59,6 +87,7 @@ class TestFamilies(unittest.TestCase):
         """
         # raw line:
         # 0 @F6@ FAM
+        self.fam.families.clear()
         data = {
             "level": 0,
             "tag": "FAM",
@@ -78,6 +107,7 @@ class TestFamilies(unittest.TestCase):
         """
         # raw line:
         # 0 @F6@ FAM
+        self.fam.families.clear()
         data = {
             "level": 0,
             "tag": "INDI",
@@ -91,6 +121,7 @@ class TestFamilies(unittest.TestCase):
     def test_add_multiple_families(self):
         """adding mulitiple families to make sure they are both read in
         """
+        self.fam.families.clear()
         # raw line:
         # 0 @F6@ FAM
         fam1 = {
@@ -496,6 +527,7 @@ class TestFamilies(unittest.TestCase):
         # raw lines:
         # 0 @F6@ FAM
         # 0 @F5@ FAM
+        self.fam.families.clear()
         fam_data1 = {
             "level": 0,
             "tag": "FAM",
@@ -1236,3 +1268,21 @@ class TestFamilies(unittest.TestCase):
                        peep26.get_name()
         }
         self.assertDictEqual(err5, results[4])
+
+    def test_validate_parents_not_too_old(self):
+        """ US12: Test if parents are too old
+        """
+        test_family = self.fam.families["@F1@"]  # type: Family
+        self.assertTrue(self.fam._validate_parents_not_too_old(test_family))
+        self.assertEqual(len(self.msgs._messages), 0)
+
+        husband = self.peeps.individuals[test_family.get_husband_id()]  # type: Person
+        husband.set_birth_date("17 AUG 1900")
+        self.assertFalse(self.fam._validate_parents_not_too_old(test_family))
+        self.assertEqual(len(self.msgs.get_messages()), 1)
+
+        wife = self.peeps.individuals[test_family.get_wife_id()]  # type: Person
+        husband.set_birth_date("1 JAN 1965")
+        wife.set_birth_date("18 AUG 1900")
+        self.assertFalse(self.fam._validate_parents_not_too_old(test_family))
+        self.assertEqual(len(self.msgs.get_messages()), 2)

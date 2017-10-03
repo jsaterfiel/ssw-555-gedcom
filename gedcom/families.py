@@ -6,6 +6,7 @@ from datetime import timedelta
 from prettytable import PrettyTable
 from people import People
 from family import Family
+from person import Person
 
 
 class Families(object):
@@ -122,6 +123,7 @@ class Families(object):
             self._validate_marr_before_div_dates(family)
             self._validate_marr_div_dates(family)
             self._validate_death_of_parents_before_child_birth(family)
+            self._validate_parents_not_too_old(family)
 
     def _validate_birth_before_marriage(self, family):
         """get husband and wife and check birth dates
@@ -293,4 +295,28 @@ class Families(object):
                                        "NA",
                                        "Married date should occur before current date for a family")
             return False
+        return True
+
+    def _validate_parents_not_too_old(self, family):
+        children = family.get_children()
+
+        for child in children:
+            child = self._people.individuals[child]  # type: Person
+            husband = self._people.individuals[family.get_husband_id()]  # type: Person
+            wife = self._people.individuals[family.get_wife_id()]  # type: Person
+            if husband.get_age() - child.get_age() >= 80:
+                self._msgs.add_message(self.CLASS_IDENTIFIER,
+                                       "US12",
+                                       family.get_family_id(),
+                                       "NA",
+                                       "Father should be less than 80 years older than his children")
+                return False
+            if wife.get_age() - child.get_age() >= 60:
+                self._msgs.add_message(self.CLASS_IDENTIFIER,
+                                       "US12",
+                                       family.get_family_id(),
+                                       "NA",
+                                       "Mother should be less than 60 years older than her children")
+                return False
+
         return True
