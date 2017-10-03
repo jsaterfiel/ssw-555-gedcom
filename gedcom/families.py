@@ -298,6 +298,8 @@ class Families(object):
         return True
 
     def _validate_parents_not_too_old(self, family):
+        """Validate that husband and wife are not too much older than children
+        """
         children = family.get_children()
 
         if children:
@@ -305,19 +307,21 @@ class Families(object):
                 child = self._people.individuals[child]  # type: Person
                 husband = self._people.individuals[family.get_husband_id()]  # type: Person
                 wife = self._people.individuals[family.get_wife_id()]  # type: Person
-                if husband.get_age() - child.get_age() >= 80:
+                if husband.get_is_alive() and (husband.get_age() - child.get_age() >= 80):
                     self._msgs.add_message(self.CLASS_IDENTIFIER,
                                            "US12",
                                            family.get_family_id(),
                                            "NA",
-                                           "Father should be less than 80 years older than his children")
+                                           "Father %s should be less than 80 years older than his child %s" %
+                                           (family.get_husband_id(), child.get_person_id()))
                     return False
-                if wife.get_age() - child.get_age() >= 60:
+                if wife.get_is_alive() and (wife.get_age() - child.get_age() >= 60):
                     self._msgs.add_message(self.CLASS_IDENTIFIER,
                                            "US12",
                                            family.get_family_id(),
                                            "NA",
-                                           "Mother should be less than 60 years older than her children")
+                                           "Mother %s should be less than 60 years older than her child %s" %
+                                           (family.get_wife_id(), child.get_person_id()))
                     return False
 
         return True
