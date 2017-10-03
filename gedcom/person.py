@@ -114,6 +114,13 @@ class Person(object):
         """
         self._child_of_families.append(family_id)
 
+    def remove_children_of_family(self, family_id):
+        """Remove a family id the person is a child of
+        Args:
+            family_id (string): family id the person is a child of
+        """
+        self._child_of_families.remove(family_id)
+
     def get_spouse_of_families(self):
         """returns family ids person is a spouse of
         Returns:
@@ -127,6 +134,13 @@ class Person(object):
             family_id (string): family id the person is a spouse of
         """
         self._spouse_of_families.append(family_id)
+
+    def remove_spouse_of_family(self, family_id):
+        """Remove a family id the person is a spouse of
+        Args:
+            family_id (string): family id the person is a spouse of
+        """
+        self._spouse_of_families.remove(family_id)
 
     def get_age(self):
         """returns person's age
