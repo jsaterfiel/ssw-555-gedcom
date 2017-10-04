@@ -19,7 +19,7 @@ class Person(object):
         self._person_id = person_id
         self._name = ""
         self._gender = ""
-        self._is_alive = True  # determined by death date being set
+        self._is_alive = True  # Automatically set by having death deate
         self._birth_date = None
         self._death_date = None
         self._child_of_families = []
@@ -59,7 +59,7 @@ class Person(object):
         Args:
             gender (string): gender ("M", "F" or None only)
         """
-        if(gender == "M" or gender == "F"):
+        if gender == "M" or gender == "F":
             self._gender = gender
 
     def get_is_alive(self):
@@ -138,10 +138,10 @@ class Person(object):
     def _generate_age(self):
         """generates age of the person based on their birth and death dates
         """
-        if(self._birth_date is None):
+        if self._birth_date is None:
             return
 
-        if(self._death_date is not None):
+        if self._death_date is not None:
             self._age = int(
                 (self._death_date - self._birth_date).days / self.DAYS_IN_YEAR)
         else:

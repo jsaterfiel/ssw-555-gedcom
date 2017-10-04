@@ -559,6 +559,8 @@ class TestFamilies(unittest.TestCase):
     def test_validation_marriage_before_death(self):
         """US05: testing that a marriage occurred before death
         """
+        self.fam.families.clear()
+
         # Family 1 setup (married before death)
         peep1 = Person("@I01@")
         peep1.set_name("Bob /Saget/")
@@ -700,6 +702,8 @@ class TestFamilies(unittest.TestCase):
     def test_validation_divorce_before_death(self):
         """US06: testing that a divorce occurred before death
         """
+        self.fam.families.clear()
+
         # Family 1 setup (divorced before death)
         peep1 = Person("@I01@")
         peep1.set_name("Bob /Saget/")
@@ -897,7 +901,8 @@ class TestFamilies(unittest.TestCase):
     def test_validation_marriage_before_divorce(self):
         """US04: testing that marriage occurred before divorce
         """
-        # Family 1 setup (married before divorced) Pass
+        self.fam.families.clear()
+
         fam1 = Family("@F01@")
         fam1.set_married_date("10 FEB 1980")
         fam1.set_divorced_date("11 FEB 2015")
@@ -967,6 +972,7 @@ class TestFamilies(unittest.TestCase):
     def test_validation_marriage_and_divorce_before_current(self):
         """US01: testing that marriage and divorce dates occurred before current date
         """
+        self.fam.families.clear()
         curr = datetime.now()
 
         # Family 1 setup (married before current) pass
@@ -1024,7 +1030,7 @@ class TestFamilies(unittest.TestCase):
         peep2.add_spouse_of_family("@F1@")
         self.peeps.individuals[peep2.get_person_id()] = peep2
         peep3 = Person("@I3@")
-        peep3.set_name("Fresh /Prince/")
+        peep3.set_name("Fresh /Banks/")
         peep3.set_gender("M")
         peep3.set_birth_date("17 AUG 2009")
         peep3.add_children_of_family("@F1@")
@@ -1221,7 +1227,6 @@ class TestFamilies(unittest.TestCase):
         self.fam.validate()
 
         results = self.msgs.get_messages()
-
         self.assertEqual(5, len(results))
         err1 = {
             "error_id": "FAMILY",
@@ -1268,6 +1273,79 @@ class TestFamilies(unittest.TestCase):
                        peep26.get_name()
         }
         self.assertDictEqual(err5, results[4])
+
+    def test_us16_male_last_names(self):
+        """US016 All males in a family have the same last name
+        """
+        self.fam.families.clear()
+
+        fam1_id = "@F01@"
+        fam1_male1 = Person("@F1I1@")
+        fam1_male1.set_gender("M")
+        fam1_male1.set_name("Bob /Hope/")
+        fam1_male1.add_spouse_of_family(fam1_id)
+        fam1_male1.set_birth_date("1 JAN 1965")
+        fam1_male2 = Person("@F1I2@")
+        fam1_male2.set_gender("M")
+        fam1_male2.set_name("Greg /Hope")
+        fam1_male2.add_children_of_family(fam1_id)
+        fam1_male2.set_birth_date("1 JAN 1965")
+        fam1_female1 = Person("@F1I4@")
+        fam1_female1.set_gender("F")
+        fam1_female1.set_name("Sally /Fields/")
+        fam1_female1.add_spouse_of_family(fam1_id)
+        fam1_female1.set_birth_date("1 JAN 1965")
+        fam1 = Family(fam1_id)
+        fam1.set_husband_id(fam1_male1.get_person_id())
+        fam1.set_wife_id(fam1_female1.get_person_id())
+        fam1.add_child(fam1_male2.get_person_id())
+        self.peeps.individuals[fam1_female1.get_person_id()] = fam1_female1
+        self.peeps.individuals[fam1_male1.get_person_id()] = fam1_male1
+        self.peeps.individuals[fam1_male2.get_person_id()] = fam1_male2
+        self.fam.families[fam1.get_family_id()] = fam1
+
+        fam2_id = "@F02@"
+        fam2 = Family(fam2_id)
+        fam2_male1 = Person("@F2I1@")
+        fam2_male1.set_gender("M")
+        fam2_male1.set_name("Sam /Spade/")
+        fam2_male1.add_spouse_of_family(fam2_id)
+        fam2_male1.set_birth_date("1 JAN 1965")
+        fam2_female1 = Person("@F2I2@")
+        fam2_female1.add_spouse_of_family(fam2_id)
+        fam2_female1.set_birth_date("1 JAN 1965")
+        fam2.set_husband_id(fam2_male1.get_person_id())
+        fam2.set_wife_id(fam2_female1.get_person_id())
+        self.peeps.individuals[fam2_female1.get_person_id()] = fam2_female1
+        self.peeps.individuals[fam2_male1.get_person_id()] = fam2_male1
+        self.fam.families[fam2.get_family_id()] = fam2
+
+        self.fam.validate()
+
+        self.assertEqual(0, len(self.msgs.get_messages()))
+
+        fam1_male3 = Person("@F1I3@")
+        fam1_male3.set_gender("M")
+        fam1_male3.set_name("Al /Bundy/")
+        fam1_male3.add_children_of_family(fam1_id)
+        fam1_male3.set_birth_date("1 JAN 1965")
+        fam1.add_child(fam1_male3.get_person_id())
+        self.peeps.individuals[fam1_male3.get_person_id()] = fam1_male3
+
+        self.fam.validate()
+
+        msgs = self.msgs.get_messages()
+        self.assertEqual(1, len(msgs))
+
+        err = {
+            "error_id": Families.CLASS_IDENTIFIER,
+            "user_story": "US16",
+            "user_id": fam1.get_family_id(),
+            "name": "NA",
+            "message": "All males in a family must have the same last name"
+        }
+
+        self.assertDictEqual(err, msgs[0])
 
     def test_validate_parents_not_too_old(self):
         """ US12: Test if parents are too old
