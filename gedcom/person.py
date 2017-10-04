@@ -19,7 +19,7 @@ class Person(object):
         self._person_id = person_id
         self._name = ""
         self._gender = ""
-        self._is_alive = True  # determined by death date being set
+        self._is_alive = True  # Automatically set by having death deate
         self._birth_date = None
         self._death_date = None
         self._child_of_families = []

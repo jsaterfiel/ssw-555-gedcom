@@ -1,6 +1,7 @@
 """Families GEDCOM
 Parses family tags from the gedcom data passed to it line by line as they appear in the gedcom files
 """
+import re
 from datetime import datetime
 from datetime import timedelta
 from prettytable import PrettyTable
@@ -28,6 +29,8 @@ class Families(object):
         self._people = people
         self._msgs = validation_messages
         self._current_time = datetime.now()
+        # parses names in the format Bob /Hope/ where the last name has slashes around it
+        self._last_name_regex = re.compile(r'\/(.*)\/')
 
     def process_line_data(self, data):
         """line data is a dict of the format:
@@ -122,6 +125,7 @@ class Families(object):
             self._validate_marr_before_div_dates(family)
             self._validate_marr_div_dates(family)
             self._validate_death_of_parents_before_child_birth(family)
+            self._validate_males_in_family_same_last_name(family)
 
     def _validate_birth_before_marriage(self, family):
         """get husband and wife and check birth dates
@@ -294,3 +298,34 @@ class Families(object):
                                        "Married date should occur before current date for a family")
             return False
         return True
+
+    def _validate_males_in_family_same_last_name(self, family):
+        """US16 All males in a family have the same last name
+        """
+        children = family.get_children()
+        if children is None:
+            return
+
+        male_last_names = dict()
+        people_ids = []
+        people_ids.extend(children)
+
+        if family.get_husband_id() is not None:
+            people_ids.append(family.get_husband_id())
+
+        for person_id in people_ids:
+            peep = self._people.individuals[person_id]
+
+            if peep.get_gender() != "M":
+                continue
+
+            result = self._last_name_regex.search(peep.get_name())
+            if result is not None:
+                male_last_names[result.group(1)] = True
+
+        if len(male_last_names) > 1:
+            self._msgs.add_message(self.CLASS_IDENTIFIER,
+                                   "US16",
+                                   family.get_family_id(),
+                                   "NA",
+                                   "All males in a family must have the same last name")
