@@ -126,6 +126,7 @@ class Families(object):
             self._validate_marr_div_dates(family)
             self._validate_death_of_parents_before_child_birth(family)
             self._validate_males_in_family_same_last_name(family)
+            self._validate_fewer_than_15_siblings(family)
 
     def _validate_birth_before_marriage(self, family):
         """get husband and wife and check birth dates
@@ -329,3 +330,15 @@ class Families(object):
                                    family.get_family_id(),
                                    "NA",
                                    "All males in a family must have the same last name")
+
+    def _validate_fewer_than_15_siblings(self, family):
+        """US15 There should be fewer than 15 siblings in a family
+        """
+        children = family.get_children()
+        if children is not None:
+            if len(children) >= 15:
+                self._msgs.add_message("FAMILY",
+                                       "US15",
+                                       family.get_family_id(),
+                                       "NA",
+                                       "There should be fewer than 15 siblings in a family")

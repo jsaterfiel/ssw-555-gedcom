@@ -1300,3 +1300,123 @@ class TestFamilies(unittest.TestCase):
         }
 
         self.assertDictEqual(err, msgs[0])
+
+    def test_us15_fewer_than_15_siblings(self):
+        """US015 there must be fewer than 15 siblings in a family
+        """
+        # Family 1 setup with three children - valid
+        peep22 = Person("@I22@")
+        peep22.set_name("Ashley /Banks/")
+        peep22.set_gender("F")
+        peep22.set_birth_date("1 SEP 2016")
+        peep22.add_children_of_family("@F1@")
+        self.peeps.individuals[peep22.get_person_id()] = peep22
+        peep23 = Person("@I23@")
+        peep23.set_name("Carlton /Banks/")
+        peep23.set_gender("M")
+        peep23.set_birth_date("1 SEP 2012")
+        peep23.add_children_of_family("@F1@")
+        self.peeps.individuals[peep23.get_person_id()] = peep23
+        peep24 = Person("@I24@")
+        peep24.set_name("Hilary /Banks/")
+        peep24.set_gender("F")
+        peep24.set_birth_date("1 SEP 2010")
+        peep24.add_children_of_family("@F1@")
+        self.peeps.individuals[peep24.get_person_id()] = peep24
+        fam1 = Family("@F1@")
+        fam1.add_child(peep22.get_person_id())
+        fam1.add_child(peep23.get_person_id())
+        fam1.add_child(peep24.get_person_id())
+        self.fam.families[fam1.get_family_id()] = fam1
+
+        # Family 2 set up with 15 children- invalid
+        peep25 = Person("@I25@")
+        peep25.set_name("Charlie /Chaplin/")
+        peep25.add_children_of_family("@F3@")
+        self.peeps.individuals[peep25.get_person_id()] = peep25
+        peep26 = Person("@I26@")
+        peep26.set_name("Hugh /Chaplin/")
+        peep26.add_children_of_family("@F3@")
+        self.peeps.individuals[peep26.get_person_id()] = peep26
+        peep27 = Person("@I27@")
+        peep27.set_name("Charlie /Chaplin/")
+        peep27.add_children_of_family("@F3@")
+        self.peeps.individuals[peep27.get_person_id()] = peep27
+        peep28 = Person("@I28@")
+        peep28.set_name("Charlie /Chaplin/")
+        peep28.add_children_of_family("@F3@")
+        self.peeps.individuals[peep28.get_person_id()] = peep28
+        peep29 = Person("@I29@")
+        peep29.set_name("Charlie /Chaplin/")
+        peep29.add_children_of_family("@F3@")
+        self.peeps.individuals[peep29.get_person_id()] = peep29
+        peep30 = Person("@I30@")
+        peep30.set_name("Charlie /Chaplin/")
+        peep30.add_children_of_family("@F3@")
+        self.peeps.individuals[peep30.get_person_id()] = peep30
+        peep31 = Person("@I31@")
+        peep31.set_name("Charlie /Chaplin/")
+        peep31.add_children_of_family("@F3@")
+        self.peeps.individuals[peep31.get_person_id()] = peep31
+        peep32 = Person("@I32@")
+        peep32.set_name("Charlie /Chaplin/")
+        peep32.add_children_of_family("@F3@")
+        self.peeps.individuals[peep32.get_person_id()] = peep32
+        peep33 = Person("@I33@")
+        peep33.set_name("Charlie /Chaplin/")
+        peep33.add_children_of_family("@F3@")
+        self.peeps.individuals[peep33.get_person_id()] = peep33
+        peep34 = Person("@I34@")
+        peep34.set_name("Charlie /Chaplin/")
+        peep34.add_children_of_family("@F3@")
+        self.peeps.individuals[peep34.get_person_id()] = peep34
+        peep35 = Person("@I35@")
+        peep35.set_name("Charlie /Chaplin/")
+        peep35.add_children_of_family("@F3@")
+        self.peeps.individuals[peep35.get_person_id()] = peep35
+        peep36 = Person("@I36@")
+        peep36.set_name("Charlie /Chaplin/")
+        peep36.add_children_of_family("@F3@")
+        self.peeps.individuals[peep36.get_person_id()] = peep36
+        peep37 = Person("@I37@")
+        peep37.set_name("Charlie /Chaplin/")
+        peep37.add_children_of_family("@F3@")
+        self.peeps.individuals[peep37.get_person_id()] = peep37
+        peep38 = Person("@I38@")
+        peep38.set_name("Charlie /Chaplin/")
+        peep38.add_children_of_family("@F3@")
+        self.peeps.individuals[peep38.get_person_id()] = peep38
+        peep39 = Person("@I39@")
+        peep39.set_name("Charlie /Chaplin/")
+        peep39.add_children_of_family("@F3@")
+        self.peeps.individuals[peep39.get_person_id()] = peep39
+        fam3 = Family("@F03@")
+        fam3.add_child(peep25.get_person_id())
+        fam3.add_child(peep26.get_person_id())
+        fam3.add_child(peep27.get_person_id())
+        fam3.add_child(peep28.get_person_id())
+        fam3.add_child(peep29.get_person_id())
+        fam3.add_child(peep30.get_person_id())
+        fam3.add_child(peep31.get_person_id())
+        fam3.add_child(peep32.get_person_id())
+        fam3.add_child(peep33.get_person_id())
+        fam3.add_child(peep34.get_person_id())
+        fam3.add_child(peep35.get_person_id())
+        fam3.add_child(peep36.get_person_id())
+        fam3.add_child(peep37.get_person_id())
+        fam3.add_child(peep38.get_person_id())
+        fam3.add_child(peep39.get_person_id())
+        self.fam.families[fam3.get_family_id()] = fam3
+
+        self.fam.validate()
+
+        results = self.msgs.get_messages()
+        self.assertEqual(1, len(results))
+        err1 = {
+            "error_id": "FAMILY",
+            "user_story": "US15",
+            "user_id": fam3.get_family_id(),
+            "name": "NA",
+            "message": "There should be fewer than 15 siblings in a family"
+        }
+        self.assertDictEqual(err1, results[0])
