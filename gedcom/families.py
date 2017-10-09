@@ -71,9 +71,9 @@ class Families(object):
 
         if data["tag"] == "DATE":
             if self._current_level_1 == "MARR":
-                self._curr_family.set_married_date(data["args"])
+                self._curr_family.set_date(data["args"], "married")
             if self._current_level_1 == "DIV":
-                self._curr_family.set_divorced_date(data["args"])
+                self._curr_family.set_date(data["args"], "divorced")
 
     def print_all(self):
         """print all families information
@@ -119,108 +119,109 @@ class Families(object):
         fam_keys = sorted(self.families.keys())
         for idx in fam_keys:
             family = self.families[idx]
-            self._validate_death_before_marriage(family)
-            self._validate_death_before_divorce(family)
-            self._validate_birth_before_marriage(family)
-            self._validate_marr_before_div_dates(family)
+            self._validate_dates(family)
             self._validate_marr_div_dates(family)
             self._validate_death_of_parents_before_child_birth(family)
             self._validate_males_in_family_same_last_name(family)
             self._validate_fewer_than_15_siblings(family)
 
-    def _validate_birth_before_marriage(self, family):
-        """get husband and wife and check birth dates
-        Args:
-            family (Family): family object
-        Returns:
-            boolean
+    def _validate_dates(self, family):
+        """ validating dates
         """
-        if family.get_married_date() is not None:
-            married_date = family.get_married_date()
-            if family.get_husband_id() is not None and family.get_husband_id() in self._people.individuals and self._people.individuals[family.get_husband_id()].get_birth_date() is not None:
-                if married_date < self._people.individuals[family.get_husband_id()].get_birth_date():
-                    self._msgs.add_message(People.CLASS_IDENTIFIER,
-                                           "US02",
-                                           family.get_husband_id(),
-                                           self._people.individuals[family.get_husband_id(
-                                           )].get_name(),
-                                           "Birth date should occur before marriage of an individual")
-                    return False
+        if family.get_family_id() is not None and family.get_married_date() is not None:
+            fam_id = family.get_family_id()
+            mar_date = family.get_married_date()
+            if family.get_divorced_date() is not None:
+                div_date = family.get_divorced_date()
+                if mar_date > div_date:
+                    self._msgs.add_message("FAMILY",
+                                           "US04",
+                                           fam_id,
+                                           "NA",
+                                           "Marriage date should occur before divorce date of a family")
+            # Husband Dates
+            if family.get_husband_id() is not None and family.get_wife_id() is not None:
+                hus_id = family.get_husband_id()
+                wife_id = family.get_wife_id()
+                if self._people.individuals[family.get_husband_id()].get_birth_date() is not None and self._people.individuals[family.get_husband_id()].get_name() is not None:
+                    hus_bd = self._people.individuals[family.get_husband_id(
+                    )].get_birth_date()
+                    hus_name = self._people.individuals[family.get_husband_id(
+                    )].get_name()
+                    if mar_date < hus_bd:
+                        self._msgs.add_message(People.CLASS_IDENTIFIER,
+                                               "US02",
+                                               hus_id,
+                                               hus_name,
+                                               "Birth date should occur before marriage of an individual")
+                    if self._people.individuals[family.get_husband_id()].get_death_date() is not None:
+                        hus_dd = self._people.individuals[family.get_husband_id(
+                        )].get_death_date()
+                        if mar_date > hus_dd:
+                            self._msgs.add_message("FAMILY",
+                                                   "US05",
+                                                   fam_id,
+                                                   "NA",
+                                                   "marriage after death for " + hus_id + " " + hus_name)
+                        if family.get_divorced_date() is not None:
+                            div_date = family.get_divorced_date()
+                            if div_date > hus_dd:
+                                self._msgs.add_message("FAMILY",
+                                                       "US06",
+                                                       fam_id,
+                                                       "NA",
+                                                       "divorce after death for " + hus_id + " " + hus_name)
+        # Wife Dates
+                if self._people.individuals[family.get_wife_id()].get_birth_date() is not None and self._people.individuals[family.get_wife_id()].get_name() is not None:
+                    wife_bd = self._people.individuals[family.get_wife_id(
+                    )].get_birth_date()
+                    wife_name = self._people.individuals[family.get_wife_id(
+                    )].get_name()
+                    if mar_date < wife_bd:
+                        self._msgs.add_message(People.CLASS_IDENTIFIER,
+                                               "US02",
+                                               wife_id,
+                                               wife_name,
+                                               "Birth date should occur before marriage of an individual")
+                    if self._people.individuals[family.get_wife_id()].get_death_date() is not None:
+                        wife_dd = self._people.individuals[family.get_wife_id(
+                        )].get_death_date()
+                        if mar_date > wife_dd:
+                            self._msgs.add_message("FAMILY",
+                                                   "US05",
+                                                   fam_id,
+                                                   "NA",
+                                                   "marriage after death for " + wife_id + " " + wife_name)
+                        if family.get_divorced_date() is not None:
+                            div_date = family.get_divorced_date()
+                            if div_date > wife_dd:
+                                self._msgs.add_message("FAMILY",
+                                                       "US06",
+                                                       fam_id,
+                                                       "NA",
+                                                       "divorce after death for " + wife_id + " " + wife_name)
 
-            if family.get_wife_id() is not None and family.get_wife_id() in self._people.individuals and self._people.individuals[family.get_wife_id()].get_birth_date() is not None:
-                if married_date < self._people.individuals[family.get_wife_id()].get_birth_date():
-                    self._msgs.add_message(People.CLASS_IDENTIFIER,
-                                           "US02",
-                                           family.get_wife_id(),
-                                           self._people.individuals[family.get_wife_id(
-                                           )].get_name(),
-                                           "Birth date should occur before marriage of an individual")
-                    return False
-        return True
-
-    def _validate_death_before_marriage(self, family):
-        """US05: validate that death occurred before marriage
-        Args:
-            family (Family): family object
+    def _validate_marr_div_dates(self, family):
+        """Validate that family marriage and divorce dates occurs before current date
         """
-        key = "US05"
-        msg = "marriage after death for "
-        if family is None:
-            return
-        if family.get_married_date() is not None:
-            if family.get_husband_id() is not None:
-                # check the husband died after marriage
-                husb = self._people.individuals[family.get_husband_id()]
-                if husb.get_death_date() is not None and family.get_married_date() > husb.get_death_date():
-                    # error husband died before marriage
-                    self._msgs.add_message(
-                        "FAMILY",
-                        key,
-                        family.get_family_id(),
-                        "NA",
-                        msg + husb.get_person_id() + " " + husb.get_name())
-            if family.get_wife_id() is not None:
-                # check the wife died after the marriage
-                wife = self._people.individuals[family.get_wife_id()]
-                if wife.get_death_date() is not None and family.get_married_date() > wife.get_death_date():
-                    # error wife died before marriage
-                    self._msgs.add_message(
-                        "FAMILY",
-                        key,
-                        family.get_family_id(),
-                        "NA",
-                        msg + wife.get_person_id() + " " + wife.get_name())
-
-    def _validate_death_before_divorce(self, family):
-        """US06: validate that death occurred before marriage
-        Args:
-            family (Family): family object
-        """
-        key = "US06"
-        msg = "divorce after death for "
         if family.get_divorced_date() is not None:
-            if family.get_husband_id() is not None:
-                # check the husband died after divorce
-                husb = self._people.individuals[family.get_husband_id()]
-                if husb.get_death_date() is not None and family.get_divorced_date() > husb.get_death_date():
-                    # error husband died before divorce
-                    self._msgs.add_message(
-                        "FAMILY",
-                        key,
-                        family.get_family_id(),
-                        "NA",
-                        msg + husb.get_person_id() + " " + husb.get_name())
-            if family.get_wife_id() is not None:
-                # check the wife died after the divorce
-                wife = self._people.individuals[family.get_wife_id()]
-                if wife.get_death_date() is not None and family.get_divorced_date() > wife.get_death_date():
-                    # error wife died before divorce
-                    self._msgs.add_message(
-                        "FAMILY",
-                        key,
-                        family.get_family_id(),
-                        "NA",
-                        msg + wife.get_person_id() + " " + wife.get_name())
+            if family.get_divorced_date() > self._current_time:
+                self._msgs.add_message("FAMILY",
+                                       "US01",
+                                       family.get_family_id(),
+                                       "NA",
+                                       "Divorced date should occur before current date for a family")
+                return False
+
+        if family.get_married_date() is not None:
+            if family.get_married_date() > self._current_time:
+                self._msgs.add_message("FAMILY",
+                                       "US01",
+                                       family.get_family_id(),
+                                       "NA",
+                                       "Married date should occur before current date for a family")
+            return False
+        return True
 
     def _validate_death_of_parents_before_child_birth(self, family):
         """US09: validate death of parents before child birth
@@ -263,42 +264,6 @@ class Families(object):
                         family.get_family_id(),
                         "NA",
                         msg + wife.get_person_id() + " " + wife.get_name())
-
-    def _validate_marr_before_div_dates(self, family):
-        """Validate that family marriage date occurs before divorce
-        """
-        if family.get_divorced_date() is not None:
-            if family.get_married_date() is not None:
-                if family.get_married_date() > family.get_divorced_date():
-                    self._msgs.add_message("FAMILY",
-                                           "US04",
-                                           family.get_family_id(),
-                                           "NA",
-                                           "Marriage date should occur before divorce date of a family")
-                    return False
-        return True
-
-    def _validate_marr_div_dates(self, family):
-        """Validate that family marriage and divorce dates occurs before current date
-        """
-        if family.get_divorced_date() is not None:
-            if family.get_divorced_date() > self._current_time:
-                self._msgs.add_message("FAMILY",
-                                       "US01",
-                                       family.get_family_id(),
-                                       "NA",
-                                       "Divorced date should occur before current date for a family")
-                return False
-
-        if family.get_married_date() is not None:
-            if family.get_married_date() > self._current_time:
-                self._msgs.add_message("FAMILY",
-                                       "US01",
-                                       family.get_family_id(),
-                                       "NA",
-                                       "Married date should occur before current date for a family")
-            return False
-        return True
 
     def _validate_males_in_family_same_last_name(self, family):
         """US16 All males in a family have the same last name
