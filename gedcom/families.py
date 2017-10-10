@@ -316,9 +316,9 @@ class Families(object):
 
         if children:
             for child in children:
-                child = self._people.individuals[child]  # type: Person
-                husband = self._people.individuals[family.get_husband_id()]  # type: Person
-                wife = self._people.individuals[family.get_wife_id()]  # type: Person
+                child = self._people.individuals[child]
+                husband = self._people.individuals[family.get_husband_id()]
+                wife = self._people.individuals[family.get_wife_id()]
                 if husband.get_is_alive() and (husband.get_age() - child.get_age() >= 80):
                     self._msgs.add_message(self.CLASS_IDENTIFIER,
                                            "US12",
