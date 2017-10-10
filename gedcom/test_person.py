@@ -29,10 +29,9 @@ class TestPerson(unittest.TestCase):
         """test birth date
         """
         peep = Person("@I01@")
-        birth_date_str = "7 SEP 1988"
         birth_date = datetime.strptime(
-            birth_date_str, '%d %b %Y')
-        peep.set_birth_date(birth_date_str)
+            "7 SEP 1988", '%d %b %Y')
+        peep.set_date("7 SEP 1988", "birth")
 
         self.assertEqual(birth_date, peep.get_birth_date())
 
@@ -40,10 +39,9 @@ class TestPerson(unittest.TestCase):
         """test death date
         """
         peep = Person("@I01@")
-        death_date_str = "7 SEP 1988"
         death_date = datetime.strptime(
-            death_date_str, '%d %b %Y')
-        peep.set_death_date(death_date_str)
+            "7 SEP 1988", '%d %b %Y')
+        peep.set_date("7 SEP 1988", "death")
 
         self.assertEqual(death_date, peep.get_death_date())
 
@@ -51,10 +49,9 @@ class TestPerson(unittest.TestCase):
         """test age without death but with birth date
         """
         peep = Person("@I01@")
-        birth_date_str = "7 SEP 1988"
         birth_date = datetime.strptime(
-            birth_date_str, '%d %b %Y')
-        peep.set_birth_date(birth_date_str)
+            "7 SEP 1988", '%d %b %Y')
+        peep.set_date("7 SEP 1988", "birth")
 
         expected_age = int(
             (peep.CURRENT_TIME - birth_date).days / peep.DAYS_IN_YEAR)
@@ -66,14 +63,12 @@ class TestPerson(unittest.TestCase):
         """
         peep = Person("@I01@")
 
-        birth_date_str = "7 SEP 1988"
         birth_date = datetime.strptime(
-            birth_date_str, '%d %b %Y')
-        peep.set_birth_date(birth_date_str)
-        death_date_str = "7 SEP 1988"
+            "7 SEP 1988", '%d %b %Y')
+        peep.set_date("7 SEP 1988", "birth")
         death_date = datetime.strptime(
-            death_date_str, '%d %b %Y')
-        peep.set_death_date(death_date_str)
+            "7 SEP 1988", '%d %b %Y')
+        peep.set_date("7 SEP 1988", "death")
 
         expected_age = int(
             (death_date - birth_date).days / peep.DAYS_IN_YEAR)
@@ -87,13 +82,11 @@ class TestPerson(unittest.TestCase):
 
         self.assertTrue(peep.get_is_alive())
 
-        birth_date_str = "7 SEP 1988"
-        peep.set_birth_date(birth_date_str)
+        peep.set_date("7 SEP 1988", "birth")
 
         self.assertTrue(peep.get_is_alive())
 
-        death_date_str = "7 SEP 1988"
-        peep.set_death_date(death_date_str)
+        peep.set_date("7 SEP 1988", "death")
 
         self.assertFalse(peep.get_is_alive())
 

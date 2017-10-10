@@ -27,22 +27,20 @@ class TestFamilies(unittest.TestCase):
     def test_married_date(self):
         """add married date 28 MAR 2001
         """
-        married_date_str = "28 MAR 2001"
         married_date = datetime.strptime(
-            married_date_str, '%d %b %Y')
+            "28 MAR 2001", '%d %b %Y')
         fam = Family("@F01@")
-        fam.set_married_date(married_date_str)
+        fam.set_date("28 MAR 2001", "married")
 
         self.assertEqual(married_date, fam.get_married_date())
 
     def test_divorced_date(self):
-        """add divorced date 28 MAR 2001
+        """add divorced date 1 APR 1970
         """
-        divorced_date_str = "1 APR 1970"
         divorced_date = datetime.strptime(
-            divorced_date_str, '%d %b %Y')
+            "1 APR 1970", '%d %b %Y')
         fam = Family("@F09@")
-        fam.set_divorced_date(divorced_date_str)
+        fam.set_date("1 APR 1970", "divorced")
 
         self.assertEqual(divorced_date, fam.get_divorced_date())
 
@@ -51,15 +49,13 @@ class TestFamilies(unittest.TestCase):
         """
         fam = Family("@F01@")
 
-        married_date_str = "28 MAR 2001"
         married_date = datetime.strptime(
-            married_date_str, '%d %b %Y')
-        fam.set_married_date(married_date_str)
+            "28 MAR 2001", '%d %b %Y')
+        fam.set_date("28 MAR 2001", "married")
 
-        divorced_date_str = "1 APR 1970"
         divorced_date = datetime.strptime(
-            divorced_date_str, '%d %b %Y')
-        fam.set_divorced_date(divorced_date_str)
+            "1 APR 1970", '%d %b %Y')
+        fam.set_date("1 APR 1970", "divorced")
 
         self.assertEqual(married_date, fam.get_married_date())
         self.assertEqual(divorced_date, fam.get_divorced_date())

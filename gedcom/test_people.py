@@ -657,8 +657,8 @@ class TestPeople(unittest.TestCase):
         valid_person = Person("@I3@")
         valid_person.set_name("Margo /Hemmingway/")
         valid_person.set_gender("F")
-        valid_person.set_birth_date("8 APR 1954")
-        valid_person.set_death_date("5 NOV 2011")
+        valid_person.set_date("8 APR 1954", "birth")
+        valid_person.set_date("5 NOV 2011", "death")
         self.peeps.individuals[valid_person.get_person_id()] = valid_person
 
         self.peeps.validate()
@@ -668,8 +668,8 @@ class TestPeople(unittest.TestCase):
         invalid_person = Person("@I4@")
         invalid_person.set_gender("F")
         invalid_person.set_name("Gergina /Hemmingway/")
-        invalid_person.set_death_date("8 APR 1954")
-        invalid_person.set_birth_date("5 NOV 2011")
+        invalid_person.set_date("8 APR 1954", "death")
+        invalid_person.set_date("5 NOV 2011", "birth")
         self.peeps.individuals[invalid_person.get_person_id()] = invalid_person
 
         self.peeps.validate()
@@ -693,32 +693,32 @@ class TestPeople(unittest.TestCase):
         """
         valid_person = Person("@I3@")
         valid_person.set_name("Bubbles /Bambi/")
-        valid_person.set_birth_date("1 JAN 1960")
+        valid_person.set_date("1 JAN 1960", "birth")
         self.peeps.individuals[valid_person.get_person_id()] = valid_person
 
         invalid_person = Person("@I4@")
         invalid_person.set_name("Margo /Hemmingway/")
-        invalid_person.set_death_date("1 JAN 2000")  # 151 years old
-        invalid_person.set_birth_date("1 JAN 1849")
+        invalid_person.set_date("1 JAN 2000", "death")  # 151 years old
+        invalid_person.set_date("1 JAN 1849", "birth")
         self.peeps.individuals[invalid_person.get_person_id()] = invalid_person
 
         invalid_person2 = Person("@I5@")
         invalid_person2.set_name("Betty /Hemmingway/")
-        invalid_person2.set_death_date("2 JAN 2000")  # 150 years old
-        invalid_person2.set_birth_date("1 JAN 1850")
+        invalid_person2.set_date("2 JAN 2000", "death")  # 150 years old
+        invalid_person2.set_date("1 JAN 1850", "birth")
         self.peeps.individuals[invalid_person2.get_person_id()
                                ] = invalid_person2
 
         invalid_person3 = Person("@I6@")
         invalid_person3.set_name("Moses /Hemmingway/")
-        invalid_person3.set_death_date("1 JAN 2000")  # 200 years old
-        invalid_person3.set_birth_date("1 JAN 1800")
+        invalid_person3.set_date("1 JAN 2000", "death")  # 200 years old
+        invalid_person3.set_date("1 JAN 1800", "birth")
         self.peeps.individuals[invalid_person3.get_person_id()
                                ] = invalid_person3
         valid_person2 = Person("@I7@")
         valid_person2.set_name("Salty /Hemmingway/")
-        valid_person2.set_death_date("1 JAN 2000")  # 149 years old
-        valid_person2.set_birth_date("1 JAN 1851")
+        valid_person2.set_date("1 JAN 2000", "death")  # 149 years old
+        valid_person2.set_date("1 JAN 1851", "birth")
         self.peeps.individuals[valid_person2.get_person_id()
                                ] = valid_person2
 
@@ -759,26 +759,28 @@ class TestPeople(unittest.TestCase):
 
         date_before_current = Person("@I10@")
         date_before_current.set_name("Link /Tiger/")
-        date_before_current.set_birth_date("7 OCT 1940")
+        date_before_current.set_date("7 OCT 1940", "birth")
         self.peeps.individuals[date_before_current.get_person_id(
         )] = date_before_current
 
         date_before_current1 = Person("@I11@")
         date_before_current1.set_name("Zelda /Tiger/")
-        date_before_current1.set_birth_date("7 OCT 1942")
+        date_before_current1.set_date("7 OCT 1942", "birth")
         self.peeps.individuals[date_before_current1.get_person_id(
         )] = date_before_current1
 
         date_notbefore_current1 = Person("@I3@")
         date_notbefore_current1.set_name("Ernest /Hemmingway/")
-        date_notbefore_current1.set_birth_date("4 AUG 1861")
-        date_notbefore_current1.set_death_date("5 NOV " + str(curr.year + 4))
+        date_notbefore_current1.set_date("4 AUG 1861", "birth")
+        date_notbefore_current1.set_date(
+            "5 NOV " + str(curr.year + 4), "death")
         self.peeps.individuals[date_notbefore_current1.get_person_id(
         )] = date_notbefore_current1
 
         date_notbefore_current2 = Person("@I5@")
         date_notbefore_current2.set_name("Rodney /Dangerfield/")
-        date_notbefore_current2.set_birth_date("9 OCT " + str(curr.year + 2))
+        date_notbefore_current2.set_date(
+            "9 OCT " + str(curr.year + 2), "birth")
         self.peeps.individuals[date_notbefore_current2.get_person_id(
         )] = date_notbefore_current2
 

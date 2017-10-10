@@ -76,14 +76,6 @@ class Person(object):
         """
         return self._birth_date
 
-    def set_birth_date(self, birth_date_string):
-        """creates the datetime object from the passed in string and also sets the person's age
-        Args:
-            birth_date_string (string): string of the datetime to parse in the format '%d %b %Y'
-        """
-        self._birth_date = datetime.strptime(birth_date_string, '%d %b %Y')
-        self._generate_age()
-
     def get_death_date(self):
         """returns death date
         Returns:
@@ -91,14 +83,19 @@ class Person(object):
         """
         return self._death_date
 
-    def set_death_date(self, death_date_string):
-        """creates the datetime object from the passed in string
+    def set_date(self, date_string, date_type):
+        """creates the datetime object from the passed in string and also sets the person's age
         Args:
-            death_date_string (string): string of the datetime to parse in the format '%d %b %Y'
+            date_string (string): string of the datetime to parse in the format '%d %b %Y'
+            date_type (string): birth, death
         """
-        self._death_date = datetime.strptime(death_date_string, '%d %b %Y')
-        self._generate_age()
-        self._is_alive = False
+        if date_type == "birth":
+            self._birth_date = datetime.strptime(date_string, '%d %b %Y')
+            self._generate_age()
+        if date_type == "death":
+            self._death_date = datetime.strptime(date_string, '%d %b %Y')
+            self._generate_age()
+            self._is_alive = False
 
     def get_children_of_families(self):
         """returns family ids person is a child of

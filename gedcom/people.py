@@ -69,10 +69,10 @@ class People(object):
 
         if data["tag"] == "DATE":
             if self._current_level_1 == "BIRT":
-                self._curr_person.set_birth_date(data["args"])
+                self._curr_person.set_date(data["args"], "birth")
 
             if self._current_level_1 == "DEAT":
-                self._curr_person.set_death_date(data["args"])
+                self._curr_person.set_date(data["args"], "death")
 
     def print_all(self):
         """print all individuals information
