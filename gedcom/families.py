@@ -309,16 +309,19 @@ class Families(object):
                                        "NA",
                                        "There should be fewer than 15 siblings in a family")
 
-    def _validate_parents_not_too_old(self, family):
+    def _validate_parents_not_too_old(self, family: Family):
         """Validate that husband and wife are not too much older than children
+        Returns:
+            bool
         """
-        children = family.get_children()
+
+        children = set(family.get_children())
 
         if children:
             for child in children:
-                child = self._people.individuals[child]
-                husband = self._people.individuals[family.get_husband_id()]
-                wife = self._people.individuals[family.get_wife_id()]
+                child = self._people.individuals[child]  # type: Person
+                husband = self._people.individuals[family.get_husband_id()]  # type: Person
+                wife = self._people.individuals[family.get_wife_id()]  # type: Person
                 if husband.get_is_alive() and (husband.get_age() - child.get_age() >= 80):
                     self._msgs.add_message(self.CLASS_IDENTIFIER,
                                            "US12",
