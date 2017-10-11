@@ -124,6 +124,7 @@ class Families(object):
             self._validate_death_of_parents_before_child_birth(family)
             self._validate_males_in_family_same_last_name(family)
             self._validate_fewer_than_15_siblings(family)
+            self._validate_no_marriage_to_decendants(family)
 
     def _validate_dates(self, family):
         """ validating dates
@@ -259,11 +260,52 @@ class Families(object):
                 if wife.get_death_date() is not None and chil.get_birth_date() > wife.get_death_date():
                     # error wife died before child birth
                     self._msgs.add_message(
-                        "FAMILY",
+                        self.CLASS_IDENTIFIER,
                         key,
                         family.get_family_id(),
                         "NA",
                         msg + wife.get_person_id() + " " + wife.get_name())
+
+    def _validate_no_marriage_to_decendants(self, family):
+        """US17 No marriage to decendants
+        """
+        if family.get_children() is None:
+            return
+
+        if family.get_husband_id() is not None:
+            self._check_family_for_decendant_marriage(
+                family, family.get_husband_id(), True)
+
+        if family.get_wife_id() is not None:
+            self._check_family_for_decendant_marriage(
+                family, family.get_wife_id(), True)
+
+    def _check_family_for_decendant_marriage(self, family, person_id, ignore_current_family):
+        """recursive function to go through families to see if a particular person_id was reused
+        Is a part of US17
+        """
+        if ignore_current_family is False:
+            if family.get_wife_id() == person_id or family.get_husband_id() == person_id:
+                person = self._people.individuals[person_id]
+                self._msgs.add_message(self.CLASS_IDENTIFIER,
+                                       "US17",
+                                       family.get_family_id(),
+                                       "NA",
+                                       "No marriage to decendants. " + person_id + " " + person.get_name())
+
+        children = family.get_children()
+        if children is None:
+            return
+
+        for child_id in family.get_children():
+            child = self._people.individuals[child_id]
+            fams = child.get_spouse_of_families()
+            if fams is None:
+                return
+            for fam_id in fams:
+                fam = self.families[fam_id]
+                self._check_family_for_decendant_marriage(
+                    fam, person_id, False)
 
     def _validate_males_in_family_same_last_name(self, family):
         """US16 All males in a family have the same last name
