@@ -77,13 +77,6 @@ class Family(object):
         """
         return self._married_date
 
-    def set_married_date(self, married_date_string):
-        """creates the datetime object from the passed in string
-        Args:
-            married_date_string (string): string of the datetime to parse in the format '%d %b %Y'
-        """
-        self._married_date = datetime.strptime(married_date_string, '%d %b %Y')
-
     def get_divorced_date(self):
         """returns divorced date
         Returns:
@@ -91,10 +84,12 @@ class Family(object):
         """
         return self._divorced_date
 
-    def set_divorced_date(self, divorced_date_string):
-        """creates the datetime object from the passed in string
-        Args:
-            divorced_date_string (string): string of the datetime to parse in the format '%d %b %Y'
+    def set_date(self, date_string, date_type):
+        """returns the date in datetime convention from a string
+        Returns:
+
         """
-        self._divorced_date = datetime.strptime(
-            divorced_date_string, '%d %b %Y')
+        if date_type == "married":
+            self._married_date = datetime.strptime(date_string, '%d %b %Y')
+        if date_type == "divorced":
+            self._divorced_date = datetime.strptime(date_string, '%d %b %Y')
