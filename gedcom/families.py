@@ -22,6 +22,7 @@ class Families(object):
     """
 
     CLASS_IDENTIFIER = "FAMILY"
+    DAYS_IN_YEAR = 365.2425
 
     def __init__(self, people, validation_messages):
         self.families = {}
@@ -155,6 +156,14 @@ class Families(object):
                                                hus_id,
                                                hus_name,
                                                "Birth date should occur before marriage of an individual")
+                    hus_mar_age = int(
+                        (mar_date - hus_bd).days / self.DAYS_IN_YEAR)
+                    if hus_mar_age < 14:
+                        self._msgs.add_message("FAMILY",
+                                               "US10",
+                                               fam_id,
+                                               "NA",
+                                               "marriage before age 14 for " + hus_id + " " + hus_name)
                     if self._people.individuals[family.get_husband_id()].get_death_date() is not None:
                         hus_dd = self._people.individuals[family.get_husband_id(
                         )].get_death_date()
@@ -172,7 +181,7 @@ class Families(object):
                                                        fam_id,
                                                        "NA",
                                                        "divorce after death for " + hus_id + " " + hus_name)
-        # Wife Dates
+                # Wife Dates
                 if self._people.individuals[family.get_wife_id()].get_birth_date() is not None and self._people.individuals[family.get_wife_id()].get_name() is not None:
                     wife_bd = self._people.individuals[family.get_wife_id(
                     )].get_birth_date()
@@ -184,6 +193,14 @@ class Families(object):
                                                wife_id,
                                                wife_name,
                                                "Birth date should occur before marriage of an individual")
+                    wif_mar_age = int(
+                        (mar_date - wife_bd).days / self.DAYS_IN_YEAR)
+                    if wif_mar_age < 14:
+                        self._msgs.add_message("FAMILY",
+                                               "US10",
+                                               fam_id,
+                                               "NA",
+                                               "marriage before age 14 for " + wife_id + " " + wife_name)
                     if self._people.individuals[family.get_wife_id()].get_death_date() is not None:
                         wife_dd = self._people.individuals[family.get_wife_id(
                         )].get_death_date()
