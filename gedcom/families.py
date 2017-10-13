@@ -9,6 +9,7 @@ from people import People
 from family import Family
 from person import Person
 
+
 class Families(object):
     """Families class
     Contains logic for processing family tags
