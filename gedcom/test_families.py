@@ -1252,10 +1252,12 @@ class TestFamilies(unittest.TestCase):
         fam1_male1.set_gender("M")
         fam1_male1.set_name("Bob /Hope/")
         fam1_male1.add_spouse_of_family(fam1_id)
+        fam1_male1.set_date("1 JAN 1965", "birth")
         fam1_male2 = Person("@F1I2@")
         fam1_male2.set_gender("M")
         fam1_male2.set_name("Greg /Hope")
         fam1_male2.add_children_of_family(fam1_id)
+        fam1_male2.set_date("1 JAN 1965", "birth")
         fam1_female1 = Person("@F1I4@")
         fam1_female1.set_gender("F")
         fam1_female1.set_name("Sally /Fields/")
@@ -1428,3 +1430,46 @@ class TestFamilies(unittest.TestCase):
             "message": "There should be fewer than 15 siblings in a family"
         }
         self.assertDictEqual(err1, results[0])
+
+    def test_validate_parents_not_too_old(self):
+        # Create a test family for each unit test
+        test_family = Family("@F1@")
+        test_family.set_husband_id("@I1@")
+        test_family.set_wife_id("@I2@")
+        test_family.set_date("1 JAN 1990", "married")
+        test_family.add_child("@I3@")
+        self.fam.families[test_family.get_family_id()] = test_family
+        test_husband = Person("@I1@")
+        test_husband.set_name("Tony /Tiger/")
+        test_husband.set_gender("M")
+        test_husband.set_date("1 JAN 1965", "birth")
+        test_husband.add_spouse_of_family(test_family.get_family_id())
+        self.peeps.individuals[test_husband.get_person_id()] = test_husband
+        test_wife = Person("@I2@")
+        test_wife.set_name("Minnie /Mouse/")
+        test_wife.set_gender("F")
+        test_wife.set_date("20 JUL 1966", "birth")
+        test_wife.add_spouse_of_family(test_family.get_family_id())
+        self.peeps.individuals[test_wife.get_person_id()] = test_wife
+        test_child = Person("@I3@")
+        test_child.set_name("Mickey /Mouse/")
+        test_child.set_gender("M")
+        test_child.set_date("20 NOV 1992", "birth")
+        test_child.add_children_of_family(test_family.get_family_id())
+        self.peeps.individuals[test_child.get_person_id()] = test_child
+        """ US12: Test if parents are too old
+        """
+        test_family = self.fam.families["@F1@"]  # type: Family
+        self.assertTrue(self.fam._validate_parents_not_too_old(test_family))
+        self.assertEqual(len(self.msgs._messages), 0)
+
+        husband = self.peeps.individuals[test_family.get_husband_id()]  # type: Person
+        husband.set_date("17 AUG 1900", "birth")
+        self.assertFalse(self.fam._validate_parents_not_too_old(test_family))
+        self.assertEqual(len(self.msgs.get_messages()), 1)
+
+        wife = self.peeps.individuals[test_family.get_wife_id()]  # type: Person
+        husband.set_date("1 JAN 1965", "birth")
+        wife.set_date("18 AUG 1900", "birth")
+        self.assertFalse(self.fam._validate_parents_not_too_old(test_family))
+        self.assertEqual(len(self.msgs.get_messages()), 2)

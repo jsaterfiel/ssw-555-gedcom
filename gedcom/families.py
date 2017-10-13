@@ -7,6 +7,7 @@ from datetime import timedelta
 from prettytable import PrettyTable
 from people import People
 from family import Family
+from person import Person
 
 
 class Families(object):
@@ -307,3 +308,35 @@ class Families(object):
                                        family.get_family_id(),
                                        "NA",
                                        "There should be fewer than 15 siblings in a family")
+
+    def _validate_parents_not_too_old(self, family: Family):
+        """Validate that husband and wife are not too much older than children
+        Returns:
+            bool
+        """
+
+        children = set(family.get_children())
+
+        if children:
+            for child in children:
+                child = self._people.individuals[child]  # type: Person
+                husband = self._people.individuals[family.get_husband_id()]  # type: Person
+                wife = self._people.individuals[family.get_wife_id()]  # type: Person
+                if husband.get_is_alive() and (husband.get_age() - child.get_age() >= 80):
+                    self._msgs.add_message(self.CLASS_IDENTIFIER,
+                                           "US12",
+                                           family.get_family_id(),
+                                           "NA",
+                                           "Father %s should be less than 80 years older than his child %s" %
+                                           (family.get_husband_id(), child.get_person_id()))
+                    return False
+                if wife.get_is_alive() and (wife.get_age() - child.get_age() >= 60):
+                    self._msgs.add_message(self.CLASS_IDENTIFIER,
+                                           "US12",
+                                           family.get_family_id(),
+                                           "NA",
+                                           "Mother %s should be less than 60 years older than her child %s" %
+                                           (family.get_wife_id(), child.get_person_id()))
+                    return False
+
+        return True
