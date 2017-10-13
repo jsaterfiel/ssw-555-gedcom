@@ -1579,6 +1579,85 @@ class TestFamilies(unittest.TestCase):
         }
         self.assertDictEqual(err1, results[0])
 
+    def test_us14_fewer_than_5_siblings(self):
+        """US014 No more than 5 siblings born in a multiple birth in a family
+        """
+        # family set up - 3 births at a time - valid
+        peep25 = Person("@I25@")
+        peep25.set_name("GreenDay /Chaplin/")
+        peep25.set_date("1 JAN 1970", "birth")
+        peep25.add_children_of_family("@F1@")
+        self.peeps.individuals[peep25.get_person_id()] = peep25
+        peep26 = Person("@I26@")
+        peep26.set_name("Panic /Chaplin/")
+        peep26.set_date("1 JAN 1970", "birth")
+        peep26.add_children_of_family("@F1@")
+        self.peeps.individuals[peep26.get_person_id()] = peep26
+        peep27 = Person("@I27@")
+        peep27.set_name("Maroon /Chaplin/")
+        peep27.set_date("1 JAN 1970", "birth")
+        peep27.add_children_of_family("@F1@")
+        self.peeps.individuals[peep27.get_person_id()] = peep27
+        fam1 = Family("@F1@")
+        fam1.add_child(peep25.get_person_id())
+        fam1.add_child(peep26.get_person_id())
+        fam1.add_child(peep27.get_person_id())
+        self.fam.families[fam1.get_family_id()] = fam1
+
+        # family set up - 6 births at same time - invalid
+        peep25 = Person("@I25@")
+        peep25.set_name("Charlie1 /Chaplin/")
+        peep25.set_date("1 JAN 1970", "birth")
+        peep25.add_children_of_family("@F3@")
+        self.peeps.individuals[peep25.get_person_id()] = peep25
+        peep26 = Person("@I26@")
+        peep26.set_name("Hugh2 /Chaplin/")
+        peep26.set_date("1 JAN 1970", "birth")
+        peep26.add_children_of_family("@F3@")
+        self.peeps.individuals[peep26.get_person_id()] = peep26
+        peep27 = Person("@I27@")
+        peep27.set_name("Jacob3 /Chaplin/")
+        peep27.set_date("1 JAN 1970", "birth")
+        peep27.add_children_of_family("@F3@")
+        self.peeps.individuals[peep27.get_person_id()] = peep27
+        peep28 = Person("@I28@")
+        peep28.set_name("William4 /Chaplin/")
+        peep28.set_date("1 JAN 1970", "birth")
+        peep28.add_children_of_family("@F3@")
+        self.peeps.individuals[peep28.get_person_id()] = peep28
+        peep29 = Person("@I29@")
+        peep29.set_name("Coolie5 /Chaplin/")
+        peep29.set_date("1 JAN 1970", "birth")
+        peep29.add_children_of_family("@F3@")
+        self.peeps.individuals[peep29.get_person_id()] = peep29
+        peep30 = Person("@I30@")
+        peep30.set_name("JackJack6 /Chaplin/")
+        peep30.set_date("1 JAN 1970", "birth")
+        peep30.add_children_of_family("@F3@")
+        self.peeps.individuals[peep30.get_person_id()] = peep30
+
+        fam3 = Family("@F03@")
+        fam3.add_child(peep25.get_person_id())
+        fam3.add_child(peep26.get_person_id())
+        fam3.add_child(peep27.get_person_id())
+        fam3.add_child(peep28.get_person_id())
+        fam3.add_child(peep29.get_person_id())
+        fam3.add_child(peep30.get_person_id())
+        self.fam.families[fam3.get_family_id()] = fam3
+
+        self.fam.validate()
+
+        results = self.msgs.get_messages()
+        self.assertEqual(1, len(results))
+        err1 = {
+            "error_id": "FAMILY",
+            "user_story": "US14",
+            "user_id": fam3.get_family_id(),
+            "name": "NA",
+            "message": "No more than five siblings should be born at the same time"
+        }
+        self.assertDictEqual(err1, results[0])
+
     def test_validate_parents_not_too_old(self):
         # Create a test family for each unit test
         test_family = Family("@F1@")

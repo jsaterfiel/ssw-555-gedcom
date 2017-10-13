@@ -126,6 +126,7 @@ class Families(object):
             self._validate_death_of_parents_before_child_birth(family)
             self._validate_males_in_family_same_last_name(family)
             self._validate_fewer_than_15_siblings(family)
+            self._validate_less_than_5_multi_births(family)
 
     def _validate_dates(self, family):
         """ validating dates
@@ -325,6 +326,32 @@ class Families(object):
                                        family.get_family_id(),
                                        "NA",
                                        "There should be fewer than 15 siblings in a family")
+
+    def _validate_less_than_5_multi_births(self, family):
+        """US14 No more than 5 siblings born in a multiple birth in a family"""
+        children = family.get_children()
+        childbdays = {}
+
+        for child_id in children:
+            child = self._people.individuals[child_id]
+
+            if child.get_birth_date() is None:
+                continue
+
+            value = childbdays.get(
+                child.get_birth_date().date().isoformat(), None)
+            if value is not None:
+                childbdays[child.get_birth_date().date().isoformat()] = value + 1
+            else:
+                childbdays[child.get_birth_date().date().isoformat()] = 1
+            for _, value in childbdays.items():
+                if value > 5:
+                    self._msgs.add_message(self.CLASS_IDENTIFIER,
+                                           "US14",
+                                           family.get_family_id(),
+                                           "NA",
+                                           "No more than five siblings should be born at the same time")
+                    break
 
     def _validate_parents_not_too_old(self, family: Family):
         """Validate that husband and wife are not too much older than children
