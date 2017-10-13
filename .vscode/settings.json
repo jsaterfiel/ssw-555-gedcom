@@ -9,5 +9,8 @@
     "-v",
     "-s",
     "${workspaceRoot}/gedcom"
+  ],
+  "python.linting.pylintArgs": [
+    "--max-line-length=200"
   ]
 }
