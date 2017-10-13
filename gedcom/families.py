@@ -7,7 +7,7 @@ from datetime import timedelta
 from prettytable import PrettyTable
 from people import People
 from family import Family
-
+from person import Person
 
 class Families(object):
     """Families class
@@ -363,24 +363,28 @@ class Families(object):
 
         if children:
             for child in children:
-                child = self._people.individuals[child]  # type: Person
-                husband = self._people.individuals[family.get_husband_id()]  # type: Person
-                wife = self._people.individuals[family.get_wife_id()]  # type: Person
-                if husband.get_is_alive() and (husband.get_age() - child.get_age() >= 80):
-                    self._msgs.add_message(self.CLASS_IDENTIFIER,
-                                           "US12",
-                                           family.get_family_id(),
-                                           "NA",
-                                           "Father %s should be less than 80 years older than his child %s" %
-                                           (family.get_husband_id(), child.get_person_id()))
-                    return False
-                if wife.get_is_alive() and (wife.get_age() - child.get_age() >= 60):
-                    self._msgs.add_message(self.CLASS_IDENTIFIER,
-                                           "US12",
-                                           family.get_family_id(),
-                                           "NA",
-                                           "Mother %s should be less than 60 years older than her child %s" %
-                                           (family.get_wife_id(), child.get_person_id()))
-                    return False
+                # type: Person
+                child = self._people.individuals[child]
+                if family.get_husband_id() is not None:
+                    husband = self._people.individuals[family.get_husband_id()]  # type: Person
+                    if husband.get_is_alive() and (husband.get_age() - child.get_age() >= 80):
+                        self._msgs.add_message(self.CLASS_IDENTIFIER,
+                                               "US12",
+                                               family.get_family_id(),
+                                               "NA",
+                                               "Father %s should be less than 80 years older than his child %s" %
+                                               (family.get_husband_id(), child.get_person_id()))
+                        return False
+                if family.get_wife_id() is not None:
+                    wife = self._people.individuals[family.get_wife_id()]  # type: Person
+
+                    if wife.get_is_alive() and (wife.get_age() - child.get_age() >= 60):
+                        self._msgs.add_message(self.CLASS_IDENTIFIER,
+                                               "US12",
+                                               family.get_family_id(),
+                                               "NA",
+                                               "Mother %s should be less than 60 years older than her child %s" %
+                                               (family.get_wife_id(), child.get_person_id()))
+                        return False
 
         return True
