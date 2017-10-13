@@ -21,6 +21,7 @@ class Families(object):
     """
 
     CLASS_IDENTIFIER = "FAMILY"
+    DAYS_IN_YEAR = 365.2425
 
     def __init__(self, people, validation_messages):
         self.families = {}
@@ -125,6 +126,7 @@ class Families(object):
             self._validate_males_in_family_same_last_name(family)
             self._validate_fewer_than_15_siblings(family)
             self._validate_no_marriage_to_decendants(family)
+            self._validate_less_than_5_multi_births(family)
 
     def _validate_dates(self, family):
         """ validating dates
@@ -155,6 +157,14 @@ class Families(object):
                                                hus_id,
                                                hus_name,
                                                "Birth date should occur before marriage of an individual")
+                    hus_mar_age = int(
+                        (mar_date - hus_bd).days / self.DAYS_IN_YEAR)
+                    if hus_mar_age < 14:
+                        self._msgs.add_message("FAMILY",
+                                               "US10",
+                                               fam_id,
+                                               "NA",
+                                               "marriage before age 14 for " + hus_id + " " + hus_name)
                     if self._people.individuals[family.get_husband_id()].get_death_date() is not None:
                         hus_dd = self._people.individuals[family.get_husband_id(
                         )].get_death_date()
@@ -172,7 +182,7 @@ class Families(object):
                                                        fam_id,
                                                        "NA",
                                                        "divorce after death for " + hus_id + " " + hus_name)
-        # Wife Dates
+                # Wife Dates
                 if self._people.individuals[family.get_wife_id()].get_birth_date() is not None and self._people.individuals[family.get_wife_id()].get_name() is not None:
                     wife_bd = self._people.individuals[family.get_wife_id(
                     )].get_birth_date()
@@ -184,6 +194,14 @@ class Families(object):
                                                wife_id,
                                                wife_name,
                                                "Birth date should occur before marriage of an individual")
+                    wif_mar_age = int(
+                        (mar_date - wife_bd).days / self.DAYS_IN_YEAR)
+                    if wif_mar_age < 14:
+                        self._msgs.add_message("FAMILY",
+                                               "US10",
+                                               fam_id,
+                                               "NA",
+                                               "marriage before age 14 for " + wife_id + " " + wife_name)
                     if self._people.individuals[family.get_wife_id()].get_death_date() is not None:
                         wife_dd = self._people.individuals[family.get_wife_id(
                         )].get_death_date()
@@ -349,3 +367,64 @@ class Families(object):
                                        family.get_family_id(),
                                        "NA",
                                        "There should be fewer than 15 siblings in a family")
+
+    def _validate_less_than_5_multi_births(self, family):
+        """US14 No more than 5 siblings born in a multiple birth in a family"""
+        children = family.get_children()
+        childbdays = {}
+
+        for child_id in children:
+            child = self._people.individuals[child_id]
+
+            if child.get_birth_date() is None:
+                continue
+
+            value = childbdays.get(
+                child.get_birth_date().date().isoformat(), None)
+            if value is not None:
+                childbdays[child.get_birth_date().date().isoformat()
+                           ] = value + 1
+            else:
+                childbdays[child.get_birth_date().date().isoformat()] = 1
+            for _, value in childbdays.items():
+                if value > 5:
+                    self._msgs.add_message(self.CLASS_IDENTIFIER,
+                                           "US14",
+                                           family.get_family_id(),
+                                           "NA",
+                                           "No more than five siblings should be born at the same time")
+                    break
+
+    def _validate_parents_not_too_old(self, family):
+        """Validate that husband and wife are not too much older than children
+        Returns:
+            bool
+        """
+
+        children = set(family.get_children())
+
+        if children:
+            for child in children:
+                child = self._people.individuals[child]  # type: Person
+                # type: Person
+                husband = self._people.individuals[family.get_husband_id()]
+                # type: Person
+                wife = self._people.individuals[family.get_wife_id()]
+                if husband.get_is_alive() and (husband.get_age() - child.get_age() >= 80):
+                    self._msgs.add_message(self.CLASS_IDENTIFIER,
+                                           "US12",
+                                           family.get_family_id(),
+                                           "NA",
+                                           "Father %s should be less than 80 years older than his child %s" %
+                                           (family.get_husband_id(), child.get_person_id()))
+                    return False
+                if wife.get_is_alive() and (wife.get_age() - child.get_age() >= 60):
+                    self._msgs.add_message(self.CLASS_IDENTIFIER,
+                                           "US12",
+                                           family.get_family_id(),
+                                           "NA",
+                                           "Mother %s should be less than 60 years older than her child %s" %
+                                           (family.get_wife_id(), child.get_person_id()))
+                    return False
+
+        return True

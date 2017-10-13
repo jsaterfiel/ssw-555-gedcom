@@ -808,67 +808,216 @@ class TestFamilies(unittest.TestCase):
         }
         self.assertDictEqual(err3, results[2])
 
-    def test_is_valid_married_date(self):
-        """ US02: is marriage valid
+    def test_valid_married_date_and_age(self):
+        """ US02: is marriage valid. US10: are spouses at
+        least 14 when married
         """
         # Family 1 invalid married date
-        fam1 = Family("@F1@")
-        fam1.set_husband_id("@I1@")
-        fam1.set_wife_id("@I2@")
-        fam1.set_date("1 JAN 1960", "married")
-        self.fam.families[fam1.get_family_id()] = fam1
         peep1 = Person("@I1@")
         peep1.set_name("Tony /Tiger/")
         peep1.set_gender("M")
         peep1.set_date("1 JAN 1970", "birth")
-        peep1.add_spouse_of_family(fam1.get_family_id())
+        peep1.add_spouse_of_family("@F1@")
         self.peeps.individuals[peep1.get_person_id()] = peep1
         peep2 = Person("@I2@")
         peep2.set_name("Minnie /Mouse/")
         peep2.set_gender("F")
         peep2.set_date("20 JUL 1970", "birth")
-        peep2.add_spouse_of_family(fam1.get_family_id())
+        peep2.add_spouse_of_family("@F1@")
         self.peeps.individuals[peep2.get_person_id()] = peep2
+        fam1 = Family("@F1@")
+        fam1.set_husband_id("@I1@")
+        fam1.set_wife_id("@I2@")
+        fam1.set_date("1 JAN 1960", "married")
+        self.fam.families[fam1.get_family_id()] = fam1
 
         # Family 2 valid married date
-        fam2 = Family("@F2@")
-        fam2.set_husband_id("@I3@")
-        fam2.set_wife_id("@I4@")
-        fam2.set_date("1 JAN 1990", "married")
-        self.fam.families[fam2.get_family_id()] = fam2
         peep3 = Person("@I3@")
         peep3.set_name("Bob /Tiger/")
         peep3.set_gender("M")
         peep3.set_date("1 JAN 1970", "birth")
-        peep3.add_spouse_of_family(fam2.get_family_id())
+        peep3.add_spouse_of_family("@F2@")
         self.peeps.individuals[peep3.get_person_id()] = peep3
         peep4 = Person("@I4@")
         peep4.set_name("Sally /Mouse/")
         peep4.set_gender("F")
         peep4.set_date("20 JUL 1970", "birth")
-        peep4.add_spouse_of_family(fam2.get_family_id())
+        peep4.add_spouse_of_family("@F2@")
         self.peeps.individuals[peep4.get_person_id()] = peep4
+        fam2 = Family("@F2@")
+        fam2.set_husband_id("@I3@")
+        fam2.set_wife_id("@I4@")
+        fam2.set_date("1 JAN 1990", "married")
+        self.fam.families[fam2.get_family_id()] = fam2
+
+        # Family 9 setup (married: husband age 30, wife age 27) Valid
+        peep28 = Person("@I28@")
+        peep28.set_name("SpongeBob /SquarePants/")
+        peep28.set_gender("M")
+        peep28.set_date("17 AUG 1987", "birth")
+        peep28.add_spouse_of_family("@F9@")
+        self.peeps.individuals[peep28.get_person_id()] = peep28
+        peep29 = Person("@I29@")
+        peep29.set_name("Sandy /Cheeks/")
+        peep29.set_gender("F")
+        peep29.set_date("19 AUG 1990", "birth")
+        peep29.add_spouse_of_family("@F9@")
+        self.peeps.individuals[peep29.get_person_id()] = peep29
+        fam9 = Family("@F9@")
+        fam9.set_date("4 OCT 2017", "married")
+        fam9.set_husband_id(peep28.get_person_id())
+        fam9.set_wife_id(peep29.get_person_id())
+        self.fam.families[fam9.get_family_id()] = fam9
+
+        # Family 10 setup (married: husband age 14, wife age 14) Valid
+        peep30 = Person("@I30@")
+        peep30.set_name("Patrick /Star/")
+        peep30.set_gender("M")
+        peep30.set_date("17 AUG 2003", "birth")
+        peep30.add_spouse_of_family("@F10@")
+        self.peeps.individuals[peep30.get_person_id()] = peep30
+        peep31 = Person("@I31@")
+        peep31.set_name("Pearl /Crabs/")
+        peep31.set_gender("F")
+        peep31.set_date("25 MAY 2003", "birth")
+        peep31.add_spouse_of_family("@F10@")
+        self.peeps.individuals[peep31.get_person_id()] = peep31
+        fam10 = Family("@F10@")
+        fam10.set_date("4 OCT 2017", "married")
+        fam10.set_husband_id(peep30.get_person_id())
+        fam10.set_wife_id(peep31.get_person_id())
+        self.fam.families[fam10.get_family_id()] = fam10
+
+        # Family 11 setup (married: husband age 13, wife age 16) Invalid
+        peep32 = Person("@I32@")
+        peep32.set_name("Gary /Snail/")
+        peep32.set_gender("M")
+        peep32.set_date("17 AUG 2004", "birth")
+        peep32.add_spouse_of_family("@F11@")
+        self.peeps.individuals[peep32.get_person_id()] = peep32
+        peep33 = Person("@I33@")
+        peep33.set_name("Lady /Crustacean/")
+        peep33.set_gender("F")
+        peep33.set_date("25 AUG 2001", "birth")
+        peep33.add_spouse_of_family("@F11@")
+        self.peeps.individuals[peep33.get_person_id()] = peep33
+        fam11 = Family("@F11@")
+        fam11.set_date("4 OCT 2017", "married")
+        fam11.set_husband_id(peep32.get_person_id())
+        fam11.set_wife_id(peep33.get_person_id())
+        self.fam.families[fam11.get_family_id()] = fam11
+
+        # Family 12 setup (married: husband age 16, wife age 13) Invalid
+        peep34 = Person("@I34@")
+        peep34.set_name("Larry /Lobster/")
+        peep34.set_gender("M")
+        peep34.set_date("17 AUG 2001", "birth")
+        peep34.add_spouse_of_family("@F12@")
+        self.peeps.individuals[peep34.get_person_id()] = peep34
+        peep35 = Person("@I35@")
+        peep35.set_name("Tina /Tuna/")
+        peep35.set_gender("F")
+        peep35.set_date("25 AUG 2004", "birth")
+        peep35.add_spouse_of_family("@F12@")
+        self.peeps.individuals[peep35.get_person_id()] = peep35
+        fam12 = Family("@F12@")
+        fam12.set_husband_id(peep34.get_person_id())
+        fam12.set_wife_id(peep35.get_person_id())
+        fam12.set_date("4 OCT 2017", "married")
+        self.fam.families[fam12.get_family_id()] = fam12
+
+        # Family 13 setup (married: husband age 12, wife age 10) Invalid
+        peep36 = Person("@I36@")
+        peep36.set_name("Squidward /Tentacles/")
+        peep36.set_gender("M")
+        peep36.set_date("17 AUG 2005", "birth")
+        peep36.add_spouse_of_family("@F13@")
+        self.peeps.individuals[peep36.get_person_id()] = peep36
+        peep37 = Person("@I37@")
+        peep37.set_name("Karen /Tentacles/")
+        peep37.set_gender("F")
+        peep37.set_date("25 AUG 2007", "birth")
+        peep37.add_spouse_of_family("@F13@")
+        self.peeps.individuals[peep37.get_person_id()] = peep37
+        fam13 = Family("@F13@")
+        fam13.set_husband_id(peep36.get_person_id())
+        fam13.set_wife_id(peep37.get_person_id())
+        fam13.set_date("4 OCT 2017", "married")
+        self.fam.families[fam13.get_family_id()] = fam13
 
         self.fam.validate()
         results = self.msgs.get_messages()
 
-        self.assertEqual(2, len(results))
+        self.assertEqual(8, len(results))
+
         err1 = {
+            "error_id": "FAMILY",
+            "user_story": "US10",
+            "user_id": fam11.get_family_id(),
+            "name": "NA",
+            "message": "marriage before age 14 for " + peep32.get_person_id() + " " +
+                       peep32.get_name()
+        }
+        self.assertDictEqual(err1, results[0])
+        err2 = {
+            "error_id": "FAMILY",
+            "user_story": "US10",
+            "user_id": fam12.get_family_id(),
+            "name": "NA",
+            "message": "marriage before age 14 for " + peep35.get_person_id() + " " +
+                       peep35.get_name()
+        }
+        self.assertDictEqual(err2, results[1])
+        err3 = {
+            "error_id": "FAMILY",
+            "user_story": "US10",
+            "user_id": fam13.get_family_id(),
+            "name": "NA",
+            "message": "marriage before age 14 for " + peep36.get_person_id() + " " +
+                       peep36.get_name()
+        }
+        self.assertDictEqual(err3, results[2])
+        err4 = {
+            "error_id": "FAMILY",
+            "user_story": "US10",
+            "user_id": fam13.get_family_id(),
+            "name": "NA",
+            "message": "marriage before age 14 for " + peep37.get_person_id() + " " +
+                       peep37.get_name()
+        }
+        self.assertDictEqual(err4, results[3])
+        err5 = {
             "error_id": "INDIVIDUAL",
             "user_story": "US02",
             "user_id": peep1.get_person_id(),
             "name": peep1.get_name(),
             "message": "Birth date should occur before marriage of an individual"
         }
-        self.assertDictEqual(err1, results[0])
-        err2 = {
+        self.assertDictEqual(err5, results[4])
+        err6 = {
+            "error_id": "FAMILY",
+            "user_story": "US10",
+            "user_id": fam1.get_family_id(),
+            "name": "NA",
+            "message": "marriage before age 14 for " + peep1.get_person_id() + " " + peep1.get_name()
+        }
+        self.assertDictEqual(err6, results[5])
+        err7 = {
             "error_id": "INDIVIDUAL",
             "user_story": "US02",
             "user_id": peep2.get_person_id(),
             "name": peep2.get_name(),
             "message": "Birth date should occur before marriage of an individual"
         }
-        self.assertDictEqual(err2, results[1])
+        self.assertDictEqual(err7, results[6])
+        err8 = {
+            "error_id": "FAMILY",
+            "user_story": "US10",
+            "user_id": fam1.get_family_id(),
+            "name": "NA",
+            "message": "marriage before age 14 for " + peep2.get_person_id() + " " + peep2.get_name()
+        }
+        self.assertDictEqual(err8, results[7])
 
     def test_validation_marriage_before_divorce(self):
         """US04: testing that marriage occurred before divorce
@@ -1252,10 +1401,12 @@ class TestFamilies(unittest.TestCase):
         fam1_male1.set_gender("M")
         fam1_male1.set_name("Bob /Hope/")
         fam1_male1.add_spouse_of_family(fam1_id)
+        fam1_male1.set_date("1 JAN 1965", "birth")
         fam1_male2 = Person("@F1I2@")
         fam1_male2.set_gender("M")
         fam1_male2.set_name("Greg /Hope")
         fam1_male2.add_children_of_family(fam1_id)
+        fam1_male2.set_date("1 JAN 1965", "birth")
         fam1_female1 = Person("@F1I4@")
         fam1_female1.set_gender("F")
         fam1_female1.set_name("Sally /Fields/")
@@ -1306,7 +1457,6 @@ class TestFamilies(unittest.TestCase):
             "name": "NA",
             "message": "All males in a family must have the same last name"
         }
-
         self.assertDictEqual(err, msgs[0])
 
     def test_us17_no_marriages_to_descendants(self):
@@ -1590,3 +1740,125 @@ class TestFamilies(unittest.TestCase):
             "message": "There should be fewer than 15 siblings in a family"
         }
         self.assertDictEqual(err1, results[0])
+
+    def test_us14_fewer_than_5_siblings(self):
+        """US014 No more than 5 siblings born in a multiple birth in a family
+        """
+        # family set up - 3 births at a time - valid
+        peep25 = Person("@I25@")
+        peep25.set_name("GreenDay /Chaplin/")
+        peep25.set_date("1 JAN 1970", "birth")
+        peep25.add_children_of_family("@F1@")
+        self.peeps.individuals[peep25.get_person_id()] = peep25
+        peep26 = Person("@I26@")
+        peep26.set_name("Panic /Chaplin/")
+        peep26.set_date("1 JAN 1970", "birth")
+        peep26.add_children_of_family("@F1@")
+        self.peeps.individuals[peep26.get_person_id()] = peep26
+        peep27 = Person("@I27@")
+        peep27.set_name("Maroon /Chaplin/")
+        peep27.set_date("1 JAN 1970", "birth")
+        peep27.add_children_of_family("@F1@")
+        self.peeps.individuals[peep27.get_person_id()] = peep27
+        fam1 = Family("@F1@")
+        fam1.add_child(peep25.get_person_id())
+        fam1.add_child(peep26.get_person_id())
+        fam1.add_child(peep27.get_person_id())
+        self.fam.families[fam1.get_family_id()] = fam1
+
+        # family set up - 6 births at same time - invalid
+        peep25 = Person("@I25@")
+        peep25.set_name("Charlie1 /Chaplin/")
+        peep25.set_date("1 JAN 1970", "birth")
+        peep25.add_children_of_family("@F3@")
+        self.peeps.individuals[peep25.get_person_id()] = peep25
+        peep26 = Person("@I26@")
+        peep26.set_name("Hugh2 /Chaplin/")
+        peep26.set_date("1 JAN 1970", "birth")
+        peep26.add_children_of_family("@F3@")
+        self.peeps.individuals[peep26.get_person_id()] = peep26
+        peep27 = Person("@I27@")
+        peep27.set_name("Jacob3 /Chaplin/")
+        peep27.set_date("1 JAN 1970", "birth")
+        peep27.add_children_of_family("@F3@")
+        self.peeps.individuals[peep27.get_person_id()] = peep27
+        peep28 = Person("@I28@")
+        peep28.set_name("William4 /Chaplin/")
+        peep28.set_date("1 JAN 1970", "birth")
+        peep28.add_children_of_family("@F3@")
+        self.peeps.individuals[peep28.get_person_id()] = peep28
+        peep29 = Person("@I29@")
+        peep29.set_name("Coolie5 /Chaplin/")
+        peep29.set_date("1 JAN 1970", "birth")
+        peep29.add_children_of_family("@F3@")
+        self.peeps.individuals[peep29.get_person_id()] = peep29
+        peep30 = Person("@I30@")
+        peep30.set_name("JackJack6 /Chaplin/")
+        peep30.set_date("1 JAN 1970", "birth")
+        peep30.add_children_of_family("@F3@")
+        self.peeps.individuals[peep30.get_person_id()] = peep30
+
+        fam3 = Family("@F03@")
+        fam3.add_child(peep25.get_person_id())
+        fam3.add_child(peep26.get_person_id())
+        fam3.add_child(peep27.get_person_id())
+        fam3.add_child(peep28.get_person_id())
+        fam3.add_child(peep29.get_person_id())
+        fam3.add_child(peep30.get_person_id())
+        self.fam.families[fam3.get_family_id()] = fam3
+
+        self.fam.validate()
+
+        results = self.msgs.get_messages()
+        self.assertEqual(1, len(results))
+        err1 = {
+            "error_id": "FAMILY",
+            "user_story": "US14",
+            "user_id": fam3.get_family_id(),
+            "name": "NA",
+            "message": "No more than five siblings should be born at the same time"
+        }
+        self.assertDictEqual(err1, results[0])
+
+    def test_validate_parents_not_too_old(self):
+        # Create a test family for each unit test
+        test_family = Family("@F1@")
+        test_family.set_husband_id("@I1@")
+        test_family.set_wife_id("@I2@")
+        test_family.set_date("1 JAN 1990", "married")
+        test_family.add_child("@I3@")
+        self.fam.families[test_family.get_family_id()] = test_family
+        test_husband = Person("@I1@")
+        test_husband.set_name("Tony /Tiger/")
+        test_husband.set_gender("M")
+        test_husband.set_date("1 JAN 1965", "birth")
+        test_husband.add_spouse_of_family(test_family.get_family_id())
+        self.peeps.individuals[test_husband.get_person_id()] = test_husband
+        test_wife = Person("@I2@")
+        test_wife.set_name("Minnie /Mouse/")
+        test_wife.set_gender("F")
+        test_wife.set_date("20 JUL 1966", "birth")
+        test_wife.add_spouse_of_family(test_family.get_family_id())
+        self.peeps.individuals[test_wife.get_person_id()] = test_wife
+        test_child = Person("@I3@")
+        test_child.set_name("Mickey /Mouse/")
+        test_child.set_gender("M")
+        test_child.set_date("20 NOV 1992", "birth")
+        test_child.add_children_of_family(test_family.get_family_id())
+        self.peeps.individuals[test_child.get_person_id()] = test_child
+        """ US12: Test if parents are too old
+        """
+        test_family = self.fam.families["@F1@"]  # type: Family
+        self.assertTrue(self.fam._validate_parents_not_too_old(test_family))
+        self.assertEqual(len(self.msgs._messages), 0)
+
+        husband = self.peeps.individuals[test_family.get_husband_id()]  # type: Person
+        husband.set_date("17 AUG 1900", "birth")
+        self.assertFalse(self.fam._validate_parents_not_too_old(test_family))
+        self.assertEqual(len(self.msgs.get_messages()), 1)
+
+        wife = self.peeps.individuals[test_family.get_wife_id()]  # type: Person
+        husband.set_date("1 JAN 1965", "birth")
+        wife.set_date("18 AUG 1900", "birth")
+        self.assertFalse(self.fam._validate_parents_not_too_old(test_family))
+        self.assertEqual(len(self.msgs.get_messages()), 2)
