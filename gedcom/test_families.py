@@ -1401,12 +1401,10 @@ class TestFamilies(unittest.TestCase):
         fam1_male1.set_gender("M")
         fam1_male1.set_name("Bob /Hope/")
         fam1_male1.add_spouse_of_family(fam1_id)
-        fam1_male1.set_date("1 JAN 1965", "birth")
         fam1_male2 = Person("@F1I2@")
         fam1_male2.set_gender("M")
-        fam1_male2.set_name("Greg /Hope")
+        fam1_male2.set_name("Greg /Hope/")
         fam1_male2.add_children_of_family(fam1_id)
-        fam1_male2.set_date("1 JAN 1965", "birth")
         fam1_female1 = Person("@F1I4@")
         fam1_female1.set_gender("F")
         fam1_female1.set_name("Sally /Fields/")
@@ -1588,7 +1586,7 @@ class TestFamilies(unittest.TestCase):
         self.fam.validate()
 
         results = self.msgs.get_messages()
-        
+
         self.assertEqual(3, len(results))
 
         err1 = {
@@ -1852,12 +1850,14 @@ class TestFamilies(unittest.TestCase):
         self.assertTrue(self.fam._validate_parents_not_too_old(test_family))
         self.assertEqual(len(self.msgs._messages), 0)
 
-        husband = self.peeps.individuals[test_family.get_husband_id()]  # type: Person
+        # type: Person
+        husband = self.peeps.individuals[test_family.get_husband_id()]
         husband.set_date("17 AUG 1900", "birth")
         self.assertFalse(self.fam._validate_parents_not_too_old(test_family))
         self.assertEqual(len(self.msgs.get_messages()), 1)
 
-        wife = self.peeps.individuals[test_family.get_wife_id()]  # type: Person
+        # type: Person
+        wife = self.peeps.individuals[test_family.get_wife_id()]
         husband.set_date("1 JAN 1965", "birth")
         wife.set_date("18 AUG 1900", "birth")
         self.assertFalse(self.fam._validate_parents_not_too_old(test_family))
