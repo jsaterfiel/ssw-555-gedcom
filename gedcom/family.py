@@ -87,7 +87,7 @@ class Family(object):
     def set_date(self, date_string, date_type):
         """returns the date in datetime convention from a string
         Returns:
-
+            datetime
         """
         if date_type == "married":
             self._married_date = datetime.strptime(date_string, '%d %b %Y')
