@@ -153,7 +153,7 @@ class People(object):
     def _is_valid_sibling(self, person):
         """ checks if siblings are married to each other
         """
-        if person.get_children_of_families() is not None and person.get_spouse_of_families() is not None:
+        if len(set(person.get_children_of_families())) and len(set(person.get_spouse_of_families())):
             spouses = set(person.get_spouse_of_families())
             children = set(person.get_children_of_families())
 

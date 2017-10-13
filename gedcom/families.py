@@ -126,6 +126,7 @@ class Families(object):
             self._validate_males_in_family_same_last_name(family)
             self._validate_fewer_than_15_siblings(family)
             self._validate_less_than_5_multi_births(family)
+            self._validate_parents_not_too_old(family)
 
     def _validate_dates(self, family):
         """ validating dates
