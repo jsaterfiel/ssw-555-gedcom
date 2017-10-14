@@ -1486,12 +1486,14 @@ class TestFamilies(unittest.TestCase):
         fam1.set_husband_id(peep1.get_person_id())
         fam1.set_wife_id(peep2.get_person_id())
         fam1.add_child(peep3.get_person_id())
+        fam1.set_date("20 FEB 1999", "married")
         self.fam.families[fam1.get_family_id()] = fam1
 
         # Family 2 setup (same husband and wife is child from family 1) INVALID
         fam2 = Family("@F2@")
         fam2.set_husband_id(peep1.get_person_id())
         fam2.set_wife_id(peep3.get_person_id())
+        fam2.set_date("13 JAN 2016", "married")
         self.fam.families[fam2.get_family_id()] = fam2
 
         # Family 3 setup VALID
@@ -1520,12 +1522,14 @@ class TestFamilies(unittest.TestCase):
         fam3.set_husband_id(peep4.get_person_id())
         fam3.set_wife_id(peep5.get_person_id())
         fam3.add_child(peep6.get_person_id())
+        fam3.set_date("21 FEB 2000", "married")
         self.fam.families[fam3.get_family_id()] = fam3
 
         # Family 4 setup (same wife and child from family 3) INVALID
         fam4 = Family("@F4@")
         fam4.set_husband_id(peep6.get_person_id())
         fam4.set_wife_id(peep5.get_person_id())
+        fam4.set_date("16 SEP 2015", "married")
         self.fam.families[fam4.get_family_id()] = fam4
 
         # Family 5 setup VALID
@@ -1554,6 +1558,8 @@ class TestFamilies(unittest.TestCase):
         fam5.set_husband_id(peep7.get_person_id())
         fam5.set_wife_id(peep8.get_person_id())
         fam5.add_child(peep9.get_person_id())
+        fam5.set_date("19 FEB 1980", "married")
+        fam5.set_date("20 MAR 1981", "divorced")
         self.fam.families[fam5.get_family_id()] = fam5
 
         # Family 6 setup (decendants of family 5) VALID
@@ -1575,12 +1581,14 @@ class TestFamilies(unittest.TestCase):
         fam6.set_husband_id(peep10.get_person_id())
         fam6.set_wife_id(peep9.get_person_id())
         fam6.add_child(peep11.get_person_id())
+        fam6.set_date("20 FEB 2014", "married")
         self.fam.families[fam6.get_family_id()] = fam6
 
         # Family 7 setup (same wife as family 5) INVALID
         fam7 = Family("@F7@")
         fam7.set_husband_id(peep11.get_person_id())
         fam7.set_wife_id(peep8.get_person_id())
+        fam7.set_date("1 JAN 2015", "married")
         self.fam.families[fam7.get_family_id()] = fam7
 
         self.fam.validate()
@@ -1738,6 +1746,167 @@ class TestFamilies(unittest.TestCase):
             "message": "There should be fewer than 15 siblings in a family"
         }
         self.assertDictEqual(err1, results[0])
+
+    def test_validation_no_bigamy(self):
+        """US11: testing no bigamy
+        """
+        # Family 1 setup
+        peep1 = Person("@I1@")
+        peep1.set_name("Philip /Banks/")
+        peep1.set_gender("M")
+        peep1.set_date("17 AUG 1967", "birth")
+        peep1.add_spouse_of_family("@F1@")
+        peep1.add_spouse_of_family("@F2@")
+        peep1.add_spouse_of_family("@F3@")
+        self.peeps.individuals[peep1.get_person_id()] = peep1
+        peep2 = Person("@I2@")
+        peep2.set_name("Vivian /Banks/")
+        peep2.set_gender("F")
+        peep2.set_date("17 AUG 1970", "birth")
+        peep2.set_date("17 JAN 1993", "death")
+        peep2.add_spouse_of_family("@F1@")
+        peep2.add_spouse_of_family("@F4@")
+        self.peeps.individuals[peep2.get_person_id()] = peep2
+        fam1 = Family("@F1@")
+        fam1.set_husband_id(peep1.get_person_id())
+        fam1.set_wife_id(peep2.get_person_id())
+        fam1.set_date("20 SEP 1990", "married")
+        self.fam.families[fam1.get_family_id()] = fam1
+
+        # Family 2 setup
+        peep3 = Person("@I3@")
+        peep3.set_name("Lily /Banks/")
+        peep3.set_gender("F")
+        peep3.set_date("20 AUG 1970", "birth")
+        peep3.add_spouse_of_family("@F2@")
+        self.peeps.individuals[peep3.get_person_id()] = peep3
+        fam2 = Family("@F2@")
+        fam2.set_husband_id(peep1.get_person_id())
+        fam2.set_wife_id(peep3.get_person_id())
+        fam2.set_date("20 SEP 1994", "married")
+        fam2.set_date("25 AUG 1996", "divorced")
+        self.fam.families[fam2.get_family_id()] = fam2
+
+        # Family 3 setup
+        peep4 = Person("@I4@")
+        peep4.set_name("Millie /Banks/")
+        peep4.set_gender("F")
+        peep4.set_date("20 AUG 1970", "birth")
+        peep4.add_spouse_of_family("@F3@")
+        self.peeps.individuals[peep4.get_person_id()] = peep4
+        fam3 = Family("@F3@")
+        fam3.set_husband_id(peep1.get_person_id())
+        fam3.set_wife_id(peep4.get_person_id())
+        fam3.set_date("20 SEP 1990", "married")
+        self.fam.families[fam3.get_family_id()] = fam3
+
+        # Family 4 setup
+        peep5 = Person("@I5@")
+        peep5.set_name("Mikey /Mild/")
+        peep5.set_gender("M")
+        peep5.set_date("20 AUG 1970", "birth")
+        peep5.add_spouse_of_family("@F4@")
+        peep5.add_spouse_of_family("@F5@")
+        self.peeps.individuals[peep5.get_person_id()] = peep5
+        fam4 = Family("@F4@")
+        fam4.set_husband_id(peep5.get_person_id())
+        fam4.set_wife_id(peep2.get_person_id())
+        self.fam.families[fam4.get_family_id()] = fam4
+
+        # Family 5 setup
+        peep6 = Person("@I6@")
+        peep6.set_name("Maura /Mild/")
+        peep6.set_gender("F")
+        peep6.set_date("21 AUG 1970", "birth")
+        peep6.add_spouse_of_family("@F5@")
+        self.peeps.individuals[peep6.get_person_id()] = peep6
+        fam5 = Family("@F5@")
+        fam5.set_husband_id(peep5.get_person_id())
+        fam5.set_wife_id(peep6.get_person_id())
+        self.fam.families[fam5.get_family_id()] = fam5
+
+        # Family 6 setup
+        peep7 = Person("@I7@")
+        peep7.set_name("Freddy /Banks/")
+        peep7.set_gender("M")
+        peep7.set_date("17 AUG 1967", "birth")
+        peep7.add_spouse_of_family("@F6@")
+        peep7.add_spouse_of_family("@F7@")
+        self.peeps.individuals[peep7.get_person_id()] = peep7
+        peep8 = Person("@I8@")
+        peep8.set_name("Carrie /Banks/")
+        peep8.set_gender("F")
+        peep8.set_date("17 AUG 1970", "birth")
+        peep8.add_spouse_of_family("@F6@")
+        self.peeps.individuals[peep8.get_person_id()] = peep8
+        fam6 = Family("@F6@")
+        fam6.set_husband_id(peep7.get_person_id())
+        fam6.set_wife_id(peep8.get_person_id())
+        fam6.set_date("20 OCT 1990", "married")
+        fam6.set_date("29 OCT 1991", "divorced")
+        self.fam.families[fam6.get_family_id()] = fam6
+
+        # Family 7
+        peep9 = Person("@I9@")
+        peep9.set_name("Carrie /Banks/")
+        peep9.set_gender("F")
+        peep9.set_date("17 JAN 1970", "birth")
+        peep9.add_spouse_of_family("@F7@")
+        self.peeps.individuals[peep9.get_person_id()] = peep9
+        fam7 = Family("@F7@")
+        fam7.set_husband_id(peep7.get_person_id())
+        fam7.set_wife_id(peep9.get_person_id())
+        fam7.set_date("19 OCT 2000", "married")
+        self.fam.families[fam7.get_family_id()] = fam7
+        self.fam.validate()
+
+        results = self.msgs.get_messages()
+        self.assertEqual(5, len(results))
+        err1 = {
+            "error_id": "FAMILY",
+            "user_story": "US11",
+            "user_id": fam1.get_family_id(),
+            "name": "NA",
+            "message": "Bigamy for " + peep2.get_person_id() + " " +
+                       peep2.get_name()
+        }
+        self.assertDictEqual(err1, results[0])
+        err2 = {
+            "error_id": "FAMILY",
+            "user_story": "US11",
+            "user_id": fam3.get_family_id(),
+            "name": "NA",
+            "message": "Bigamy for " + peep1.get_person_id() + " " +
+                       peep1.get_name()
+        }
+        self.assertDictEqual(err2, results[1])
+        err3 = {
+            "error_id": "FAMILY",
+            "user_story": "US11",
+            "user_id": fam4.get_family_id(),
+            "name": "NA",
+            "message": "Bigamy for " + peep5.get_person_id() + " " +
+                       peep5.get_name()
+        }
+        self.assertDictEqual(err3, results[2])
+        err4 = {
+            "error_id": "FAMILY",
+            "user_story": "US11",
+            "user_id": fam4.get_family_id(),
+            "name": "NA",
+            "message": "Bigamy for " + peep2.get_person_id() + " " +
+                       peep2.get_name()
+        }
+        self.assertDictEqual(err4, results[3])
+        err5 = {
+            "error_id": "FAMILY",
+            "user_story": "US11",
+            "user_id": fam5.get_family_id(),
+            "name": "NA",
+            "message": "Bigamy for " + peep5.get_person_id() + " " +
+                       peep5.get_name()
+        }
+        self.assertDictEqual(err5, results[4])
 
     def test_us14_fewer_than_5_siblings(self):
         """US014 No more than 5 siblings born in a multiple birth in a family

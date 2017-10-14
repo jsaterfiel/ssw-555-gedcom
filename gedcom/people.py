@@ -4,6 +4,7 @@ Parses person tags from the gedcom data passed to it line by line as they appear
 from datetime import datetime
 from person import Person
 from prettytable import PrettyTable
+from family import Family
 
 
 class People(object):

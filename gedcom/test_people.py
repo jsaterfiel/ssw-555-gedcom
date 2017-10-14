@@ -7,6 +7,7 @@ from datetime import datetime
 from people import People
 from person import Person
 from validation_messages import ValidationMessages
+from family import Family
 
 
 class TestPeople(unittest.TestCase):
