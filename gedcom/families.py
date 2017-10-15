@@ -7,7 +7,6 @@ from datetime import timedelta
 from prettytable import PrettyTable
 from people import People
 from family import Family
-from person import Person
 
 
 class Families(object):
@@ -126,6 +125,8 @@ class Families(object):
             self._validate_death_of_parents_before_child_birth(family)
             self._validate_males_in_family_same_last_name(family)
             self._validate_fewer_than_15_siblings(family)
+            self._validate_no_bigamy(family)
+            self._validate_no_marriage_to_decendants(family)
             self._validate_less_than_5_multi_births(family)
             self._validate_parents_not_too_old(family)
 
@@ -258,7 +259,7 @@ class Families(object):
                 if husb.get_death_date() is not None:
                     hub9_date = husb.get_death_date()
                     # Calculate 9 Months Back
-                    for i in range(0, 9):
+                    for _ in range(0, 9):
                         hub9_date = hub9_date.replace(day=1)
                         hub9_date = hub9_date - timedelta(days=1)
                         # Calculate Day
@@ -279,11 +280,123 @@ class Families(object):
                 if wife.get_death_date() is not None and chil.get_birth_date() > wife.get_death_date():
                     # error wife died before child birth
                     self._msgs.add_message(
-                        "FAMILY",
+                        self.CLASS_IDENTIFIER,
                         key,
                         family.get_family_id(),
                         "NA",
                         msg + wife.get_person_id() + " " + wife.get_name())
+
+    def _person_check_bigamy(self, person_id, marriage_start, marriage_end):
+        """ check bigamy for person
+        """
+        spouses_h = self._people.individuals[person_id].get_spouse_of_families(
+        )
+        if spouses_h is not None and len(spouses_h) > 1:
+            for item in spouses_h:
+                ft = self.families[item]
+                ft_hus = ft.get_husband_id()
+                ft_wif = ft.get_wife_id()
+                ft_som = ft.get_married_date()
+                if ft_som is None:
+                    return True
+                if (marriage_start is None or ft_som > marriage_start) and ft_som < marriage_end:
+                    return True
+                ft_eom = ft.get_divorced_date()
+                if ft_eom is None:
+                    ft_eom = self._people.individuals[ft_hus].get_death_date()
+                    ft_w_d = self._people.individuals[ft_wif].get_death_date()
+                    if ft_w_d is not None:
+                        if ft_eom is None or ft_w_d < ft_eom:
+                            ft_eom = ft_w_d
+                if ft_eom is None:
+                    ft_eom = self._current_time
+                if ft_eom > marriage_start and ft_eom < marriage_end:
+                    return True
+        return False
+
+    def _validate_no_bigamy(self, family):
+        """US11 No bigamy
+        """
+        key = "US11"
+        msg = "Bigamy for "
+
+        hus = family.get_husband_id()
+        wif = family.get_wife_id()
+
+        if hus is None or wif is None:
+            return
+
+        som = family.get_married_date()
+        eom = family.get_divorced_date()
+        if eom is None:
+            eom = self._people.individuals[hus].get_death_date()
+            w_d = self._people.individuals[wif].get_death_date()
+            if w_d is not None:
+                if eom is None or w_d < eom:
+                    eom = w_d
+        if eom is None:
+            eom = self._current_time
+
+        hus_result = self._person_check_bigamy(hus, som, eom)
+
+        wif_result = self._person_check_bigamy(wif, som, eom)
+
+        if hus_result is True:
+            self._msgs.add_message(
+                self.CLASS_IDENTIFIER,
+                key,
+                family.get_family_id(),
+                "NA",
+                msg + self._people.individuals[family.get_husband_id()].get_person_id() + " " + self._people.individuals[family.get_husband_id()].get_name())
+
+        if wif_result is True:
+            self._msgs.add_message(
+                self.CLASS_IDENTIFIER,
+                key,
+                family.get_family_id(),
+                "NA",
+                msg + self._people.individuals[family.get_wife_id()].get_person_id() + " " + self._people.individuals[family.get_wife_id()].get_name())
+
+    def _validate_no_marriage_to_decendants(self, family):
+        """US17 No marriage to decendants
+        """
+        if family.get_children() is None:
+            return
+
+        if family.get_husband_id() is not None:
+            self._check_family_for_decendant_marriage(
+                family, family.get_husband_id(), True)
+
+        if family.get_wife_id() is not None:
+            self._check_family_for_decendant_marriage(
+                family, family.get_wife_id(), True)
+
+    def _check_family_for_decendant_marriage(self, family, person_id, ignore_current_family):
+        """recursive function to go through families to see if a particular person_id was reused
+        Is a part of US17
+        """
+        if ignore_current_family is False:
+            if family.get_wife_id() == person_id or family.get_husband_id() == person_id:
+                person = self._people.individuals[person_id]
+                self._msgs.add_message(self.CLASS_IDENTIFIER,
+                                       "US17",
+                                       family.get_family_id(),
+                                       "NA",
+                                       "No marriage to decendants. " + person_id + " " + person.get_name())
+
+        children = family.get_children()
+        if children is None:
+            return
+
+        for child_id in family.get_children():
+            child = self._people.individuals[child_id]
+            fams = child.get_spouse_of_families()
+            if fams is None:
+                return
+            for fam_id in fams:
+                fam = self.families[fam_id]
+                self._check_family_for_decendant_marriage(
+                    fam, person_id, False)
 
     def _validate_males_in_family_same_last_name(self, family):
         """US16 All males in a family have the same last name
@@ -342,7 +455,8 @@ class Families(object):
             value = childbdays.get(
                 child.get_birth_date().date().isoformat(), None)
             if value is not None:
-                childbdays[child.get_birth_date().date().isoformat()] = value + 1
+                childbdays[child.get_birth_date().date().isoformat()
+                           ] = value + 1
             else:
                 childbdays[child.get_birth_date().date().isoformat()] = 1
             for _, value in childbdays.items():
@@ -354,7 +468,7 @@ class Families(object):
                                            "No more than five siblings should be born at the same time")
                     break
 
-    def _validate_parents_not_too_old(self, family: Family):
+    def _validate_parents_not_too_old(self, family):
         """Validate that husband and wife are not too much older than children
         Returns:
             bool
