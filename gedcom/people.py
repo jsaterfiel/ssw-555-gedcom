@@ -151,6 +151,23 @@ class People(object):
                                        person.get_name(),
                                        "Birth date should occur before current date")
 
+    def _is_valid_sibling(self, person):
+        """ checks if siblings are married to each other
+        """
+        if len(set(person.get_children_of_families())) and len(set(person.get_spouse_of_families())):
+            spouses = set(person.get_spouse_of_families())
+            children = set(person.get_children_of_families())
+
+            if spouses.intersection(children):
+                self._msgs.add_message(self.CLASS_IDENTIFIER,
+                                       "US18",
+                                       person.get_person_id(),
+                                       person.get_name(),
+                                       "Siblings should not marry")
+                return False
+
+        return True
+
     def validate(self):
         """run through all validation rules around people
         """
@@ -162,3 +179,4 @@ class People(object):
             self._is_valid_age(person)
             self._is_valid_birth_current_dates(person)
             self._is_valid_death_current_dates(person)
+            self._is_valid_sibling(person)

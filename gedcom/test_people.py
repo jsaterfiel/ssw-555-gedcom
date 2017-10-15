@@ -806,3 +806,25 @@ class TestPeople(unittest.TestCase):
             "message": "Birth date should occur before current date"
         }
         self.assertDictEqual(error2, output[2])
+
+    def test_is_valid_sibling(self):
+        husband = Person("@I3@")
+        husband.set_name("Steve /Bambi/")
+        husband.add_children_of_family("@F4@")
+        husband.add_spouse_of_family("@F4@")
+        self.peeps.individuals[husband.get_person_id()] = husband
+
+        wife = Person("@I3@")
+        wife.set_name("Bubbles /Bambi/")
+        wife.add_children_of_family("@F4@")
+        wife.add_spouse_of_family("@F4@")
+        self.peeps.individuals[husband.get_person_id()] = wife
+
+        self.assertFalse(self.peeps._is_valid_sibling(wife))
+        self.assertFalse(self.peeps._is_valid_sibling(husband))
+
+        wife.remove_children_of_family("@F4@")
+        husband.remove_children_of_family("@F4@")
+
+        self.assertTrue(self.peeps._is_valid_sibling(wife))
+        self.assertTrue(self.peeps._is_valid_sibling(husband))
