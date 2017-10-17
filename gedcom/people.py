@@ -23,6 +23,12 @@ class People(object):
         self._current_time = datetime.now()
         self._days_in_year = 365.2425
         self._msgs = validation_messages
+        self._families = None
+
+    def set_families(self, families):
+        """sets the Families class that should be used
+        """
+        self._families = families
 
     def process_line_data(self, data):
         """line data is a dict of the format:
@@ -180,3 +186,22 @@ class People(object):
             self._is_valid_birth_current_dates(person)
             self._is_valid_death_current_dates(person)
             self._is_valid_sibling(person)
+            self._validate_corresponding_entries(person)
+
+    def _validate_corresponding_entries(self, person):
+        """US26: check that the person's family links exist in the family record
+        """
+        us_num = "US26"
+        peep_id = person.get_person_id()
+        name = person.get_name()
+        for fam_id in person.get_spouse_of_families():
+            fam = self._families.families[fam_id]
+            if fam.get_husband_id() != peep_id and fam.get_wife_id() != peep_id:
+                self._msgs.add_message(self.CLASS_IDENTIFIER, us_num, peep_id,
+                                       name, "corresponding spouse link missing in family " + fam_id)
+
+        for fam_id in person.get_children_of_families():
+            fam = self._families.families[fam_id]
+            if peep_id not in fam.get_children():
+                self._msgs.add_message(self.CLASS_IDENTIFIER, us_num, peep_id,
+                                       name, "corresponding child link missing in family " + fam_id)

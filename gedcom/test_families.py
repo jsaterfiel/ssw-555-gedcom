@@ -25,6 +25,7 @@ class TestFamilies(unittest.TestCase):
         self.msgs = ValidationMessages()
         self.peeps = People(self.msgs)
         self.fam = Families(self.peeps, self.msgs)
+        self.peeps.set_families(self.fam)
 
     def tearDown(self):
         """delete test objects
@@ -665,6 +666,107 @@ class TestFamilies(unittest.TestCase):
         }
         self.assertDictEqual(err3, results[2])
 
+    def test_corresponding_entries(self):
+        """US26:testing corresponding entires for family links in links for that individual
+        and that the person links are correct for the families
+        """
+        # Family checks
+        peep1 = Person("@I01@")  # INVALID missing spouse of family link
+        peep1.set_name("Bob /Saget/")
+        peep1.set_gender("M")
+        peep1.set_date("17 AUG 1987", "birth")
+        self.peeps.individuals[peep1.get_person_id()] = peep1
+        peep2 = Person("@I02@")  # valid spouse
+        peep2.set_name("Marylin /Saget/")
+        peep2.set_gender("F")
+        peep2.set_date("17 AUG 1990", "birth")
+        peep2.add_spouse_of_family("@F01@")
+        self.peeps.individuals[peep2.get_person_id()] = peep2
+        peep3 = Person("@I03@")  # invalid child
+        peep3.set_name("Jannet /Saget/")
+        peep3.set_gender("F")
+        peep3.set_date("17 AUG 2010", "birth")
+        self.peeps.individuals[peep3.get_person_id()] = peep3
+        peep4 = Person("@I04@")  # valid child
+        peep4.set_name("Jeffrey /Saget/")
+        peep4.set_gender("M")
+        peep4.set_date("17 AUG 2012", "birth")
+        peep4.add_children_of_family("@F01@")
+        self.peeps.individuals[peep4.get_person_id()] = peep4
+        fam1 = Family("@F01@")  # valid family
+        fam1.set_husband_id(peep1.get_person_id())
+        fam1.set_wife_id(peep2.get_person_id())
+        fam1.add_child(peep3.get_person_id())
+        fam1.add_child(peep4.get_person_id())
+        self.fam.families[fam1.get_family_id()] = fam1
+
+        self.fam.validate()
+        results = self.msgs.get_messages()
+
+        self.assertEqual(2, len(results))
+        err1 = {
+            "error_id": Families.CLASS_IDENTIFIER,
+            "user_story": "US26",
+            "user_id": fam1.get_family_id(),
+            "name": "NA",
+            "message": "corresponding spouse link missing for " + peep1.get_person_id() + " " + peep1.get_name()
+        }
+        self.assertDictEqual(err1, results[0])
+        err2 = {
+            "error_id": Families.CLASS_IDENTIFIER,
+            "user_story": "US26",
+            "user_id": fam1.get_family_id(),
+            "name": "NA",
+            "message": "corresponding child link missing for " + peep3.get_person_id() + " " + peep3.get_name()
+        }
+        self.assertDictEqual(err2, results[1])
+
+        # Individual checks
+        peep4 = Person("@I04@")  # INVALID missing spouse of family link
+        peep4.set_name("Bob /Saget/")
+        peep4.set_gender("M")
+        peep4.set_date("17 AUG 1987", "birth")
+        peep4.add_spouse_of_family("@F01@")
+        peep4.add_spouse_of_family("@F02@")
+        self.peeps.individuals[peep4.get_person_id()] = peep4
+        peep5 = Person("@I05@")  # Invalid
+        peep5.set_name("Marylin /Saget/")
+        peep5.set_gender("F")
+        peep5.set_date("17 AUG 1990", "birth")
+        peep5.add_spouse_of_family("@F02@")
+        self.peeps.individuals[peep5.get_person_id()] = peep5
+        peep6 = Person("@I06@")  # invalid child
+        peep6.set_name("Jannet /Saget/")
+        peep6.set_gender("F")
+        peep6.set_date("17 AUG 2010", "birth")
+        peep6.add_children_of_family("@F02@")
+        self.peeps.individuals[peep6.get_person_id()] = peep6
+        fam2 = Family("@F02@")
+        fam2.set_husband_id(peep4.get_person_id())
+        fam2.set_wife_id(peep5.get_person_id())
+        self.fam.families[fam2.get_family_id()] = fam2
+
+        self.peeps.validate()
+        results = self.msgs.get_messages()
+
+        self.assertEqual(4, len(results))
+        err3 = {
+            "error_id": People.CLASS_IDENTIFIER,
+            "user_story": "US26",
+            "user_id": peep4.get_person_id(),
+            "name": peep4.get_name(),
+            "message": "corresponding spouse link missing in family " + fam1.get_family_id()
+        }
+        self.assertDictEqual(err3, results[2])
+        err4 = {
+            "error_id": People.CLASS_IDENTIFIER,
+            "user_story": "US26",
+            "user_id": peep6.get_person_id(),
+            "name": peep6.get_name(),
+            "message": "corresponding child link missing in family " + fam2.get_family_id()
+        }
+        self.assertDictEqual(err4, results[3])
+
     def test_validation_divorce_before_death(self):
         """US06: testing that a divorce occurred before death
         """
@@ -673,14 +775,14 @@ class TestFamilies(unittest.TestCase):
         peep1.set_name("Bob /Saget/")
         peep1.set_gender("M")
         peep1.set_date("17 AUG 1987", "birth")
-        peep1.add_spouse_of_family("@F01@")
+        peep1.add_spouse_of_family("@F06@")
         self.peeps.individuals[peep1.get_person_id()] = peep1
         peep2 = Person("@I02@")
         peep2.set_name("Marylin /Monroe/")
         peep2.set_gender("F")
         peep2.set_date("17 AUG 1990", "birth")
         peep2.set_date("17 JAN 2014", "death")
-        peep2.add_spouse_of_family("@F01@")
+        peep2.add_spouse_of_family("@F06@")
         self.peeps.individuals[peep2.get_person_id()] = peep2
         fam1 = Family("@F06@")
         fam1.set_husband_id(peep1.get_person_id())
@@ -1723,7 +1825,7 @@ class TestFamilies(unittest.TestCase):
         peep39.set_name("Charlie /Chaplin/")
         peep39.add_children_of_family("@F3@")
         self.peeps.individuals[peep39.get_person_id()] = peep39
-        fam3 = Family("@F03@")
+        fam3 = Family("@F3@")
         fam3.add_child(peep25.get_person_id())
         fam3.add_child(peep26.get_person_id())
         fam3.add_child(peep27.get_person_id())
@@ -1941,44 +2043,44 @@ class TestFamilies(unittest.TestCase):
         self.fam.families[fam1.get_family_id()] = fam1
 
         # family set up - 6 births at same time - invalid
-        peep25 = Person("@I25@")
-        peep25.set_name("Charlie1 /Chaplin/")
-        peep25.set_date("1 JAN 1970", "birth")
-        peep25.add_children_of_family("@F3@")
-        self.peeps.individuals[peep25.get_person_id()] = peep25
-        peep26 = Person("@I26@")
-        peep26.set_name("Hugh2 /Chaplin/")
-        peep26.set_date("1 JAN 1970", "birth")
-        peep26.add_children_of_family("@F3@")
-        self.peeps.individuals[peep26.get_person_id()] = peep26
-        peep27 = Person("@I27@")
-        peep27.set_name("Jacob3 /Chaplin/")
-        peep27.set_date("1 JAN 1970", "birth")
-        peep27.add_children_of_family("@F3@")
-        self.peeps.individuals[peep27.get_person_id()] = peep27
         peep28 = Person("@I28@")
-        peep28.set_name("William4 /Chaplin/")
+        peep28.set_name("Charlie1 /Chaplin/")
         peep28.set_date("1 JAN 1970", "birth")
         peep28.add_children_of_family("@F3@")
         self.peeps.individuals[peep28.get_person_id()] = peep28
         peep29 = Person("@I29@")
-        peep29.set_name("Coolie5 /Chaplin/")
+        peep29.set_name("Hugh2 /Chaplin/")
         peep29.set_date("1 JAN 1970", "birth")
         peep29.add_children_of_family("@F3@")
         self.peeps.individuals[peep29.get_person_id()] = peep29
         peep30 = Person("@I30@")
-        peep30.set_name("JackJack6 /Chaplin/")
+        peep30.set_name("Jacob3 /Chaplin/")
         peep30.set_date("1 JAN 1970", "birth")
         peep30.add_children_of_family("@F3@")
         self.peeps.individuals[peep30.get_person_id()] = peep30
+        peep31 = Person("@I31@")
+        peep31.set_name("William4 /Chaplin/")
+        peep31.set_date("1 JAN 1970", "birth")
+        peep31.add_children_of_family("@F3@")
+        self.peeps.individuals[peep31.get_person_id()] = peep31
+        peep32 = Person("@I32@")
+        peep32.set_name("Coolie5 /Chaplin/")
+        peep32.set_date("1 JAN 1970", "birth")
+        peep32.add_children_of_family("@F3@")
+        self.peeps.individuals[peep32.get_person_id()] = peep32
+        peep33 = Person("@I33@")
+        peep33.set_name("JackJack6 /Chaplin/")
+        peep33.set_date("1 JAN 1970", "birth")
+        peep33.add_children_of_family("@F3@")
+        self.peeps.individuals[peep33.get_person_id()] = peep33
 
-        fam3 = Family("@F03@")
-        fam3.add_child(peep25.get_person_id())
-        fam3.add_child(peep26.get_person_id())
-        fam3.add_child(peep27.get_person_id())
+        fam3 = Family("@F3@")
         fam3.add_child(peep28.get_person_id())
         fam3.add_child(peep29.get_person_id())
         fam3.add_child(peep30.get_person_id())
+        fam3.add_child(peep31.get_person_id())
+        fam3.add_child(peep32.get_person_id())
+        fam3.add_child(peep33.get_person_id())
         self.fam.families[fam3.get_family_id()] = fam3
 
         self.fam.validate()

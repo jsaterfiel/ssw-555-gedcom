@@ -16,6 +16,7 @@ def run():
     tags = Tags()
     peeps = People(validation_msgs)
     fam = Families(peeps, validation_msgs)
+    peeps.set_families(fam)
 
     if len(sys.argv) < 2:
         sys.exit("Usage: " + sys.argv[0] + " path-to-gedom-file")
