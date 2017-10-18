@@ -1495,6 +1495,161 @@ class TestFamilies(unittest.TestCase):
         }
         self.assertDictEqual(err5, results[4])
 
+    def test_validation_children_unique_first_name(self):
+        """US25: testing that a child first name is unique
+        """
+        # Family 1 setup valid
+        peep1 = Person("@I1@")
+        peep1.set_name("Philip /Banks/")
+        peep1.set_gender("M")
+        peep1.set_date("17 AUG 1987", "birth")
+        peep1.add_spouse_of_family("@F1@")
+        self.peeps.individuals[peep1.get_person_id()] = peep1
+        peep2 = Person("@I2@")
+        peep2.set_name("Vivian /Banks/")
+        peep2.set_gender("F")
+        peep2.set_date("17 AUG 1990", "birth")
+        peep2.set_date("17 JAN 2014", "death")
+        peep2.add_spouse_of_family("@F1@")
+        self.peeps.individuals[peep2.get_person_id()] = peep2
+        peep3 = Person("@I3@")
+        peep3.set_name("Freshie /Banks/")
+        peep3.set_gender("M")
+        peep3.set_date("17 AUG 2009", "birth")
+        peep3.add_children_of_family("@F1@")
+        self.peeps.individuals[peep3.get_person_id()] = peep3
+        peep4 = Person("@I4@")
+        peep4.set_name("Frank /Banks/")
+        peep4.set_gender("M")
+        peep4.set_date("17 AUG 2010", "birth")
+        peep4.add_children_of_family("@F1@")
+        self.peeps.individuals[peep4.get_person_id()] = peep4
+        peep5 = Person("@I5@")
+        peep5.set_name("Felix /Banks/")
+        peep5.set_gender("M")
+        peep5.set_date("17 AUG 2011", "birth")
+        peep5.add_children_of_family("@F1@")
+        self.peeps.individuals[peep5.get_person_id()] = peep5
+        fam1 = Family("@F1@")
+        fam1.set_husband_id(peep1.get_person_id())
+        fam1.set_wife_id(peep2.get_person_id())
+        fam1.add_child(peep3.get_person_id())
+        fam1.add_child(peep4.get_person_id())
+        fam1.add_child(peep5.get_person_id())
+        self.fam.families[fam1.get_family_id()] = fam1
+
+        # Family 2 setup invalid
+        peep6 = Person("@I6@")
+        peep6.set_name("Doug /Funnie/")
+        peep6.set_gender("M")
+        peep6.set_date("17 AUG 1987", "birth")
+        peep6.set_date("17 SEP 2014", "death")
+        peep6.add_spouse_of_family("@F2@")
+        self.peeps.individuals[peep6.get_person_id()] = peep6
+        peep7 = Person("@I7@")
+        peep7.set_gender("F")
+        peep7.set_name("Pattie /Mayonaise/")
+        peep7.set_date("17 AUG 1990", "birth")
+        peep7.add_spouse_of_family("@F2@")
+        self.peeps.individuals[peep7.get_person_id()] = peep7
+        peep8 = Person("@I8@")
+        peep8.set_gender("F")
+        peep8.set_name("Frankie /Funnie/")
+        peep8.set_date("17 AUG 2009", "birth")
+        peep8.add_children_of_family("@F2@")
+        self.peeps.individuals[peep8.get_person_id()] = peep8
+        peep9 = Person("@I9@")
+        peep9.set_gender("F")
+        peep9.set_name("Frankie /Funnie/")
+        peep9.set_date("17 AUG 2009", "birth")
+        peep9.add_children_of_family("@F2@")
+        self.peeps.individuals[peep9.get_person_id()] = peep9
+        fam2 = Family("@F2@")
+        fam2.set_husband_id(peep6.get_person_id())
+        fam2.set_wife_id(peep7.get_person_id())
+        fam2.add_child(peep8.get_person_id())
+        fam2.add_child(peep9.get_person_id())
+        self.fam.families[fam2.get_family_id()] = fam2
+
+        # Family 3 setup valid
+        peep10 = Person("@I10@")
+        peep10.set_name("Doogie /Howser/")
+        peep10.set_gender("M")
+        peep10.set_date("17 AUG 1987", "birth")
+        peep10.set_date("17 SEP 2014", "death")
+        peep10.add_spouse_of_family("@F3@")
+        self.peeps.individuals[peep10.get_person_id()] = peep10
+        peep11 = Person("@I11@")
+        peep11.set_gender("F")
+        peep11.set_name("Pennie /Howser/")
+        peep11.set_date("17 AUG 1990", "birth")
+        peep11.add_spouse_of_family("@F3@")
+        self.peeps.individuals[peep11.get_person_id()] = peep11
+        peep12 = Person("@I12@")
+        peep12.set_gender("F")
+        peep12.set_name("Fruity /Howser/")
+        peep12.set_date("17 AUG 2008", "birth")
+        peep12.add_children_of_family("@F3@")
+        self.peeps.individuals[peep12.get_person_id()] = peep12
+        peep13 = Person("@I13@")
+        peep13.set_gender("F")
+        peep13.set_name("Fruity /Howser/")
+        peep13.set_date("17 AUG 2009", "birth")
+        peep13.add_children_of_family("@F3@")
+        self.peeps.individuals[peep13.get_person_id()] = peep13
+        fam3 = Family("@F3@")
+        fam3.set_husband_id(peep10.get_person_id())
+        fam3.set_wife_id(peep11.get_person_id())
+        fam3.add_child(peep12.get_person_id())
+        fam3.add_child(peep13.get_person_id())
+        self.fam.families[fam3.get_family_id()] = fam3
+
+        # Family 4 setup valid
+        peep14 = Person("@I14@")
+        peep14.set_name("Larry /Howser/")
+        peep14.set_gender("M")
+        peep14.set_date("17 AUG 1987", "birth")
+        peep14.set_date("17 SEP 2014", "death")
+        peep14.add_spouse_of_family("@F4@")
+        self.peeps.individuals[peep14.get_person_id()] = peep14
+        peep15 = Person("@I15@")
+        peep15.set_gender("F")
+        peep15.set_name("Lucinda /Howser/")
+        peep15.set_date("17 AUG 1990", "birth")
+        peep15.add_spouse_of_family("@F4@")
+        self.peeps.individuals[peep15.get_person_id()] = peep15
+        peep16 = Person("@I16@")
+        peep16.set_gender("F")
+        peep16.set_name("Lila /Howser/")
+        peep16.set_date("17 AUG 2009", "birth")
+        peep16.add_children_of_family("@F4@")
+        self.peeps.individuals[peep16.get_person_id()] = peep16
+        peep17 = Person("@I17@")
+        peep17.set_gender("F")
+        peep17.set_name("Linda /Howser/")
+        peep17.set_date("17 AUG 2009", "birth")
+        peep17.add_children_of_family("@F4@")
+        self.peeps.individuals[peep17.get_person_id()] = peep17
+        fam4 = Family("@F4@")
+        fam4.set_husband_id(peep14.get_person_id())
+        fam4.set_wife_id(peep15.get_person_id())
+        fam4.add_child(peep16.get_person_id())
+        fam4.add_child(peep17.get_person_id())
+        self.fam.families[fam4.get_family_id()] = fam4
+
+        self.fam.validate()
+
+        results = self.msgs.get_messages()
+        self.assertEqual(1, len(results))
+        err1 = {
+            "error_id": Families.CLASS_IDENTIFIER,
+            "user_story": "US25",
+            "user_id": fam2.get_family_id(),
+            "name": "NA",
+            "message": "Children in a family must have unique first name and birthday"
+        }
+        self.assertDictEqual(err1, results[0])
+
     def test_us16_male_last_names(self):
         """US016 All males in a family have the same last name
         """
@@ -1846,6 +2001,7 @@ class TestFamilies(unittest.TestCase):
         self.fam.validate()
 
         results = self.msgs.get_messages()
+
         self.assertEqual(1, len(results))
         err1 = {
             "error_id": "FAMILY",

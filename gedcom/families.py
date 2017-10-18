@@ -4,6 +4,7 @@ Parses family tags from the gedcom data passed to it line by line as they appear
 import re
 from datetime import datetime
 from datetime import timedelta
+from time import strftime
 from prettytable import PrettyTable
 from people import People
 from family import Family
@@ -32,6 +33,7 @@ class Families(object):
         self._current_time = datetime.now()
         # parses names in the format Bob /Hope/ where the last name has slashes around it
         self._last_name_regex = re.compile(r'\/(.*)\/')
+        self._first_name_regex = re.compile(r'(.*) \/')
 
     def process_line_data(self, data):
         """line data is a dict of the format:
@@ -124,6 +126,7 @@ class Families(object):
             self._validate_marr_div_dates(family)
             self._validate_death_of_parents_before_child_birth(family)
             self._validate_males_in_family_same_last_name(family)
+            self._validate_children_names_and_birthdays_are_different(family)
             self._validate_fewer_than_15_siblings(family)
             self._validate_no_bigamy(family)
             self._validate_corresponding_entries(family)
@@ -398,6 +401,35 @@ class Families(object):
                 fam = self.families[fam_id]
                 self._check_family_for_decendant_marriage(
                     fam, person_id, False)
+
+    def _validate_children_names_and_birthdays_are_different(self, family):
+        """US25 Child in a family must have unique first name and birthday
+        otherwise it will be considered a misentry of the same child
+        """
+        children = family.get_children()
+        if children is None:
+            return
+
+        children_first_names = dict()
+        people_ids = []
+        people_ids.extend(children)
+
+        for person_id in people_ids:
+            peep = self._people.individuals[person_id]
+
+            name = self._first_name_regex.search(peep.get_name())
+            if peep.get_birth_date() is None:
+                return
+            if name is not None and peep.get_birth_date() is not None:
+                children_first_names[name.group(
+                    0), peep.get_birth_date()] = True
+
+        if len(children_first_names) < len(people_ids):
+            self._msgs.add_message(self.CLASS_IDENTIFIER,
+                                   "US25",
+                                   family.get_family_id(),
+                                   "NA",
+                                   "Children in a family must have unique first name and birthday")
 
     def _validate_males_in_family_same_last_name(self, family):
         """US16 All males in a family have the same last name
