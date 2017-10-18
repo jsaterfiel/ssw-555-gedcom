@@ -126,6 +126,7 @@ class Families(object):
             self._validate_males_in_family_same_last_name(family)
             self._validate_fewer_than_15_siblings(family)
             self._validate_no_bigamy(family)
+            self._validate_corresponding_entries(family)
             self._validate_no_marriage_to_decendants(family)
             self._validate_less_than_5_multi_births(family)
             self._validate_parents_not_too_old(family)
@@ -435,11 +436,37 @@ class Families(object):
         children = family.get_children()
         if children is not None:
             if len(children) >= 15:
-                self._msgs.add_message("FAMILY",
+                self._msgs.add_message(self.CLASS_IDENTIFIER,
                                        "US15",
                                        family.get_family_id(),
                                        "NA",
                                        "There should be fewer than 15 siblings in a family")
+
+    def _validate_corresponding_entries(self, family):
+        """US26 Corresponding entries (families)
+        See US26 in people class for rest of US26 functionality
+        """
+        us_name = "US26"
+        fam_id = family.get_family_id()
+        husband_id = family.get_husband_id()
+        wife_id = family.get_wife_id()
+        child_ids = family.get_children()
+        if husband_id is not None:
+            husband = self._people.individuals[husband_id]
+            if fam_id not in husband.get_spouse_of_families():
+                self._msgs.add_message(self.CLASS_IDENTIFIER, us_name, fam_id, "NA",
+                                       "corresponding spouse link missing for " + husband_id + " " + husband.get_name())
+        if wife_id is not None:
+            wife = self._people.individuals[wife_id]
+            if fam_id not in wife.get_spouse_of_families():
+                self._msgs.add_message(self.CLASS_IDENTIFIER, us_name, fam_id, "NA",
+                                       "corresponding spouse link missing for " + wife_id + " " + wife.get_name())
+        if child_ids is not None:
+            for child_id in child_ids:
+                child = self._people.individuals[child_id]
+                if fam_id not in child.get_children_of_families():
+                    self._msgs.add_message(self.CLASS_IDENTIFIER, us_name, fam_id, "NA",
+                                           "corresponding child link missing for " + child_id + " " + child.get_name())
 
     def _validate_less_than_5_multi_births(self, family):
         """US14 No more than 5 siblings born in a multiple birth in a family"""
@@ -481,7 +508,8 @@ class Families(object):
                 # type: Person
                 child = self._people.individuals[child]
                 if family.get_husband_id() is not None:
-                    husband = self._people.individuals[family.get_husband_id()]  # type: Person
+                    # type: Person
+                    husband = self._people.individuals[family.get_husband_id()]
                     if husband.get_is_alive() and (husband.get_age() - child.get_age() >= 80):
                         self._msgs.add_message(self.CLASS_IDENTIFIER,
                                                "US12",
@@ -491,7 +519,8 @@ class Families(object):
                                                (family.get_husband_id(), child.get_person_id()))
                         return False
                 if family.get_wife_id() is not None:
-                    wife = self._people.individuals[family.get_wife_id()]  # type: Person
+                    # type: Person
+                    wife = self._people.individuals[family.get_wife_id()]
 
                     if wife.get_is_alive() and (wife.get_age() - child.get_age() >= 60):
                         self._msgs.add_message(self.CLASS_IDENTIFIER,
