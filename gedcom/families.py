@@ -133,6 +133,7 @@ class Families(object):
             self._validate_no_marriage_to_decendants(family)
             self._validate_less_than_5_multi_births(family)
             self._validate_parents_not_too_old(family)
+            self._validate_correct_gender_roles(family)
 
     def _validate_dates(self, family):
         """ validating dates
@@ -564,3 +565,34 @@ class Families(object):
                         return False
 
         return True
+
+    def _validate_correct_gender_roles(self, family):
+        "Validate that the husband and wife roles in family are assigned the correct gender"
+        husband_ids = []
+        wife_ids = []
+        if family.get_husband_id() is not None:
+            husband_ids.append(family.get_husband_id())
+        for person_id in husband_ids:
+            hus_spouse = self._people.individuals[person_id]
+
+            if hus_spouse.get_gender() != "M":
+                self._msgs.add_message(self.CLASS_IDENTIFIER,
+                                       "US21",
+                                       family.get_family_id(),
+                                       "NA",
+                                       "Father %s should be a Male" %
+                                       (family.get_husband_id()))
+        if family.get_wife_id() is not None:
+            wife_ids.append(family.get_wife_id())
+        for person_id in wife_ids:
+            wif_spouse = self._people.individuals[person_id]
+
+            if wif_spouse.get_gender() != "F":
+                self._msgs.add_message(self.CLASS_IDENTIFIER,
+                                       "US21",
+                                       family.get_family_id(),
+                                       "NA",
+                                       "Mother %s should be a Female" %
+                                       (family.get_wife_id()))
+                return False
+            return True

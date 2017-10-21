@@ -537,8 +537,8 @@ class TestFamilies(unittest.TestCase):
 
         self.peeps.individuals[peep1.get_person_id()] = peep1
 
-        peep2 = Person("@I01@")
-        peep2.set_name("Bob /Saget/")
+        peep2 = Person("@I02@")
+        peep2.set_name("Barbra /Saget/")
         peep2.set_gender("F")
         peep2.set_date("17 AUG 1990", "birth")
         peep2.set_date("17 JAN 2014", "death")
@@ -640,6 +640,7 @@ class TestFamilies(unittest.TestCase):
 
         self.fam.validate()
         results = self.msgs.get_messages()
+
         self.assertEqual(3, len(results))
         err1 = {
             "error_id": "FAMILY",
@@ -1326,18 +1327,18 @@ class TestFamilies(unittest.TestCase):
         peep11.set_name("Lorraine /McFly/")
         peep11.set_gender("F")
         peep11.set_date("17 AUG 1990", "birth")
-        peep11.add_children_of_family("@F4@")
+        peep11.add_spouse_of_family("@F4@")
         self.peeps.individuals[peep11.get_person_id()] = peep11
         peep12 = Person("@I12@")
         peep12.set_gender("M")
         peep12.set_name("Marty /McFly/")
         peep12.set_date("17 DEC 2013", "birth")
-        peep12.add_spouse_of_family("@F4@")
+        peep12.add_children_of_family("@F4@")
         self.peeps.individuals[peep12.get_person_id()] = peep12
         fam4 = Family("@F4@")
-        fam4.set_husband_id(peep12.get_person_id())
-        fam4.set_wife_id(peep10.get_person_id())
-        fam4.add_child(peep11.get_person_id())
+        fam4.set_husband_id(peep10.get_person_id())
+        fam4.set_wife_id(peep11.get_person_id())
+        fam4.add_child(peep12.get_person_id())
         self.fam.families[fam4.get_family_id()] = fam4
 
         # Family 5 setup (child 9 months and some days but same month before dad death) Invalid
@@ -1448,6 +1449,7 @@ class TestFamilies(unittest.TestCase):
         self.fam.validate()
 
         results = self.msgs.get_messages()
+
         self.assertEqual(5, len(results))
         err1 = {
             "error_id": "FAMILY",
@@ -1661,7 +1663,7 @@ class TestFamilies(unittest.TestCase):
         fam1_male1.set_date("1 JAN 1965", "birth")
         fam1_male2 = Person("@F1I2@")
         fam1_male2.set_gender("M")
-        fam1_male2.set_name("Greg /Hope")
+        fam1_male2.set_name("Greg /Hope/")
         fam1_male2.set_date("1 JAN 1965", "birth")
         fam1_male2.add_children_of_family(fam1_id)
         fam1_male2.set_date("1 JAN 1965", "birth")
@@ -1687,6 +1689,7 @@ class TestFamilies(unittest.TestCase):
         fam2_male1.set_date("1 JAN 1965", "birth")
         fam2_male1.add_spouse_of_family(fam2_id)
         fam2_female1 = Person("@F2I2@")
+        fam2_female1.set_gender("F")
         fam2_female1.set_date("1 JAN 1965", "birth")
         fam2_female1.add_spouse_of_family(fam2_id)
         fam2.set_husband_id(fam2_male1.get_person_id())
@@ -2296,3 +2299,67 @@ class TestFamilies(unittest.TestCase):
         wife.set_date("18 AUG 1900", "birth")
         self.assertFalse(self.fam._validate_parents_not_too_old(test_family))
         self.assertEqual(len(self.msgs.get_messages()), 2)
+
+    def test_us21_correct_gender_role(self):
+        """US21 Gender roles should correctly be assigned for husband and wife
+        """
+        # Family 1 setup - valid
+        peep1 = Person("@I1@")
+        peep1.set_name("Drake /Minaj/")
+        peep1.set_gender("M")
+        peep1.set_date("17 Jan 1980", "birth")
+        peep1.add_spouse_of_family("@F1@")
+        self.peeps.individuals[peep1.get_person_id()] = peep1
+        peep2 = Person("@I2@")
+        peep2.set_name("Cardi /Minaj/")
+        peep2.set_gender("F")
+        peep2.set_date("17 Dec 1980", "birth")
+        peep2.set_date("20 Dec 2015", "death")
+        peep2.add_spouse_of_family("@F1@")
+        self.peeps.individuals[peep2.get_person_id()] = peep2
+        fam1 = Family("@F1@")
+        fam1.set_husband_id(peep1.get_person_id())
+        fam1.set_wife_id(peep2.get_person_id())
+        fam1.set_date("20 Jun 2000", "married")
+        self.fam.families[fam1.get_family_id()] = fam1
+
+        # Family 2 setup INVALID
+        peep3 = Person("@I3@")
+        peep3.set_name("Travis /Jacobs/")
+        peep3.set_gender("F")
+        peep3.set_date("17 Jan 1980", "birth")
+        peep3.add_spouse_of_family("@F2@")
+        self.peeps.individuals[peep3.get_person_id()] = peep3
+        peep4 = Person("@I4@")
+        peep4.set_name("Nicki /Jacobs/")
+        peep4.set_gender("M")
+        peep4.set_date("17 Dec 1980", "birth")
+        peep4.set_date("20 Dec 2015", "death")
+        peep4.add_spouse_of_family("@F2@")
+        self.peeps.individuals[peep4.get_person_id()] = peep4
+        fam2 = Family("@F2@")
+        fam2.set_husband_id(peep3.get_person_id())
+        fam2.set_wife_id(peep4.get_person_id())
+        fam2.set_date("20 Jun 2000", "married")
+        self.fam.families[fam2.get_family_id()] = fam2
+
+        self.fam.validate()
+
+        results = self.msgs.get_messages()
+        self.assertEqual(2, len(results))
+        err1 = {
+            "error_id": "FAMILY",
+            "user_story": "US21",
+            "user_id": fam2.get_family_id(),
+            "name": "NA",
+            "message": "Father " + peep3.get_person_id() + " should be a Male"
+        }
+        self.assertDictEqual(err1, results[0])
+        err2 = {
+            "error_id": "FAMILY",
+            "user_story": "US21",
+            "user_id": fam2.get_family_id(),
+            "name": "NA",
+            "message": "Mother " + peep4.get_person_id() + " should be a Female"
+        }
+        self.assertDictEqual(err2, results[1])
