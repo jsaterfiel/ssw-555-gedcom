@@ -103,6 +103,22 @@ class Families(object):
             if family.get_wife_id() is not None:
                 wife_id = family.get_wife_id()
                 wife_name = self._people.individuals[wife_id].get_name()
+            children_order = "NA"
+            if family.get_children() is not None:
+                children = family.get_children()
+                child_age = []
+            for child_id in children:
+                child = self._people.individuals[child_id]
+                if child.get_age is None:
+                    child_age = 1
+                child_age.append(child.get_age())
+            keys = children
+            values = child_age
+            childid_age = dict(zip(keys, values))
+            order_childid_age = sorted(
+                childid_age.items(), key=lambda t: t[1], reverse=True)
+            order_childid_id = [idx for idx, val in order_childid_age]
+            children_order = order_childid_id
 
             p_table.add_row([
                 family.get_family_id(),
@@ -112,7 +128,7 @@ class Families(object):
                 husband_name,
                 wife_id,
                 wife_name,
-                family.get_children()])
+                children_order])
         print(p_table)
 
     def validate(self):

@@ -394,6 +394,48 @@ class TestFamilies(unittest.TestCase):
             "valid": "Y"
         }
         self.peeps.process_line_data(name_tag2)
+        data3 = {
+            "level": 0,
+            "tag": "INDI",
+            "args": "@I11@",
+            "valid": "Y"
+        }
+        self.peeps.process_line_data(data3)
+        birth_tag1 = {
+            "level": 1,
+            "tag": "BIRT",
+            "args": "",
+            "valid": "Y"
+        }
+        self.peeps.process_line_data(birth_tag1)
+        birth_date1 = {
+            "level": 2,
+            "tag": "DATE",
+            "args": "1 MAY 2001",
+            "valid": "Y"
+        }
+        self.peeps.process_line_data(birth_date1)
+        data4 = {
+            "level": 0,
+            "tag": "INDI",
+            "args": "@I12@",
+            "valid": "Y"
+        }
+        self.peeps.process_line_data(data4)
+        birth_tag2 = {
+            "level": 1,
+            "tag": "BIRT",
+            "args": "",
+            "valid": "Y"
+        }
+        self.peeps.process_line_data(birth_tag2)
+        birth_date2 = {
+            "level": 2,
+            "tag": "DATE",
+            "args": "1 MAY 2010",
+            "valid": "Y"
+        }
+        self.peeps.process_line_data(birth_date2)
         # capture the output
         output = io.StringIO()
         sys.stdout = output
@@ -478,6 +520,48 @@ class TestFamilies(unittest.TestCase):
             "valid": "Y"
         }
         self.peeps.process_line_data(name_tag2)
+        data3 = {
+            "level": 0,
+            "tag": "INDI",
+            "args": "@I11@",
+            "valid": "Y"
+        }
+        self.peeps.process_line_data(data3)
+        birth_tag1 = {
+            "level": 1,
+            "tag": "BIRT",
+            "args": "",
+            "valid": "Y"
+        }
+        self.peeps.process_line_data(birth_tag1)
+        birth_date1 = {
+            "level": 2,
+            "tag": "DATE",
+            "args": "1 MAY 2001",
+            "valid": "Y"
+        }
+        self.peeps.process_line_data(birth_date1)
+        data4 = {
+            "level": 0,
+            "tag": "INDI",
+            "args": "@I12@",
+            "valid": "Y"
+        }
+        self.peeps.process_line_data(data4)
+        birth_tag2 = {
+            "level": 1,
+            "tag": "BIRT",
+            "args": "",
+            "valid": "Y"
+        }
+        self.peeps.process_line_data(birth_tag2)
+        birth_date2 = {
+            "level": 2,
+            "tag": "DATE",
+            "args": "1 MAY 2010",
+            "valid": "Y"
+        }
+        self.peeps.process_line_data(birth_date2)
         # capture the output
         output = io.StringIO()
         sys.stdout = output
