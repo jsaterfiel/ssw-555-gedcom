@@ -2385,7 +2385,7 @@ class TestFamilies(unittest.TestCase):
         self.assertEqual(len(self.msgs.get_messages()), 2)
 
     def test_us24_unique_families_by_spouses(self):
-        """US24 No more than one family with the same spouses by name 
+        """US24 No more than one family with the same spouses by name
         and the same marriage date should appear in a GEDCOM file.
         """
         # Family 1 setup - valid

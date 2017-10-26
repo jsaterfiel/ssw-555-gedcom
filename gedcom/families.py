@@ -166,11 +166,11 @@ class Families(object):
             key = fam_hashs[idx]
             dups = key["duplicate_families"]
             if dups:
-                 self._msgs.add_message(self.CLASS_IDENTIFIER,
-                                        "US24",
-                                        key["first_family_id"],
-                                        "NA",
-                                        "Duplicate families by spouse names and married date: " + ", ".join(dups))
+                self._msgs.add_message(self.CLASS_IDENTIFIER,
+                                       "US24",
+                                       key["first_family_id"],
+                                       "NA",
+                                       "Duplicate families by spouse names and married date: " + ", ".join(dups))
 
     def _hash_family(self, family, fam_hashs):
         """ hash family values to allow for detecting redundant family setups
@@ -178,8 +178,8 @@ class Families(object):
         """
         if family.get_husband_id() is None or family.get_wife_id() is None or family.get_married_date() is None:
             return
-        fam_hash = self._people.individuals[family.get_husband_id()].get_name() + "|" + self._people.individuals[family.get_wife_id()].get_name() + "|" +family.get_married_date().isoformat()
-        if  fam_hash in fam_hashs:
+        fam_hash = self._people.individuals[family.get_husband_id()].get_name() + "|" + self._people.individuals[family.get_wife_id()].get_name() + "|" + family.get_married_date().isoformat()
+        if fam_hash in fam_hashs:
             fam_hashs[fam_hash]["duplicate_families"].append(family.get_family_id())
         else:
             fam_hashs[fam_hash] = {
