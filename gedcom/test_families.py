@@ -2384,6 +2384,58 @@ class TestFamilies(unittest.TestCase):
         self.assertFalse(self.fam._validate_parents_not_too_old(test_family))
         self.assertEqual(len(self.msgs.get_messages()), 2)
 
+    def test_us24_unique_families_by_spouses(self):
+        """US24 No more than one family with the same spouses by name 
+        and the same marriage date should appear in a GEDCOM file.
+        """
+        # Family 1 setup - valid
+        peep1 = Person("@I1@")
+        peep1.set_name("Bob /Dole/")
+        peep1.set_gender("M")
+        peep1.add_spouse_of_family("@F1@")
+        self.peeps.individuals[peep1.get_person_id()] = peep1
+        peep2 = Person("@I2@")
+        peep2.set_name("Sally /Fields/")
+        peep2.set_gender("F")
+        peep2.add_spouse_of_family("@F1@")
+        self.peeps.individuals[peep2.get_person_id()] = peep2
+        fam1 = Family("@F1@")
+        fam1.set_husband_id(peep1.get_person_id())
+        fam1.set_wife_id(peep2.get_person_id())
+        fam1.set_date("1 Jun 2000", "married")
+        self.fam.families[fam1.get_family_id()] = fam1
+
+        # Family 2 setup INVALID
+        peep3 = Person("@I3@")
+        peep3.set_name("Bob /Dole/")
+        peep3.set_gender("M")
+        peep3.add_spouse_of_family("@F2@")
+        self.peeps.individuals[peep3.get_person_id()] = peep3
+        peep4 = Person("@I4@")
+        peep4.set_name("Sally /Fields/")
+        peep4.set_gender("F")
+        peep4.add_spouse_of_family("@F2@")
+        self.peeps.individuals[peep4.get_person_id()] = peep4
+        fam2 = Family("@F2@")
+        fam2.set_husband_id(peep3.get_person_id())
+        fam2.set_wife_id(peep4.get_person_id())
+        fam2.set_date("1 Jun 2000", "married")
+        self.fam.families[fam2.get_family_id()] = fam2
+
+        self.fam.validate()
+
+        results = self.msgs.get_messages()
+
+        self.assertEqual(1, len(results))
+        err1 = {
+            "error_id": Families.CLASS_IDENTIFIER,
+            "user_story": "US24",
+            "user_id": fam1.get_family_id(),
+            "name": "NA",
+            "message": "Duplicate families by spouse names and married date: " + fam2.get_family_id()
+        }
+        self.assertDictEqual(err1, results[0])
+
     def test_us21_correct_gender_role(self):
         """US21 Gender roles should correctly be assigned for husband and wife
         """

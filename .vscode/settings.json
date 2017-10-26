@@ -3,7 +3,7 @@
   "git.confirmSync": false,
   "editor.tabSize": 4,
   "editor.detectIndentation": false,
-  "python.formatting.formatOnSave": true,
+  "python.formatting.formatOnSave": false,
   "python.unitTest.unittestEnabled": true,
   "python.unitTest.unittestArgs": [
     "-v",
