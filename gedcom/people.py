@@ -195,13 +195,17 @@ class People(object):
         peep_id = person.get_person_id()
         name = person.get_name()
         for fam_id in person.get_spouse_of_families():
-            fam = self._families.families[fam_id]
-            if fam.get_husband_id() != peep_id and fam.get_wife_id() != peep_id:
+            fam = None
+            if fam_id in self._families.families:
+                fam = self._families.families[fam_id]
+            if fam is None or fam.get_husband_id() != peep_id and fam.get_wife_id() != peep_id:
                 self._msgs.add_message(self.CLASS_IDENTIFIER, us_num, peep_id,
                                        name, "corresponding spouse link missing in family " + fam_id)
 
         for fam_id in person.get_children_of_families():
-            fam = self._families.families[fam_id]
-            if peep_id not in fam.get_children():
+            fam = None
+            if fam_id in self._families.families:
+                fam = self._families.families[fam_id]
+            if fam is None or peep_id not in fam.get_children():
                 self._msgs.add_message(self.CLASS_IDENTIFIER, us_num, peep_id,
                                        name, "corresponding child link missing in family " + fam_id)

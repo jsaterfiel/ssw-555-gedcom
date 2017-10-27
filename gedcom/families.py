@@ -136,6 +136,7 @@ class Families(object):
         """
         # ensure the order of the results doesn't change between runs
         fam_keys = sorted(self.families.keys())
+        fam_hashs = {}
         for idx in fam_keys:
             family = self.families[idx]
             self._validate_dates(family)
@@ -150,6 +151,41 @@ class Families(object):
             self._validate_less_than_5_multi_births(family)
             self._validate_parents_not_too_old(family)
             self._validate_correct_gender_roles(family)
+            self._hash_family(family, fam_hashs)
+
+        self._validate_duplicate_families(fam_hashs)
+
+    def _validate_duplicate_families(self, fam_hashs):
+        """US24: Go through the hashes of the families and find the ones
+        with more than one in the hash
+        US24 No more than one family with the same spouses by name
+        and the same marriage date should appear in a GEDCOM file.
+        """
+        fam_keys = sorted(fam_hashs.keys())
+        for idx in fam_keys:
+            key = fam_hashs[idx]
+            dups = key["duplicate_families"]
+            if dups:
+                self._msgs.add_message(self.CLASS_IDENTIFIER,
+                                       "US24",
+                                       key["first_family_id"],
+                                       "NA",
+                                       "Duplicate families by spouse names and married date: " + ", ".join(dups))
+
+    def _hash_family(self, family, fam_hashs):
+        """ hash family values to allow for detecting redundant family setups
+        Used for US24 validation.  Must have both spouses and a married date set to get a hash else we have incomplete data to detect a redundant family
+        """
+        if family.get_husband_id() is None or family.get_wife_id() is None or family.get_married_date() is None:
+            return
+        fam_hash = self._people.individuals[family.get_husband_id()].get_name() + "|" + self._people.individuals[family.get_wife_id()].get_name() + "|" + family.get_married_date().isoformat()
+        if fam_hash in fam_hashs:
+            fam_hashs[fam_hash]["duplicate_families"].append(family.get_family_id())
+        else:
+            fam_hashs[fam_hash] = {
+                "first_family_id": family.get_family_id(),
+                "duplicate_families": []
+            }
 
     def _validate_dates(self, family):
         """ validating dates
@@ -492,7 +528,7 @@ class Families(object):
                                        "There should be fewer than 15 siblings in a family")
 
     def _validate_corresponding_entries(self, family):
-        """US26 Corresponding entries (families)
+        """US26 Corresponding entries(families)
         See US26 in people class for rest of US26 functionality
         """
         us_name = "US26"
