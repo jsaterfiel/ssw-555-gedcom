@@ -136,6 +136,33 @@ class Families(object):
                 children_order])
         print(p_table)
 
+    def print_married(self):
+        """"
+        Prints all married individuals
+        """
+        families = self.families
+        individuals = self._people.individuals
+        married_ind = dict()
+        table = PrettyTable(["ID", "Name", "Married"])
+
+        for family_id in families:
+            # type: Family
+            family = self.families[family_id]
+            if family.get_married_date() and family.get_divorced_date() is None:
+                husband = individuals[family.get_husband_id()]
+                if family.get_husband_id() not in married_ind:
+                    married_ind[family.get_husband_id()] = husband
+
+                wife = individuals[family.get_wife_id()]
+                if family.get_wife_id() not in married_ind:
+                    married_ind[family.get_wife_id()] = wife
+
+        for individual_id, individual in married_ind.items():
+            table.add_row([individual_id, individual.get_name(), True])
+
+        print("Married Individuals")
+        print(table)
+
     def validate(self):
         """run through all the validation rules around families
         """

@@ -2518,3 +2518,40 @@ class TestFamilies(unittest.TestCase):
             "message": "Mother " + peep4.get_person_id() + " should be a Female"
         }
         self.assertDictEqual(err2, results[1])
+
+    def test_print_married(self):
+        """ US30 Unit tests
+        """
+        test_family = Family("@F1@")
+        test_family.set_husband_id("@I1@")
+        test_family.set_wife_id("@I2@")
+        test_family.set_date("1 JAN 1990", "married")
+        test_family.add_child("@I3@")
+        self.fam.families[test_family.get_family_id()] = test_family
+        test_husband = Person("@I1@")
+        test_husband.set_name("Tony /Tiger/")
+        test_husband.set_gender("M")
+        test_husband.set_date("1 JAN 1965", "birth")
+        test_husband.add_spouse_of_family(test_family.get_family_id())
+        self.peeps.individuals[test_husband.get_person_id()] = test_husband
+        test_wife = Person("@I2@")
+        test_wife.set_name("Minnie /Mouse/")
+        test_wife.set_gender("F")
+        test_wife.set_date("20 JUL 1966", "birth")
+        test_wife.add_spouse_of_family(test_family.get_family_id())
+        self.peeps.individuals[test_wife.get_person_id()] = test_wife
+
+        # capture the output
+        output = io.StringIO()
+        sys.stdout = output
+        self.fam.print_married()
+        sys.stdout = sys.__stdout__
+        test_output = """Married Individuals
++------+----------------+---------+
+|  ID  |      Name      | Married |
++------+----------------+---------+
+| @I1@ |  Tony /Tiger/  |   True  |
+| @I2@ | Minnie /Mouse/ |   True  |
++------+----------------+---------+
+"""
+        self.assertEqual(test_output, output.getvalue())

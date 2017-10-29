@@ -112,6 +112,22 @@ class People(object):
                 person.get_spouse_of_families()])
         print(p_table)
 
+    def print_deceased(self):
+        """"
+        Prints all deceased individuals
+        """
+        people = self.individuals
+        table = PrettyTable(["ID", "Name", "Alive"])
+
+        for person_id in people:
+            # type: Person
+            individual = self.individuals[person_id]
+            if not individual.get_is_alive():
+                table.add_row([individual.get_person_id(), individual.get_name(), individual.get_is_alive()])
+
+        print("Deceased Individuals")
+        print(table)
+
     def _is_valid_birth_date(self, person):
         """ checks if birthday occurs after death
         Args:

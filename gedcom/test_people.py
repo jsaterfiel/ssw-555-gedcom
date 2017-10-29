@@ -850,3 +850,33 @@ class TestPeople(unittest.TestCase):
 
         self.assertTrue(self.peeps._is_valid_sibling(wife))
         self.assertTrue(self.peeps._is_valid_sibling(husband))
+
+    def test_print_deceased(self):
+        """ US29 Unit tests
+        """
+        deceased_person = Person("@I3@")
+        deceased_person.set_name("Margo /Hemmingway/")
+        deceased_person.set_gender("F")
+        deceased_person.set_date("8 APR 1954", "birth")
+        deceased_person.set_date("5 NOV 2011", "death")
+        self.peeps.individuals[deceased_person.get_person_id()] = deceased_person
+
+        alive_person = Person("@I4@")
+        alive_person.set_name("David /Hemmingway/")
+        alive_person.set_gender("M")
+        alive_person.set_date("8 APR 1954", "birth")
+        self.peeps.individuals[alive_person.get_person_id()] = alive_person
+
+        # capture the output
+        output = io.StringIO()
+        sys.stdout = output
+        self.peeps.print_deceased()
+        sys.stdout = sys.__stdout__
+        test_output = """Deceased Individuals
++------+--------------------+-------+
+|  ID  |        Name        | Alive |
++------+--------------------+-------+
+| @I3@ | Margo /Hemmingway/ | False |
++------+--------------------+-------+
+"""
+        self.assertEqual(test_output, output.getvalue())

@@ -47,10 +47,12 @@ def run():
 
     print("Individuals")
     peeps.print_all()
+    peeps.print_deceased()
     print("")
 
     print("Families")
     fam.print_all()
+    fam.print_married()
     print("")
 
 
