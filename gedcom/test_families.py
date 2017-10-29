@@ -2099,6 +2099,25 @@ class TestFamilies(unittest.TestCase):
         }
         self.assertDictEqual(err1, results[0])
 
+    def test_validation_uniq_family_id(self):
+        """US22: testing unique family ids
+        look in people for unique people ids portion
+        """
+        fam_data = {
+            "level": 0,
+            "tag": "FAM",
+            "args": "@F01@",
+            "valid": "Y"
+        }
+        self.fam.process_line_data(fam_data)
+        fam_data1 = {
+            "level": 0,
+            "tag": "FAM",
+            "args": "@F01@",
+            "valid": "Y"
+        }
+        self.fam.process_line_data(fam_data1)
+
     def test_validation_no_bigamy(self):
         """US11: testing no bigamy
         """

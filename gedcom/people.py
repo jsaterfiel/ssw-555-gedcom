@@ -47,6 +47,9 @@ class People(object):
 
         if data["tag"] == "INDI":
             self._curr_person = Person(data["args"])
+            if data["args"] in self.individuals:
+                self._msgs.add_message(self.CLASS_IDENTIFIER, "US22", data["args"],
+                                       "NA", "Not unique individual ID " + data["args"] + " ")
             self.individuals.setdefault(data["args"], self._curr_person)
 
         if data["tag"] == "SEX":

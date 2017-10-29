@@ -71,6 +71,25 @@ class TestPeople(unittest.TestCase):
         result = self.peeps.individuals[data["args"]]
         self.assertEqual(test_person.get_person_id(), result.get_person_id())
 
+    def test_unique_id(self):
+        """US22 unique ID for people
+        """
+        person1 = {
+            "level": 0,
+            "tag": "INDI",
+            "args": "@I1@",
+            "valid": "Y"
+        }
+        self.peeps.process_line_data(person1)
+        person2 = {
+            "level": 0,
+            "tag": "INDI",
+            "args": "@I1@",
+            "valid": "Y"
+        }
+        self.peeps.process_line_data(person2)
+        self.assertEqual(1, len(self.peeps.individuals))
+
     def test_correct_individual_tag(self):
         """Ensuring the INDI tag can only be used to add a person
         """

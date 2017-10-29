@@ -44,6 +44,7 @@ class Families(object):
             "valid": "Y" or "N"
         }
         """
+
         if data["valid"] == "N":
             raise ValueError
 
@@ -52,6 +53,10 @@ class Families(object):
 
         if data["tag"] == "FAM":
             self._curr_family = Family(data["args"])
+            if data["args"] in self.families:
+                self._msgs.add_message(self.CLASS_IDENTIFIER, "US22", data["args"], "NA",
+                                       "Not unique family ID " + data["args"] + " ")
+
             self.families[data["args"]] = self._curr_family
 
         if data["tag"] == "MARR":
