@@ -851,6 +851,64 @@ class TestPeople(unittest.TestCase):
         self.assertTrue(self.peeps._is_valid_sibling(wife))
         self.assertTrue(self.peeps._is_valid_sibling(husband))
 
+    def test_print_single(self):
+        """ US31 Unit tests
+        """
+        single_person = Person("@I3@")
+        single_person.set_name("Margo /Hemmingway/")
+        single_person.set_gender("F")
+        single_person.set_date("8 APR 1954", "birth")
+        self.peeps.individuals[single_person.get_person_id()] = single_person
+
+        married_person = Person("@I4@")
+        married_person.set_name("David /Hemmingway/")
+        married_person.set_gender("M")
+        married_person.set_date("8 APR 1939", "birth")
+        married_person.add_spouse_of_family("@F1@")
+        self.peeps.individuals[married_person.get_person_id()] = married_person
+
+        # Not over 30
+        single_person1 = Person("@I5@")
+        single_person1.set_name("Dodge /Hemmingway/")
+        single_person1.set_gender("M")
+        single_person1.set_date("8 APR 1987", "birth")
+        self.peeps.individuals[single_person1.get_person_id()] = single_person1
+
+        # Not over 30
+        single_person2 = Person("@I6@")
+        single_person2.set_name("Dingo /Hemmingway/")
+        single_person2.set_gender("M")
+        single_person2.set_date("8 APR 1990", "birth")
+        self.peeps.individuals[single_person2.get_person_id()] = single_person2
+
+        # Not alive
+        single_person3 = Person("@I7@")
+        single_person3.set_name("Draftie /Hemmingway/")
+        single_person3.set_gender("M")
+        single_person3.set_date("8 APR 1967", "birth")
+        single_person3.set_date("8 APR 1990", "death")
+        self.peeps.individuals[single_person3.get_person_id()] = single_person3
+
+        # No age
+        single_person4 = Person("@I8@")
+        single_person4.set_name("Dirty /Hemmingway/")
+        single_person4.set_gender("M")
+        self.peeps.individuals[single_person4.get_person_id()] = single_person4
+
+        # capture the output
+        output = io.StringIO()
+        sys.stdout = output
+        self.peeps.print_single()
+        sys.stdout = sys.__stdout__
+        test_output = """Single Individuals
++------+--------------------+-------+-----+---------+
+|  ID  |        Name        | Alive | Age | Spouses |
++------+--------------------+-------+-----+---------+
+| @I3@ | Margo /Hemmingway/ |  True |  63 |    []   |
++------+--------------------+-------+-----+---------+
+"""
+        self.assertEqual(test_output, output.getvalue())
+
     def test_print_deceased(self):
         """ US29 Unit tests
         """

@@ -48,6 +48,7 @@ def run():
     print("Individuals")
     peeps.print_all()
     peeps.print_deceased()
+    peeps.print_single()
     print("")
 
     print("Families")

@@ -128,6 +128,25 @@ class People(object):
         print("Deceased Individuals")
         print(table)
 
+    def print_single(self):
+        """" US31 list single
+        Prints all living individuals who are over 30
+        and never been married
+        """
+        people = self.individuals
+        table = PrettyTable(["ID", "Name", "Alive", "Age", "Spouses"])
+
+        for person_id in people:
+            # type: Person
+            individual = self.individuals[person_id]
+            if individual.get_age() is not None:
+                if individual.get_is_alive() and individual.get_age() > 30 and not individual.get_spouse_of_families():
+                    table.add_row([individual.get_person_id(), individual.get_name(), individual.get_is_alive(),
+                                   individual.get_age(), individual.get_spouse_of_families()])
+
+        print("Single Individuals")
+        print(table)
+
     def _is_valid_birth_date(self, person):
         """ checks if birthday occurs after death
         Args:
