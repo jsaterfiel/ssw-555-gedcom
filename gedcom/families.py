@@ -599,8 +599,7 @@ class Families(object):
             value = childbdays.get(
                 child.get_birth_date().date().isoformat(), None)
             if value is not None:
-                childbdays[child.get_birth_date().date().isoformat()
-                           ] = value + 1
+                childbdays[child.get_birth_date().date().isoformat()] = value + 1
             else:
                 childbdays[child.get_birth_date().date().isoformat()] = 1
             for _, value in childbdays.items():
@@ -610,7 +609,7 @@ class Families(object):
                                            family.get_family_id(),
                                            "NA",
                                            "No more than five siblings should be born at the same time")
-                    break
+                    return
 
     def _validate_parents_not_too_old(self, family):
         """Validate that husband and wife are not too much older than children
