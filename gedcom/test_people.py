@@ -674,7 +674,7 @@ class TestPeople(unittest.TestCase):
 """
         self.assertEqual(test_output, output.getvalue())
 
-    def test__is_valid_birth_date(self):
+    def test_us03_is_valid_birth_date(self):
         """US03 test case for valid birth dates
         """
         valid_person = Person("@I3@")
@@ -711,7 +711,7 @@ class TestPeople(unittest.TestCase):
 
         self.assertDictEqual(valid_error_message, test_messages[0])
 
-    def test_not_too_old(self):
+    def test_us07_not_too_old(self):
         """US07: test is the person's age is less than 150
         """
         valid_person = Person("@I3@")
@@ -775,7 +775,7 @@ class TestPeople(unittest.TestCase):
         }
         self.assertDictEqual(error3, output[2])
 
-    def test_dates_before_current_date(self):
+    def test_us01_dates_before_current_date(self):
         """US01: test that all dates are before the current date
         """
         curr = datetime.now()
@@ -829,7 +829,7 @@ class TestPeople(unittest.TestCase):
         }
         self.assertDictEqual(error2, output[2])
 
-    def test_is_valid_sibling(self):
+    def test_us18_is_valid_sibling(self):
         husband = Person("@I3@")
         husband.set_name("Steve /Bambi/")
         husband.add_children_of_family("@F4@")
@@ -842,16 +842,16 @@ class TestPeople(unittest.TestCase):
         wife.add_spouse_of_family("@F4@")
         self.peeps.individuals[husband.get_person_id()] = wife
 
-        self.assertFalse(self.peeps._is_valid_sibling(wife))
-        self.assertFalse(self.peeps._is_valid_sibling(husband))
+        self.assertFalse(self.peeps._us18_is_valid_sibling(wife))
+        self.assertFalse(self.peeps._us18_is_valid_sibling(husband))
 
         wife.remove_children_of_family("@F4@")
         husband.remove_children_of_family("@F4@")
 
-        self.assertTrue(self.peeps._is_valid_sibling(wife))
-        self.assertTrue(self.peeps._is_valid_sibling(husband))
+        self.assertTrue(self.peeps._us18_is_valid_sibling(wife))
+        self.assertTrue(self.peeps._us18_is_valid_sibling(husband))
 
-    def test_print_single(self):
+    def test_us31_print_single(self):
         """ US31 Unit tests
         """
         single_person = Person("@I3@")
@@ -898,7 +898,7 @@ class TestPeople(unittest.TestCase):
         # capture the output
         output = io.StringIO()
         sys.stdout = output
-        self.peeps.print_single()
+        self.peeps.us31_print_single()
         sys.stdout = sys.__stdout__
         test_output = """Single Individuals
 +------+--------------------+-------+-----+---------+
@@ -909,7 +909,7 @@ class TestPeople(unittest.TestCase):
 """
         self.assertEqual(test_output, output.getvalue())
 
-    def test_print_deceased(self):
+    def test_us29_print_deceased(self):
         """ US29 Unit tests
         """
         deceased_person = Person("@I3@")
@@ -928,7 +928,7 @@ class TestPeople(unittest.TestCase):
         # capture the output
         output = io.StringIO()
         sys.stdout = output
-        self.peeps.print_deceased()
+        self.peeps.us29_print_deceased()
         sys.stdout = sys.__stdout__
         test_output = """Deceased Individuals
 +------+--------------------+-------+

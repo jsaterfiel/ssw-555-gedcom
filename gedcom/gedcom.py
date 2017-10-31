@@ -47,13 +47,13 @@ def run():
 
     print("Individuals")
     peeps.print_all()
-    peeps.print_deceased()
-    peeps.print_single()
+    peeps.us29_print_deceased()
+    peeps.us31_print_single()
     print("")
 
     print("Families")
     fam.print_all()
-    fam.print_married()
+    fam.us30_print_married()
     print("")
 
 

@@ -53,6 +53,7 @@ class Families(object):
 
         if data["tag"] == "FAM":
             self._curr_family = Family(data["args"])
+            # US22
             if data["args"] in self.families:
                 self._msgs.add_message(self.CLASS_IDENTIFIER, "US22", data["args"], "NA",
                                        "Not unique family ID " + data["args"] + " ")
@@ -136,7 +137,7 @@ class Families(object):
                 children_order])
         print(p_table)
 
-    def print_married(self):
+    def us30_print_married(self):
         """"
         Prints all married individuals
         """
@@ -171,23 +172,23 @@ class Families(object):
         fam_hashs = {}
         for idx in fam_keys:
             family = self.families[idx]
-            self._validate_dates(family)
-            self._validate_marr_div_dates(family)
-            self._validate_death_of_parents_before_child_birth(family)
-            self._validate_males_in_family_same_last_name(family)
-            self._validate_children_names_and_birthdays_are_different(family)
-            self._validate_fewer_than_15_siblings(family)
-            self._validate_no_bigamy(family)
-            self._validate_corresponding_entries(family)
-            self._validate_no_marriage_to_decendants(family)
-            self._validate_less_than_5_multi_births(family)
-            self._validate_parents_not_too_old(family)
-            self._validate_correct_gender_roles(family)
-            self._hash_family(family, fam_hashs)
+            self._us02_us04_us05_us06_us10_validate_dates(family)
+            self._us01_validate_marr_div_dates(family)
+            self._us09_validate_death_of_parents_before_child_birth(family)
+            self._us16_validate_males_in_family_same_last_name(family)
+            self._us25_validate_children_names_and_birthdays_are_different(family)
+            self._us15_validate_fewer_than_15_siblings(family)
+            self._us11_validate_no_bigamy(family)
+            self._us26_validate_corresponding_entries(family)
+            self._us17_validate_no_marriage_to_decendants(family)
+            self._us14_validate_less_than_5_multi_births(family)
+            self._us12_validate_parents_not_too_old(family)
+            self._us21_validate_correct_gender_roles(family)
+            self._us24_hash_family(family, fam_hashs)
 
-        self._validate_duplicate_families(fam_hashs)
+        self._us24_validate_duplicate_families(fam_hashs)
 
-    def _validate_duplicate_families(self, fam_hashs):
+    def _us24_validate_duplicate_families(self, fam_hashs):
         """US24: Go through the hashes of the families and find the ones
         with more than one in the hash
         US24 No more than one family with the same spouses by name
@@ -204,7 +205,7 @@ class Families(object):
                                        "NA",
                                        "Duplicate families by spouse names and married date: " + ", ".join(dups))
 
-    def _hash_family(self, family, fam_hashs):
+    def _us24_hash_family(self, family, fam_hashs):
         """ hash family values to allow for detecting redundant family setups
         Used for US24 validation.  Must have both spouses and a married date set to get a hash else we have incomplete data to detect a redundant family
         """
@@ -219,9 +220,10 @@ class Families(object):
                 "duplicate_families": []
             }
 
-    def _validate_dates(self, family):
-        """ validating dates
+    def _us02_us04_us05_us06_us10_validate_dates(self, family):
+        """US02, US04-US06, US10 validating dates
         """
+        # US04
         if family.get_family_id() is not None and family.get_married_date() is not None:
             fam_id = family.get_family_id()
             mar_date = family.get_married_date()
@@ -234,6 +236,7 @@ class Families(object):
                                            "NA",
                                            "Marriage date should occur before divorce date of a family")
             # Husband Dates
+            # US02 HUSBAND
             if family.get_husband_id() is not None and family.get_wife_id() is not None:
                 hus_id = family.get_husband_id()
                 wife_id = family.get_wife_id()
@@ -248,6 +251,7 @@ class Families(object):
                                                hus_id,
                                                hus_name,
                                                "Birth date should occur before marriage of an individual")
+                    # US10 HUSBAND
                     hus_mar_age = int(
                         (mar_date - hus_bd).days / self.DAYS_IN_YEAR)
                     if hus_mar_age < 14:
@@ -256,6 +260,7 @@ class Families(object):
                                                fam_id,
                                                "NA",
                                                "marriage before age 14 for " + hus_id + " " + hus_name)
+                    # US05 HUSBAND
                     if self._people.individuals[family.get_husband_id()].get_death_date() is not None:
                         hus_dd = self._people.individuals[family.get_husband_id(
                         )].get_death_date()
@@ -265,6 +270,7 @@ class Families(object):
                                                    fam_id,
                                                    "NA",
                                                    "marriage after death for " + hus_id + " " + hus_name)
+                        # US06 HUSBAND
                         if family.get_divorced_date() is not None:
                             div_date = family.get_divorced_date()
                             if div_date > hus_dd:
@@ -274,6 +280,7 @@ class Families(object):
                                                        "NA",
                                                        "divorce after death for " + hus_id + " " + hus_name)
                 # Wife Dates
+                # US02 WIFE
                 if self._people.individuals[family.get_wife_id()].get_birth_date() is not None and self._people.individuals[family.get_wife_id()].get_name() is not None:
                     wife_bd = self._people.individuals[family.get_wife_id(
                     )].get_birth_date()
@@ -285,6 +292,7 @@ class Families(object):
                                                wife_id,
                                                wife_name,
                                                "Birth date should occur before marriage of an individual")
+                    # US10 WIFE
                     wif_mar_age = int(
                         (mar_date - wife_bd).days / self.DAYS_IN_YEAR)
                     if wif_mar_age < 14:
@@ -293,6 +301,7 @@ class Families(object):
                                                fam_id,
                                                "NA",
                                                "marriage before age 14 for " + wife_id + " " + wife_name)
+                    # US05 WIFE
                     if self._people.individuals[family.get_wife_id()].get_death_date() is not None:
                         wife_dd = self._people.individuals[family.get_wife_id(
                         )].get_death_date()
@@ -302,6 +311,7 @@ class Families(object):
                                                    fam_id,
                                                    "NA",
                                                    "marriage after death for " + wife_id + " " + wife_name)
+                        # US06 WIFE
                         if family.get_divorced_date() is not None:
                             div_date = family.get_divorced_date()
                             if div_date > wife_dd:
@@ -311,8 +321,8 @@ class Families(object):
                                                        "NA",
                                                        "divorce after death for " + wife_id + " " + wife_name)
 
-    def _validate_marr_div_dates(self, family):
-        """Validate that family marriage and divorce dates occurs before current date
+    def _us01_validate_marr_div_dates(self, family):
+        """US01 Validate that family marriage and divorce dates occurs before current date
         """
         if family.get_divorced_date() is not None:
             if family.get_divorced_date() > self._current_time:
@@ -333,7 +343,7 @@ class Families(object):
             return False
         return True
 
-    def _validate_death_of_parents_before_child_birth(self, family):
+    def _us09_validate_death_of_parents_before_child_birth(self, family):
         """US09: validate death of parents before child birth
         """
         key = "US09"
@@ -375,8 +385,8 @@ class Families(object):
                         "NA",
                         msg + wife.get_person_id() + " " + wife.get_name())
 
-    def _person_check_bigamy(self, person_id, marriage_start, marriage_end):
-        """ check bigamy for person
+    def _us11_person_check_bigamy(self, person_id, marriage_start, marriage_end):
+        """Part of US11 check bigamy for person
         """
         spouses_h = self._people.individuals[person_id].get_spouse_of_families(
         )
@@ -403,7 +413,7 @@ class Families(object):
                     return True
         return False
 
-    def _validate_no_bigamy(self, family):
+    def _us11_validate_no_bigamy(self, family):
         """US11 No bigamy
         """
         key = "US11"
@@ -426,9 +436,9 @@ class Families(object):
         if eom is None:
             eom = self._current_time
 
-        hus_result = self._person_check_bigamy(hus, som, eom)
+        hus_result = self._us11_person_check_bigamy(hus, som, eom)
 
-        wif_result = self._person_check_bigamy(wif, som, eom)
+        wif_result = self._us11_person_check_bigamy(wif, som, eom)
 
         if hus_result is True:
             self._msgs.add_message(
@@ -446,21 +456,21 @@ class Families(object):
                 "NA",
                 msg + self._people.individuals[family.get_wife_id()].get_person_id() + " " + self._people.individuals[family.get_wife_id()].get_name())
 
-    def _validate_no_marriage_to_decendants(self, family):
+    def _us17_validate_no_marriage_to_decendants(self, family):
         """US17 No marriage to decendants
         """
         if family.get_children() is None:
             return
 
         if family.get_husband_id() is not None:
-            self._check_family_for_decendant_marriage(
+            self._us17_check_family_for_decendant_marriage(
                 family, family.get_husband_id(), True)
 
         if family.get_wife_id() is not None:
-            self._check_family_for_decendant_marriage(
+            self._us17_check_family_for_decendant_marriage(
                 family, family.get_wife_id(), True)
 
-    def _check_family_for_decendant_marriage(self, family, person_id, ignore_current_family):
+    def _us17_check_family_for_decendant_marriage(self, family, person_id, ignore_current_family):
         """recursive function to go through families to see if a particular person_id was reused
         Is a part of US17
         """
@@ -484,10 +494,10 @@ class Families(object):
                 return
             for fam_id in fams:
                 fam = self.families[fam_id]
-                self._check_family_for_decendant_marriage(
+                self._us17_check_family_for_decendant_marriage(
                     fam, person_id, False)
 
-    def _validate_children_names_and_birthdays_are_different(self, family):
+    def _us25_validate_children_names_and_birthdays_are_different(self, family):
         """US25 Child in a family must have unique first name and birthday
         otherwise it will be considered a misentry of the same child
         """
@@ -516,7 +526,7 @@ class Families(object):
                                    "NA",
                                    "Children in a family must have unique first name and birthday")
 
-    def _validate_males_in_family_same_last_name(self, family):
+    def _us16_validate_males_in_family_same_last_name(self, family):
         """US16 All males in a family have the same last name
         """
         children = family.get_children()
@@ -547,7 +557,7 @@ class Families(object):
                                    "NA",
                                    "All males in a family must have the same last name")
 
-    def _validate_fewer_than_15_siblings(self, family):
+    def _us15_validate_fewer_than_15_siblings(self, family):
         """US15 There should be fewer than 15 siblings in a family
         """
         children = family.get_children()
@@ -559,7 +569,7 @@ class Families(object):
                                        "NA",
                                        "There should be fewer than 15 siblings in a family")
 
-    def _validate_corresponding_entries(self, family):
+    def _us26_validate_corresponding_entries(self, family):
         """US26 Corresponding entries(families)
         See US26 in people class for rest of US26 functionality
         """
@@ -585,7 +595,7 @@ class Families(object):
                     self._msgs.add_message(self.CLASS_IDENTIFIER, us_name, fam_id, "NA",
                                            "corresponding child link missing for " + child_id + " " + child.get_name())
 
-    def _validate_less_than_5_multi_births(self, family):
+    def _us14_validate_less_than_5_multi_births(self, family):
         """US14 No more than 5 siblings born in a multiple birth in a family"""
         children = family.get_children()
         childbdays = {}
@@ -611,8 +621,8 @@ class Families(object):
                                            "No more than five siblings should be born at the same time")
                     return
 
-    def _validate_parents_not_too_old(self, family):
-        """Validate that husband and wife are not too much older than children
+    def _us12_validate_parents_not_too_old(self, family):
+        """US12 Validate that husband and wife are not too much older than children
         Returns:
             bool
         """
@@ -649,8 +659,8 @@ class Families(object):
 
         return True
 
-    def _validate_correct_gender_roles(self, family):
-        "Validate that the husband and wife roles in family are assigned the correct gender"
+    def _us21_validate_correct_gender_roles(self, family):
+        "US21 Validate that the husband and wife roles in family are assigned the correct gender"
         husband_ids = []
         wife_ids = []
         if family.get_husband_id() is not None:

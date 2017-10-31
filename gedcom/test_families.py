@@ -609,7 +609,7 @@ class TestFamilies(unittest.TestCase):
 """
         self.assertEqual(test_output, output.getvalue())
 
-    def test_validation_marriage_before_death(self):
+    def test_us05_validation_marriage_before_death(self):
         """US05: testing that a marriage occurred before death
         """
         # Family 1 setup (married before death)
@@ -751,7 +751,7 @@ class TestFamilies(unittest.TestCase):
         }
         self.assertDictEqual(err3, results[2])
 
-    def test_corresponding_entries(self):
+    def test_us26_corresponding_entries(self):
         """US26:testing corresponding entires for family links in links for that individual
         and that the person links are correct for the families
         """
@@ -852,7 +852,7 @@ class TestFamilies(unittest.TestCase):
         }
         self.assertDictEqual(err4, results[3])
 
-    def test_validation_divorce_before_death(self):
+    def test_us06_validation_divorce_before_death(self):
         """US06: testing that a divorce occurred before death
         """
         # Family 1 setup (divorced before death)
@@ -995,7 +995,7 @@ class TestFamilies(unittest.TestCase):
         }
         self.assertDictEqual(err3, results[2])
 
-    def test_valid_married_date_and_age(self):
+    def test_us02_us10_valid_married_date_and_age(self):
         """ US02: is marriage valid. US10: are spouses at
         least 14 when married
         """
@@ -1206,7 +1206,7 @@ class TestFamilies(unittest.TestCase):
         }
         self.assertDictEqual(err8, results[7])
 
-    def test_validation_marriage_before_divorce(self):
+    def test_us04_validation_marriage_before_divorce(self):
         """US04: testing that marriage occurred before divorce
         """
         # Family 1 setup (married before divorced) Pass
@@ -1276,7 +1276,7 @@ class TestFamilies(unittest.TestCase):
         }
         self.assertDictEqual(err4, results[3])
 
-    def test_validation_marriage_and_divorce_before_current(self):
+    def test_us01_validation_marriage_and_divorce_before_current(self):
         """US01: testing that marriage and divorce dates occurred before current date
         """
         curr = datetime.now()
@@ -1318,7 +1318,7 @@ class TestFamilies(unittest.TestCase):
         }
         self.assertDictEqual(err2, results[1])
 
-    def test_validation_child_before_parent_death(self):
+    def test_us09_validation_child_before_parent_death(self):
         """US09: testing that a child birth occurred before parent death
         """
         # Family 1 setup (child 5ish years before mom death) Valid
@@ -1581,7 +1581,7 @@ class TestFamilies(unittest.TestCase):
         }
         self.assertDictEqual(err5, results[4])
 
-    def test_validation_children_unique_first_name(self):
+    def test_us25_validation_children_unique_first_name(self):
         """US25: testing that a child first name is unique
         """
         # Family 1 setup valid
@@ -1737,7 +1737,7 @@ class TestFamilies(unittest.TestCase):
         self.assertDictEqual(err1, results[0])
 
     def test_us16_male_last_names(self):
-        """US016 All males in a family have the same last name
+        """US16 All males in a family have the same last name
         """
         fam1_id = "@F01@"
         fam1_male1 = Person("@F1I1@")
@@ -1809,7 +1809,7 @@ class TestFamilies(unittest.TestCase):
         self.assertDictEqual(err, msgs[0])
 
     def test_us17_no_marriages_to_descendants(self):
-        """us17: test no marriages to decendants
+        """US17: test no marriages to decendants
         """
         # Family 1 setup VALID
         peep1 = Person("@I1@")
@@ -1979,7 +1979,7 @@ class TestFamilies(unittest.TestCase):
         self.assertDictEqual(err3, results[2])
 
     def test_us15_fewer_than_15_siblings(self):
-        """US015 there must be fewer than 15 siblings in a family
+        """US15 there must be fewer than 15 siblings in a family
         """
         # Family 1 setup with three children - valid
         peep22 = Person("@I22@")
@@ -2099,7 +2099,7 @@ class TestFamilies(unittest.TestCase):
         }
         self.assertDictEqual(err1, results[0])
 
-    def test_validation_uniq_family_id(self):
+    def test_US22_validation_uniq_family_id(self):
         """US22: testing unique family ids
         look in people for unique people ids portion
         """
@@ -2118,7 +2118,7 @@ class TestFamilies(unittest.TestCase):
         }
         self.fam.process_line_data(fam_data1)
 
-    def test_validation_no_bigamy(self):
+    def test_us11_validation_no_bigamy(self):
         """US11: testing no bigamy
         """
         # Family 1 setup
@@ -2280,7 +2280,7 @@ class TestFamilies(unittest.TestCase):
         self.assertDictEqual(err5, results[4])
 
     def test_us14_fewer_than_5_siblings(self):
-        """US014 No more than 5 siblings born in a multiple birth in a family
+        """US14 No more than 5 siblings born in a multiple birth in a family
         """
         # family set up - 3 births at a time - valid
         peep25 = Person("@I25@")
@@ -2358,8 +2358,8 @@ class TestFamilies(unittest.TestCase):
         }
         self.assertDictEqual(err1, results[0])
 
-    def test_validate_parents_not_too_old(self):
-        # Create a test family for each unit test
+    def test_us12_validate_parents_not_too_old(self):
+        # US12 Create a test family for each unit test
         test_family = Family("@F1@")
         test_family.set_husband_id("@I1@")
         test_family.set_wife_id("@I2@")
@@ -2387,20 +2387,20 @@ class TestFamilies(unittest.TestCase):
         """ US12: Test if parents are too old
         """
         test_family = self.fam.families["@F1@"]  # type: Family
-        self.assertTrue(self.fam._validate_parents_not_too_old(test_family))
+        self.assertTrue(self.fam._us12_validate_parents_not_too_old(test_family))
         self.assertEqual(len(self.msgs._messages), 0)
 
         # type: Person
         husband = self.peeps.individuals[test_family.get_husband_id()]
         husband.set_date("17 AUG 1900", "birth")
-        self.assertFalse(self.fam._validate_parents_not_too_old(test_family))
+        self.assertFalse(self.fam._us12_validate_parents_not_too_old(test_family))
         self.assertEqual(len(self.msgs.get_messages()), 1)
 
         # type: Person
         wife = self.peeps.individuals[test_family.get_wife_id()]
         husband.set_date("1 JAN 1965", "birth")
         wife.set_date("18 AUG 1900", "birth")
-        self.assertFalse(self.fam._validate_parents_not_too_old(test_family))
+        self.assertFalse(self.fam._us12_validate_parents_not_too_old(test_family))
         self.assertEqual(len(self.msgs.get_messages()), 2)
 
     def test_us24_unique_families_by_spouses(self):
@@ -2519,7 +2519,7 @@ class TestFamilies(unittest.TestCase):
         }
         self.assertDictEqual(err2, results[1])
 
-    def test_print_married(self):
+    def test_us30_print_married(self):
         """ US30 Unit tests
         """
         test_family = Family("@F1@")
@@ -2544,7 +2544,7 @@ class TestFamilies(unittest.TestCase):
         # capture the output
         output = io.StringIO()
         sys.stdout = output
-        self.fam.print_married()
+        self.fam.us30_print_married()
         sys.stdout = sys.__stdout__
         test_output = """Married Individuals
 +------+----------------+---------+

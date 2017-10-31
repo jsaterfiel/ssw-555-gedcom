@@ -47,6 +47,7 @@ class People(object):
 
         if data["tag"] == "INDI":
             self._curr_person = Person(data["args"])
+            # US22
             if data["args"] in self.individuals:
                 self._msgs.add_message(self.CLASS_IDENTIFIER, "US22", data["args"],
                                        "NA", "Not unique individual ID " + data["args"] + " ")
@@ -112,8 +113,8 @@ class People(object):
                 person.get_spouse_of_families()])
         print(p_table)
 
-    def print_deceased(self):
-        """"
+    def us29_print_deceased(self):
+        """"US29
         Prints all deceased individuals
         """
         people = self.individuals
@@ -128,7 +129,7 @@ class People(object):
         print("Deceased Individuals")
         print(table)
 
-    def print_single(self):
+    def us31_print_single(self):
         """" US31 list single
         Prints all living individuals who are over 30
         and never been married
@@ -147,8 +148,8 @@ class People(object):
         print("Single Individuals")
         print(table)
 
-    def _is_valid_birth_date(self, person):
-        """ checks if birthday occurs after death
+    def _us03_is_valid_birth_date(self, person):
+        """US03 checks if birthday occurs after death
         Args:
             person: Person
         """
@@ -160,8 +161,8 @@ class People(object):
                                        person.get_name(),
                                        "Birth date should occur before death of an individual")
 
-    def _is_valid_age(self, person):
-        """ checks if age is less than 150
+    def _us07_is_valid_age(self, person):
+        """US07 checks if age is less than 150
         Args:
             person: Person
         """
@@ -173,8 +174,8 @@ class People(object):
                                        person.get_name(),
                                        "Age should be less than 150")
 
-    def _is_valid_death_current_dates(self, person):
-        """ checks if birthday and death dates occurs before current date
+    def _us01_is_valid_death_current_dates(self, person):
+        """US01 checks if birthday and death dates occurs before current date
         """
         if person.get_death_date() is not None:
             if person.get_death_date() > self._current_time:
@@ -184,8 +185,8 @@ class People(object):
                                        person.get_name(),
                                        "Death date should occur before current date")
 
-    def _is_valid_birth_current_dates(self, person):
-        """ checks if birthday occurs after death
+    def _us01_is_valid_birth_current_dates(self, person):
+        """US01 checks if birthday occurs after death
         """
         if person.get_birth_date() is not None:
             if person.get_birth_date() > self._current_time:
@@ -195,8 +196,8 @@ class People(object):
                                        person.get_name(),
                                        "Birth date should occur before current date")
 
-    def _is_valid_sibling(self, person):
-        """ checks if siblings are married to each other
+    def _us18_is_valid_sibling(self, person):
+        """US18 checks if siblings are married to each other
         """
         if len(set(person.get_children_of_families())) and len(set(person.get_spouse_of_families())):
             spouses = set(person.get_spouse_of_families())
@@ -219,14 +220,14 @@ class People(object):
         ind_keys = sorted(self.individuals.keys())
         for idx in ind_keys:
             person = self.individuals[idx]
-            self._is_valid_birth_date(person)
-            self._is_valid_age(person)
-            self._is_valid_birth_current_dates(person)
-            self._is_valid_death_current_dates(person)
-            self._is_valid_sibling(person)
-            self._validate_corresponding_entries(person)
+            self._us03_is_valid_birth_date(person)
+            self._us07_is_valid_age(person)
+            self._us01_is_valid_birth_current_dates(person)
+            self._us01_is_valid_death_current_dates(person)
+            self._us18_is_valid_sibling(person)
+            self._us26_validate_corresponding_entries(person)
 
-    def _validate_corresponding_entries(self, person):
+    def _us26_validate_corresponding_entries(self, person):
         """US26: check that the person's family links exist in the family record
         """
         us_num = "US26"
