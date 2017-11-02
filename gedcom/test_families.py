@@ -2539,7 +2539,7 @@ class TestFamilies(unittest.TestCase):
         test_wife.set_date("1 JAN 2017", "death")
         test_wife.add_spouse_of_family(test_family.get_family_id())
         self.peeps.individuals[test_wife.get_person_id()] = test_wife
-        
+
         # 1 child
         test_family = Family("@F2@")
         test_family.set_husband_id("@I3@")
