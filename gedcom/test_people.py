@@ -938,3 +938,61 @@ class TestPeople(unittest.TestCase):
 +------+--------------------+-------+
 """
         self.assertEqual(test_output, output.getvalue())
+
+    def test_us35_print_recent_births(self):
+        """ US35 unit test testing recent births
+        """
+        # valid - pass
+        recent_birth = Person("@I11@")
+        recent_birth.set_name("Kyrie /Irving/")
+        recent_birth.set_gender("M")
+        recent_birth.set_date("30 OCT 2017", "birth")
+        self.peeps.individuals[recent_birth.get_person_id()] = recent_birth
+        # invalid - fail
+        not_recent_birth = Person("@I38@")
+        not_recent_birth.set_name("LaBron /James/")
+        not_recent_birth.set_gender("M")
+        not_recent_birth.set_date("30 OCT 1977", "birth")
+        self.peeps.individuals[not_recent_birth.get_person_id()] = not_recent_birth
+
+        # capture the output
+        output = io.StringIO()
+        sys.stdout = output
+        self.peeps.us35_print_recent_births()
+        sys.stdout = sys.__stdout__
+        test_output = """Recent Births
++-------+----------------+---------------------+
+|   ID  |      Name      |      Birthdate      |
++-------+----------------+---------------------+
+| @I11@ | Kyrie /Irving/ | 2017-10-30 00:00:00 |
++-------+----------------+---------------------+
+"""
+
+    def test_us36_print_recent_deaths(self):
+        """ US36 unit test testing recent deaths
+        """
+        # valid - pass
+        recent_death = Person("@I49@")
+        recent_death.set_name("Mike /Jack/")
+        recent_death.set_gender("M")
+        recent_death.set_date("31 OCT 2017", "death")
+        self.peeps.individuals[recent_death.get_person_id()] = recent_death
+        # invalid - fail
+        not_recent_death = Person("@I38@")
+        not_recent_death.set_name("Maya /Angelou/")
+        not_recent_death.set_gender("M")
+        not_recent_death.set_date("30 OCT 1977", "death")
+        self.peeps.individuals[not_recent_death.get_person_id()] = not_recent_death
+
+        # capture the output
+        output = io.StringIO()
+        sys.stdout = output
+        self.peeps.us36_print_recent_deaths()
+        sys.stdout = sys.__stdout__
+        test_output = """Recent Deaths
++-------+----------------+---------------------+
+|   ID  |      Name      |      Birthdate      |
++-------+----------------+---------------------+
+| @I49@ | Mike / Jack /  | 2017-10-31 00:00:00 |
++-------+----------------+---------------------+
+"""
