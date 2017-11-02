@@ -2,6 +2,7 @@
 Parses person tags from the gedcom data passed to it line by line as they appear in the gedcom files
 """
 from datetime import datetime
+from datetime import timedelta
 from person import Person
 from prettytable import PrettyTable
 from family import Family
@@ -146,6 +147,43 @@ class People(object):
                                    individual.get_age(), individual.get_spouse_of_families()])
 
         print("Single Individuals")
+        print(table)
+
+    def us35_print_recent_births(self):
+        """" US35 Print births in the last 30 days in pretty table
+        """
+        people = self.individuals
+        table = PrettyTable(["ID", "Name", "Birthdate"])
+
+        for person_id in people:
+            person = self.individuals[person_id]
+            recent_date = self._current_time - timedelta(days=30)
+            if person.get_birth_date() is None:
+                pass
+            if person.get_birth_date() is not None:
+                if recent_date < person.get_birth_date() and person.get_birth_date() < self._current_time:
+                    table.add_row([person.get_person_id(), person.get_name(), person.get_birth_date()])
+
+        print("Recent Births")
+        print(table)
+
+    def us36_print_recent_deaths(self):
+        """" US36 Print deaths in the last 30 days in pretty table
+        """
+        people = self.individuals
+        table = PrettyTable(["ID", "Name", "Deathdate"])
+
+        for person_id in people:
+            person = self.individuals[person_id]
+            recent_date = self._current_time - timedelta(days=30)
+
+            if person.get_death_date() is None:
+                pass
+            if person.get_death_date() is not None:
+                if recent_date < person.get_death_date() and person.get_death_date() < self._current_time:
+                    table.add_row([person.get_person_id(), person.get_name(), person.get_death_date()])
+
+        print("Recent Deaths")
         print(table)
 
     def _us03_is_valid_birth_date(self, person):
