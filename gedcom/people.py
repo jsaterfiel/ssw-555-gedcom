@@ -2,6 +2,7 @@
 Parses person tags from the gedcom data passed to it line by line as they appear in the gedcom files
 """
 from datetime import datetime
+from datetime import timedelta
 from person import Person
 from prettytable import PrettyTable
 from family import Family
