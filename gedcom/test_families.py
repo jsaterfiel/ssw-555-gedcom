@@ -2520,7 +2520,7 @@ class TestFamilies(unittest.TestCase):
         self.assertDictEqual(err2, results[1])
 
     def test_us33_print_orphaned(self):
-        """ US33 print orphans test
+        """ US33 print orphaned list test
         """
         # no children
         test_family = Family("@F1@")
