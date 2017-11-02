@@ -49,6 +49,8 @@ def run():
     peeps.print_all()
     peeps.us29_print_deceased()
     peeps.us31_print_single()
+    peeps.us35_print_recent_births()
+    peeps.us36_print_recent_deaths()
     print("")
 
     print("Families")
