@@ -164,6 +164,39 @@ class Families(object):
         print("Married Individuals")
         print(table)
 
+    def us33_print_orphans(self):
+        """"
+        Prints all orphaned individuals
+        """
+        families = self.families
+        individuals = self._people.individuals
+        table = PrettyTable(["ID", "Name", "Age"])
+
+        for family_id in families:
+            # type: Family
+            family = self.families[family_id]
+            if not family.get_children():
+                continue
+            hus_id = family.get_husband_id()
+            husband = None
+            wife_id = family.get_wife_id()
+            wife = None
+            if wife_id is not None:
+                wife = individuals[wife_id]
+            if hus_id is not None:
+                husband = individuals[hus_id]
+            if husband is None or wife is None:
+                continue
+            if wife.get_death_date() is not None and husband.get_death_date() is not None:
+                for child_id in family.get_children():
+                    child = individuals[child_id]
+                    age = child.get_age()
+                    if age is not None and age < 18:
+                        table.add_row([child_id, child.get_name(), child.get_age()])
+
+        print("Orphans")
+        print(table)
+
     def validate(self):
         """run through all the validation rules around families
         """

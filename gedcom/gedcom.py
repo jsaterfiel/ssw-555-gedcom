@@ -56,6 +56,7 @@ def run():
     print("Families")
     fam.print_all()
     fam.us30_print_married()
+    fam.us33_print_orphans()
     print("")
 
 

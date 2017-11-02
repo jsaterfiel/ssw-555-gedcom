@@ -2519,6 +2519,80 @@ class TestFamilies(unittest.TestCase):
         }
         self.assertDictEqual(err2, results[1])
 
+    def test_us33_print_orphaned(self):
+        """ US33 print orphaned list test
+        """
+        # no children
+        test_family = Family("@F1@")
+        test_family.set_husband_id("@I1@")
+        test_family.set_wife_id("@I2@")
+        self.fam.families[test_family.get_family_id()] = test_family
+        test_husband = Person("@I1@")
+        test_husband.set_name("Tony /Tiger/")
+        test_husband.set_gender("M")
+        test_husband.set_date("1 JAN 2017", "death")
+        test_husband.add_spouse_of_family(test_family.get_family_id())
+        self.peeps.individuals[test_husband.get_person_id()] = test_husband
+        test_wife = Person("@I2@")
+        test_wife.set_name("Minnie /Mouse/")
+        test_wife.set_gender("F")
+        test_wife.set_date("1 JAN 2017", "death")
+        test_wife.add_spouse_of_family(test_family.get_family_id())
+        self.peeps.individuals[test_wife.get_person_id()] = test_wife
+
+        # 1 child
+        test_family = Family("@F2@")
+        test_family.set_husband_id("@I3@")
+        test_family.set_wife_id("@I4@")
+        test_family.add_child("@I5@")
+        test_family.add_child("@I6@")
+        test_family.add_child("@I7@")
+        self.fam.families[test_family.get_family_id()] = test_family
+        test_husband = Person("@I3@")
+        test_husband.set_name("Sam /Tiger/")
+        test_husband.set_gender("M")
+        test_husband.set_date("1 JAN 2017", "death")
+        test_husband.add_spouse_of_family(test_family.get_family_id())
+        self.peeps.individuals[test_husband.get_person_id()] = test_husband
+        test_wife = Person("@I4@")
+        test_wife.set_name("Mary /Mouse/")
+        test_wife.set_gender("F")
+        test_wife.set_date("1 JAN 2017", "death")
+        test_wife.add_spouse_of_family(test_family.get_family_id())
+        self.peeps.individuals[test_wife.get_person_id()] = test_wife
+        test_child = Person("@I5@")
+        test_child.set_name("Bonnie /Mouse/")
+        test_child.set_gender("F")
+        test_child.set_date("1 JAN 2015", "birth")
+        test_child.add_children_of_family(test_family.get_family_id())
+        self.peeps.individuals[test_child.get_person_id()] = test_child
+        test_child = Person("@I6@")
+        test_child.set_name("David /Mouse/")
+        test_child.set_gender("M")
+        test_child.set_date("1 JAN 1990", "birth")
+        test_child.add_children_of_family(test_family.get_family_id())
+        self.peeps.individuals[test_child.get_person_id()] = test_child
+        test_child = Person("@I7@")
+        test_child.set_name("Doug /Mouse/")
+        test_child.set_gender("M")
+        test_child.set_date("1 JAN 2017", "death")
+        test_child.add_children_of_family(test_family.get_family_id())
+        self.peeps.individuals[test_child.get_person_id()] = test_child
+
+        # capture the output
+        output = io.StringIO()
+        sys.stdout = output
+        self.fam.us33_print_orphans()
+        sys.stdout = sys.__stdout__
+        test_output = """Orphans
++------+----------------+-----+
+|  ID  |      Name      | Age |
++------+----------------+-----+
+| @I5@ | Bonnie /Mouse/ |  2  |
++------+----------------+-----+
+"""
+        self.assertEqual(test_output, output.getvalue())
+
     def test_us30_print_married(self):
         """ US30 Unit tests
         """
