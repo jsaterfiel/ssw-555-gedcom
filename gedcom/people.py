@@ -168,7 +168,7 @@ class People(object):
         print(table)
 
     def us36_print_recent_deaths(self):
-        """" US35 Print deaths in the last 30 days in pretty table
+        """" US36 Print deaths in the last 30 days in pretty table
         """
         people = self.individuals
         table = PrettyTable(["ID", "Name", "Deathdate"])
