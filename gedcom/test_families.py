@@ -575,6 +575,166 @@ class TestFamilies(unittest.TestCase):
 """
         self.assertEqual(test_output, output.getvalue())
 
+    def test_US28_print_all_ordered_children(self):
+        """test print all families with children ordered by age
+        """
+        # raw data lines:
+        # 0 @F1@ FAM
+        # 1 DIV
+        # 2 DATE 26 APR 2017
+        # 1 HUSB @I1@
+        # 1 WIFE @I2@
+        # 1 CHIL @I18@
+        # 1 CHIL @I19@
+        # 1 MARR
+        # 2 DATE 15 JAN 1993
+        fam_data = {
+            "level": 0,
+            "tag": "FAM",
+            "args": "@F1@",
+            "valid": "Y"
+        }
+        self.fam.process_line_data(fam_data)
+        div_tag = {
+            "level": 1,
+            "tag": "DIV",
+            "args": "",
+            "valid": "Y"
+        }
+        self.fam.process_line_data(div_tag)
+        div_date = {
+            "level": 2,
+            "tag": "DATE",
+            "args": "26 APR 2017",
+            "valid": "Y"
+        }
+        self.fam.process_line_data(div_date)
+        husband_data = {
+            "level": 1,
+            "tag": "HUSB",
+            "args": "@I1@",
+            "valid": "Y"
+        }
+        self.fam.process_line_data(husband_data)
+        wife_data = {
+            "level": 1,
+            "tag": "WIFE",
+            "args": "@I2@",
+            "valid": "Y"
+        }
+        self.fam.process_line_data(wife_data)
+        child1_data = {
+            "level": 1,
+            "tag": "CHIL",
+            "args": "@I18@",
+            "valid": "Y"
+        }
+        self.fam.process_line_data(child1_data)
+        child2_data = {
+            "level": 1,
+            "tag": "CHIL",
+            "args": "@I19@",
+            "valid": "Y"
+        }
+        self.fam.process_line_data(child2_data)
+        mar_tag = {
+            "level": 1,
+            "tag": "MARR",
+            "args": "",
+            "valid": "Y"
+        }
+        self.fam.process_line_data(mar_tag)
+        mar_date = {
+            "level": 2,
+            "tag": "DATE",
+            "args": "15 JAN 1993",
+            "valid": "Y"
+        }
+        self.fam.process_line_data(mar_date)
+        # load data for the individuals in family
+        data1 = {
+            "level": 0,
+            "tag": "INDI",
+            "args": "@I1@",
+            "valid": "Y"
+        }
+        self.peeps.process_line_data(data1)
+        name_tag1 = {
+            "level": 1,
+            "tag": "NAME",
+            "args": "Jane /Doe/",
+            "valid": "Y"
+        }
+        self.peeps.process_line_data(name_tag1)
+        data2 = {
+            "level": 0,
+            "tag": "INDI",
+            "args": "@I2@",
+            "valid": "Y"
+        }
+        self.peeps.process_line_data(data2)
+        name_tag2 = {
+            "level": 1,
+            "tag": "NAME",
+            "args": "Jane /Doe/",
+            "valid": "Y"
+        }
+        self.peeps.process_line_data(name_tag2)
+        data3 = {
+            "level": 0,
+            "tag": "INDI",
+            "args": "@I18@",
+            "valid": "Y"
+        }
+        self.peeps.process_line_data(data3)
+        birth_tag1 = {
+            "level": 1,
+            "tag": "BIRT",
+            "args": "",
+            "valid": "Y"
+        }
+        self.peeps.process_line_data(birth_tag1)
+        birth_date1 = {
+            "level": 2,
+            "tag": "DATE",
+            "args": "3 OCT 2001",
+            "valid": "Y"
+        }
+        self.peeps.process_line_data(birth_date1)
+        data4 = {
+            "level": 0,
+            "tag": "INDI",
+            "args": "@I19@",
+            "valid": "Y"
+        }
+        self.peeps.process_line_data(data4)
+        birth_tag2 = {
+            "level": 1,
+            "tag": "BIRT",
+            "args": "",
+            "valid": "Y"
+        }
+        self.peeps.process_line_data(birth_tag2)
+        birth_date2 = {
+            "level": 2,
+            "tag": "DATE",
+            "args": "1 MAY 2010",
+            "valid": "Y"
+        }
+        self.peeps.process_line_data(birth_date2)
+        # capture the output
+        output = io.StringIO()
+        sys.stdout = output
+        self.fam.print_all()
+        sys.stdout = sys.__stdout__
+        test_output = """+------+------------+------------+------------+--------------+---------+------------+--------------------+
+|  ID  |  Married   |  Divorced  | Husband ID | Husband Name | Wife ID | Wife Name  |      Children      |
++------+------------+------------+------------+--------------+---------+------------+--------------------+
+| @F1@ | 1993-01-15 | 2017-04-26 |    @I1@    |  Jane /Doe/  |   @I2@  | Jane /Doe/ | ['@I18@', '@I19@'] |
++------+------------+------------+------------+--------------+---------+------------+--------------------+
+"""
+        self.assertEqual(test_output, output.getvalue())
+
     def test_print_all_in_order(self):
         """test print all families in order
         """
