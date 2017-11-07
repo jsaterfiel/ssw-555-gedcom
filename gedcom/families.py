@@ -164,6 +164,32 @@ class Families(object):
         print("Married Individuals")
         print(table)
 
+    def us32_print_multiple_births(self):
+        """"US32
+        Prints all multiple births
+        """
+        families = self.families
+        individuals = self._people.individuals
+        table = PrettyTable(["ID", "Name", "Family ID", "Birthday"])
+
+        for family_id in families:
+            child_bd = []
+            children = []
+            # type: Family
+            family = self.families[family_id]
+            if family.get_children() is not None and len(family.get_children()) > 1:
+                for child_id in family.get_children():
+                    child = individuals[child_id]
+                    if child.get_birth_date is not None:
+                        children.append(child_id)
+                        child_bd.append(child.get_birth_date())
+                for x in range(0, len(child_bd)):
+                    if child_bd.count(child_bd[x]) > 1:
+                        table.add_row([children[x], individuals[children[x]].get_name(), family_id, child_bd[x]])
+
+        print("Multiple Births")
+        print(table)
+
     def us33_print_orphans(self):
         """"
         Prints all orphaned individuals

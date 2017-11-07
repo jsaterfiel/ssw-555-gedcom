@@ -2439,6 +2439,53 @@ class TestFamilies(unittest.TestCase):
         }
         self.assertDictEqual(err5, results[4])
 
+    def test_us32_print_multiple_births(self):
+        """US32 print multiple births test
+        """
+        # family set up - 3 births at a time - valid
+        peep24 = Person("@I24@")
+        peep24.set_name("Buddy /Chaplin/")
+        peep24.set_date("5 JAN 1970", "birth")
+        peep24.add_children_of_family("@F1@")
+        self.peeps.individuals[peep24.get_person_id()] = peep24
+        peep25 = Person("@I25@")
+        peep25.set_name("GreenDay /Chaplin/")
+        peep25.set_date("1 JAN 1970", "birth")
+        peep25.add_children_of_family("@F1@")
+        self.peeps.individuals[peep25.get_person_id()] = peep25
+        peep26 = Person("@I26@")
+        peep26.set_name("Panic /Chaplin/")
+        peep26.set_date("1 JAN 1970", "birth")
+        peep26.add_children_of_family("@F1@")
+        self.peeps.individuals[peep26.get_person_id()] = peep26
+        peep27 = Person("@I27@")
+        peep27.set_name("Maroon /Chaplin/")
+        peep27.set_date("1 JAN 1970", "birth")
+        peep27.add_children_of_family("@F1@")
+        self.peeps.individuals[peep27.get_person_id()] = peep27
+        fam1 = Family("@F1@")
+        fam1.add_child(peep24.get_person_id())
+        fam1.add_child(peep25.get_person_id())
+        fam1.add_child(peep26.get_person_id())
+        fam1.add_child(peep27.get_person_id())
+        self.fam.families[fam1.get_family_id()] = fam1
+        self.maxDiff = None
+        # capture the output
+        output = io.StringIO()
+        sys.stdout = output
+        self.fam.us32_print_multiple_births()
+        sys.stdout = sys.__stdout__
+        test_output = """Multiple Births
++-------+--------------------+-----------+---------------------+
+|   ID  |        Name        | Family ID |       Birthday      |
++-------+--------------------+-----------+---------------------+
+| @I25@ | GreenDay /Chaplin/ |    @F1@   | 1970-01-01 00:00:00 |
+| @I26@ |  Panic /Chaplin/   |    @F1@   | 1970-01-01 00:00:00 |
+| @I27@ |  Maroon /Chaplin/  |    @F1@   | 1970-01-01 00:00:00 |
++-------+--------------------+-----------+---------------------+
+"""
+        self.assertEqual(test_output, output.getvalue())
+
     def test_us14_fewer_than_5_siblings(self):
         """US14 No more than 5 siblings born in a multiple birth in a family
         """
