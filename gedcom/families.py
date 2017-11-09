@@ -236,11 +236,12 @@ class Families(object):
             family = self.families[familiy_id]
             today = datetime.today()
             anniversary = family.get_married_date()
-            if anniversary is not None:
+            husband = individuals[family.get_husband_id()]
+            wife = individuals[family.get_wife_id()]
+            if anniversary is not None and husband.get_is_alive() and wife.get_is_alive():
                 family_current_anniversary = datetime(today.year, anniversary.month, anniversary.day)
                 if 0 <= (family_current_anniversary - today).days <= 30:
-                    table.add_row([family.get_family_id(), individuals[family.get_husband_id()].get_name(),
-                                   individuals[family.get_wife_id()].get_name(), anniversary])
+                    table.add_row([family.get_family_id(), husband.get_name(), wife.get_name(), anniversary])
 
         print("Upcoming Anniversaries")
         print(table)

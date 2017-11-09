@@ -142,7 +142,7 @@ class People(object):
             individual = self.individuals[person_id]
             today = datetime.today()
             individual_birthday = individual.get_birth_date()
-            if individual_birthday is not None:
+            if individual_birthday is not None and individual.get_is_alive():
                 individual_current_birthday = datetime(today.year, individual_birthday.month, individual_birthday.day)
                 if 0 <= (individual_current_birthday - today).days <= 30:
                     table.add_row([individual.get_person_id(), individual.get_name(), individual_birthday])
