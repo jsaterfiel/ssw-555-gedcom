@@ -2837,7 +2837,7 @@ class TestFamilies(unittest.TestCase):
 """
         self.assertEqual(test_output, output.getvalue())
 
-    def test_print_upcoming_anniversaries(self):
+    def us_39_test_print_upcoming_anniversaries(self):
         """ US39 Unit tests
         """
         test_family = Family("@F1@")
@@ -2862,7 +2862,7 @@ class TestFamilies(unittest.TestCase):
         # capture the output
         output = io.StringIO()
         sys.stdout = output
-        self.fam.print_upcoming_anniversaries()
+        self.fam.us_39_print_upcoming_anniversaries()
         sys.stdout = sys.__stdout__
         test_output = """Upcoming Anniversaries
 +------+--------------+----------------+---------------------+

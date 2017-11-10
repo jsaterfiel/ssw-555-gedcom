@@ -51,7 +51,7 @@ def run():
     peeps.us31_print_single()
     peeps.us35_print_recent_births()
     peeps.us36_print_recent_deaths()
-    peeps.print_upcoming_birthdays()
+    peeps.us_38_print_upcoming_birthdays()
     print("")
 
     print("Families")
@@ -59,7 +59,7 @@ def run():
     fam.us30_print_married()
     fam.us32_print_multiple_births()
     fam.us33_print_orphans()
-    fam.print_upcoming_anniversaries()
+    fam.us_39_print_upcoming_anniversaries()
     print("")
 
 

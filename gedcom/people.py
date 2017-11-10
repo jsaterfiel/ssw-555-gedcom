@@ -130,7 +130,7 @@ class People(object):
         print("Deceased Individuals")
         print(table)
 
-    def print_upcoming_birthdays(self):
+    def us_38_print_upcoming_birthdays(self):
         """"US38
         Prints birthdays within the next 30 days
         """

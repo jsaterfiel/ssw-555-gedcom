@@ -997,7 +997,7 @@ class TestPeople(unittest.TestCase):
 +-------+----------------+---------------------+
 """
 
-    def test_print_upcoming_birthdays(self):
+    def test_us_38_print_upcoming_birthdays(self):
         """ US38 Unit tests
         """
         recent_birthday_person = Person("@I3@")
@@ -1022,7 +1022,7 @@ class TestPeople(unittest.TestCase):
         # capture the output
         output = io.StringIO()
         sys.stdout = output
-        self.peeps.print_upcoming_birthdays()
+        self.peeps.us_38_print_upcoming_birthdays()
         sys.stdout = sys.__stdout__
         test_output = """Upcoming Birthdays
 +------+--------------------+---------------------+

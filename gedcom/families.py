@@ -223,7 +223,7 @@ class Families(object):
         print("Orphans")
         print(table)
 
-    def print_upcoming_anniversaries(self):
+    def us_39_print_upcoming_anniversaries(self):
         """"US39
         Prints Anniversaries within the next 30 days
         """
