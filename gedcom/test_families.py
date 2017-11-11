@@ -2801,7 +2801,7 @@ class TestFamilies(unittest.TestCase):
         self.assertEqual(test_output, output.getvalue())
 
     def test_us34_print_gold_diggers(self):
-        """ US33 print families where when married one spouse was twice as old as the other
+        """ US34 print families where when married one spouse was twice as old as the other
         """
         # invalid
         test_family = Family("@F1@")
