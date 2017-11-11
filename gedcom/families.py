@@ -223,6 +223,29 @@ class Families(object):
         print("Orphans")
         print(table)
 
+    def us_39_print_upcoming_anniversaries(self):
+        """"US39
+        Prints Anniversaries within the next 30 days
+        """
+        families = self.families
+        individuals = self._people.individuals
+        table = PrettyTable(["ID", "Husband", "Wife", "Anniversary"])
+
+        for familiy_id in families:
+            # type: Family
+            family = self.families[familiy_id]
+            today = datetime.today()
+            anniversary = family.get_married_date()
+            husband = individuals[family.get_husband_id()]
+            wife = individuals[family.get_wife_id()]
+            if anniversary is not None and husband.get_is_alive() and wife.get_is_alive():
+                family_current_anniversary = datetime(today.year, anniversary.month, anniversary.day)
+                if 0 <= (family_current_anniversary - today).days <= 30:
+                    table.add_row([family.get_family_id(), husband.get_name(), wife.get_name(), anniversary])
+
+        print("Upcoming Anniversaries")
+        print(table)
+
     def us34_print_big_age_diff(self):
         """
         prints all couples that when they married they were twice as old as the other spouse.

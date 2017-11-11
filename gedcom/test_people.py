@@ -996,3 +996,39 @@ class TestPeople(unittest.TestCase):
 | @I49@ | Mike / Jack /  | 2017-10-31 00:00:00 |
 +-------+----------------+---------------------+
 """
+
+    def test_us_38_print_upcoming_birthdays(self):
+        """ US38 Unit tests
+        """
+        recent_birthday_person = Person("@I3@")
+        recent_birthday_person.set_name("Margo /Hemmingway/")
+        recent_birthday_person.set_gender("F")
+        recent_birthday_person.set_date("20 NOV 1954", "birth")
+        self.peeps.individuals[recent_birthday_person.get_person_id()] = recent_birthday_person
+
+        past_birthday_person = Person("@I4@")
+        past_birthday_person.set_name("Marge /Hemmingway/")
+        past_birthday_person.set_gender("F")
+        past_birthday_person.set_date("1 NOV 1960", "birth")
+        self.peeps.individuals[past_birthday_person.get_person_id()] = past_birthday_person
+
+        deceased_person = Person("@I5@")
+        deceased_person.set_name("David /Hemmingway/")
+        deceased_person.set_gender("M")
+        deceased_person.set_date("8 APR 1954", "birth")
+        deceased_person.set_date("31 OCT 2017", "death")
+        self.peeps.individuals[deceased_person.get_person_id()] = deceased_person
+
+        # capture the output
+        output = io.StringIO()
+        sys.stdout = output
+        self.peeps.us_38_print_upcoming_birthdays()
+        sys.stdout = sys.__stdout__
+        test_output = """Upcoming Birthdays
++------+--------------------+---------------------+
+|  ID  |        Name        |       Birthday      |
++------+--------------------+---------------------+
+| @I3@ | Margo /Hemmingway/ | 1954-11-20 00:00:00 |
++------+--------------------+---------------------+
+"""
+        self.assertEqual(test_output, output.getvalue())
