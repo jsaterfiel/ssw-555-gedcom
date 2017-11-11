@@ -59,6 +59,7 @@ def run():
     fam.us30_print_married()
     fam.us32_print_multiple_births()
     fam.us33_print_orphans()
+    fam.us34_print_big_age_diff()
     fam.us_39_print_upcoming_anniversaries()
     print("")
 

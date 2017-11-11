@@ -2800,6 +2800,62 @@ class TestFamilies(unittest.TestCase):
 """
         self.assertEqual(test_output, output.getvalue())
 
+    def test_us34_print_gold_diggers(self):
+        """ US34 print families where when married one spouse was twice as old as the other
+        """
+        # invalid
+        test_family = Family("@F1@")
+        test_family.set_husband_id("@I1@")
+        test_family.set_wife_id("@I2@")
+        test_family.set_date("1 JAN 2017", "married")
+        self.fam.families[test_family.get_family_id()] = test_family
+        test_husband = Person("@I1@")
+        test_husband.set_name("Tony /Tiger/")
+        test_husband.set_gender("M")
+        test_husband.set_date("1 JAN 1950", "birth")
+        test_husband.add_spouse_of_family(test_family.get_family_id())
+        self.peeps.individuals[test_husband.get_person_id()] = test_husband
+        test_wife = Person("@I2@")
+        test_wife.set_name("Minnie /Mouse/")
+        test_wife.set_gender("F")
+        test_wife.set_date("1 JAN 1999", "birth")
+        test_wife.add_spouse_of_family(test_family.get_family_id())
+        self.peeps.individuals[test_wife.get_person_id()] = test_wife
+
+        # valid
+        test_family = Family("@F2@")
+        test_family.set_husband_id("@I3@")
+        test_family.set_wife_id("@I4@")
+        test_family.set_date("1 JAN 2017", "married")
+        self.fam.families[test_family.get_family_id()] = test_family
+        test_husband = Person("@I3@")
+        test_husband.set_name("Sam /Tiger/")
+        test_husband.set_gender("M")
+        test_husband.set_date("3 SEP 1980", "birth")
+        test_husband.add_spouse_of_family(test_family.get_family_id())
+        self.peeps.individuals[test_husband.get_person_id()] = test_husband
+        test_wife = Person("@I4@")
+        test_wife.set_name("Mary /Mouse/")
+        test_wife.set_gender("F")
+        test_wife.set_date("3 SEP 1980", "birth")
+        test_wife.add_spouse_of_family(test_family.get_family_id())
+        self.peeps.individuals[test_wife.get_person_id()] = test_wife
+
+        # capture the output
+        output = io.StringIO()
+        sys.stdout = output
+        self.fam.us34_print_big_age_diff()
+        sys.stdout = sys.__stdout__
+        test_output = """Married Couples Large Age Differences
++------+------------------------------+----------------+
+|  ID  |            Names             | Age Difference |
++------+------------------------------+----------------+
+| @F1@ | Minnie /Mouse/, Tony /Tiger/ |       49       |
++------+------------------------------+----------------+
+"""
+        self.maxDiff = None
+        self.assertEqual(test_output, output.getvalue())
+
     def test_us30_print_married(self):
         """ US30 Unit tests
         """

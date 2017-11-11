@@ -24,7 +24,6 @@ class Person(object):
         self._death_date = None
         self._child_of_families = []
         self._spouse_of_families = []
-        self._age = None  # age calculated automatically
 
     def get_person_id(self):
         """returns the person id
@@ -91,10 +90,8 @@ class Person(object):
         """
         if date_type == "birth":
             self._birth_date = datetime.strptime(date_string, '%d %b %Y')
-            self._generate_age()
         if date_type == "death":
             self._death_date = datetime.strptime(date_string, '%d %b %Y')
-            self._generate_age()
             self._is_alive = False
 
     def get_children_of_families(self):
@@ -144,17 +141,25 @@ class Person(object):
         Returns:
             int
         """
-        return self._age
+        return self._generate_age(self.CURRENT_TIME)
 
-    def _generate_age(self):
+    def get_age_at_date(self, curr_date):
+        """returns person's age at a specific date
+        Args:
+            curr_date (datetime): date to use to determine the person's age at
+        Returns:
+            int
+        """
+        return self._generate_age(curr_date)
+
+    def _generate_age(self, curr_date):
         """generates age of the person based on their birth and death dates
         """
         if self._birth_date is None:
-            return
+            return None
 
-        if self._death_date is not None:
-            self._age = int(
-                (self._death_date - self._birth_date).days / self.DAYS_IN_YEAR)
-        else:
-            self._age = int(
-                (self.CURRENT_TIME - self._birth_date).days / self.DAYS_IN_YEAR)
+        if self._death_date is not None and curr_date > self._death_date:
+            curr_date = self._death_date
+
+        return int(
+            (curr_date - self._birth_date).days / self.DAYS_IN_YEAR)

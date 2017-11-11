@@ -246,6 +246,45 @@ class Families(object):
         print("Upcoming Anniversaries")
         print(table)
 
+    def us34_print_big_age_diff(self):
+        """
+        prints all couples that when they married they were twice as old as the other spouse.
+        It doesn't matter if they're alive or dead as this is when they got married.
+        Must have birth and married date.
+        """
+        families = self.families
+        individuals = self._people.individuals
+        table = PrettyTable(["ID", "Names", "Age Difference"])
+
+        for family_id in families:
+            # type: Family
+            family = self.families[family_id]
+            if family.get_married_date() is None:
+                continue
+            marr_date = family.get_married_date()
+            hus_id = family.get_husband_id()
+            husband = None
+            wife_id = family.get_wife_id()
+            wife = None
+            if wife_id is not None:
+                wife = individuals[wife_id]
+            if hus_id is not None:
+                husband = individuals[hus_id]
+            if husband is None or wife is None:
+                continue
+            wife_age = wife.get_age_at_date(marr_date)
+            husb_age = husband.get_age_at_date(marr_date)
+            if wife_age is not None and husb_age is not None:
+                age_diff = None
+                if wife_age > (husb_age * 2):
+                    age_diff = wife_age - husb_age
+                if husb_age > (wife_age * 2):
+                    age_diff = husb_age - wife_age
+                if age_diff is not None and age_diff > 0:
+                    table.add_row([family.get_family_id(), wife.get_name() + ', ' + husband.get_name(), age_diff])
+        print("Married Couples Large Age Differences")
+        print(table)
+
     def validate(self):
         """run through all the validation rules around families
         """
