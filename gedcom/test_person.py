@@ -62,18 +62,10 @@ class TestPerson(unittest.TestCase):
         """test age with death
         """
         peep = Person("@I01@")
+        peep.set_date("7 AUG 1988", "birth")
+        peep.set_date("7 SEP 1990", "death")
 
-        birth_date = datetime.strptime(
-            "7 SEP 1988", '%d %b %Y')
-        peep.set_date("7 SEP 1988", "birth")
-        death_date = datetime.strptime(
-            "7 SEP 1988", '%d %b %Y')
-        peep.set_date("7 SEP 1988", "death")
-
-        expected_age = int(
-            (death_date - birth_date).days / peep.DAYS_IN_YEAR)
-
-        self.assertEqual(expected_age, peep.get_age())
+        self.assertEqual(2, peep.get_age())
 
     def test_is_alive(self):
         """test is alive without death then with death then with birth and death
@@ -121,3 +113,12 @@ class TestPerson(unittest.TestCase):
         peep.add_spouse_of_family(fam_2)
         self.assertEqual(2, len(peep.get_spouse_of_families()))
         self.assertEqual(fam_2, peep.get_spouse_of_families()[1])
+
+    def test_get_age_at_date(self):
+        """test getting a person's age at a specific date
+        """
+        peep = Person("@I01@")
+        test_date = datetime.strptime("1 JAN 2000", '%d %b %Y')
+        peep.set_date("1 JAN 1980", "birth")
+
+        self.assertEqual(20, peep.get_age_at_date(test_date))
