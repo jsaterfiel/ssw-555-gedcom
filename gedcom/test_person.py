@@ -113,7 +113,7 @@ class TestPerson(unittest.TestCase):
         peep.add_spouse_of_family(fam_2)
         self.assertEqual(2, len(peep.get_spouse_of_families()))
         self.assertEqual(fam_2, peep.get_spouse_of_families()[1])
-    
+
     def test_get_age_at_date(self):
         """test getting a person's age at a specific date
         """
